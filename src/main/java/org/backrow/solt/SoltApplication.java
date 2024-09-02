@@ -7,6 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class SoltApplication {
 
     public static void main(String[] args) {
+
+        System.out.println("Hello SD");
         SpringApplication.run(SoltApplication.class, args);
     }
 
