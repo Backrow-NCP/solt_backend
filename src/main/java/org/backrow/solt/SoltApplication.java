@@ -12,6 +12,8 @@ public class SoltApplication {
 
         System.out.println("Hello SD");
         SpringApplication.run(SoltApplication.class, args);
+
+        System.out.println("This is Suhan");
         log.info("TEST1 @@@@@eateteaetewat@@@@@@======eafefae======@");
     }
 
