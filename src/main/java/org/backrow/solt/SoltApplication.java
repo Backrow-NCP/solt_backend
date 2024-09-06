@@ -7,14 +7,11 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 @Log4j2
 public class SoltApplication {
-
     public static void main(String[] args) {
-
         System.out.println("Hello SD");
         SpringApplication.run(SoltApplication.class, args);
 
         System.out.println("This is Suhan");
         log.info("TEST1 @@@@@eateteaetewat@@@@@@======eafefae======@");
     }
-
 }
