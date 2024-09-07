@@ -6,6 +6,8 @@ import org.backrow.solt.dto.BoardDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
 import org.backrow.solt.service.BoardService;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -18,30 +20,52 @@ public class BoardController {
     private final BoardService boardService;
 
     @GetMapping("/list")
-    PageResponseDTO<BoardDTO> getBoardList(PageRequestDTO pageRequestDTO) {
-        return boardService.getBoardList(pageRequestDTO);
+    ResponseEntity<PageResponseDTO<BoardDTO>> getBoardList(PageRequestDTO pageRequestDTO) {
+        try {
+            PageResponseDTO<BoardDTO> result = boardService.getBoardList(pageRequestDTO);
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/{id}")
-    BoardDTO getBoard(@PathVariable Long id) {
-        log.info("getBoard: " + id);
-        return boardService.getBoard(id);
+    ResponseEntity<BoardDTO> getBoard(@PathVariable Long id) {
+        try {
+            return ResponseEntity.ok(boardService.getBoard(id));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
     }
 
     @PostMapping
-    Map<String, Long> saveBoard(@RequestBody BoardDTO boardDTO) {
-        return Map.of("id", boardService.saveBoard(boardDTO));
+    ResponseEntity<Map<String, Long>> saveBoard(@RequestBody BoardDTO boardDTO) {
+        try {
+            Long id = boardService.saveBoard(boardDTO);
+            return ResponseEntity.ok(Map.of("id", id));
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @PutMapping("/{id}")
     Map<String, Boolean> modifyBoard(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
-        log.info("modifyBoard: " + id + " " + boardDTO);
-        return Map.of("isSuccess", boardService.modifyBoard(id, boardDTO));
+        try {
+            return Map.of("isSuccess", boardService.modifyBoard(id, boardDTO));
+        } catch (Exception e) {
+            return Map.of("isSuccess", false);
+        }
     }
 
     @DeleteMapping("/{id}")
-    Map<String, Boolean> deleteBoard(Long id) {
-        log.info("deleteBoard: " + id);
-        return Map.of("isSuccess", boardService.deleteBoard(id));
+    Map<String, Boolean> deleteBoard(@PathVariable Long id) {
+        try {
+            return Map.of("isSuccess", boardService.deleteBoard(id));
+        } catch (Exception e) {
+            return Map.of("isSuccess", false);
+        }
     }
 }

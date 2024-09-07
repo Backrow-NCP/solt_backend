@@ -3,6 +3,7 @@ package org.backrow.solt.domain;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
+@EntityListeners(value = {AuditingEntityListener.class})
 public class Board {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,4 +36,9 @@ public class Board {
     @LastModifiedDate
     @Column(name="moddate")
     private LocalDateTime modDate;
+
+    public void modify(String title, String content) {
+        if (title != null) this.title = title;
+        if (content != null) this.content = content;
+    }
 }
