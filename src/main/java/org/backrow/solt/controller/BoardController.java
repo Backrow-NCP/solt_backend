@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
+@Tag(name = "게시판 API", description = "게시글에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
 @RestController
 @RequestMapping("/board")
 @RequiredArgsConstructor
 @Log4j2
-@Tag(name = "게시판 API", description = "게시글에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
 public class BoardController {
     private final BoardService boardService;
 
