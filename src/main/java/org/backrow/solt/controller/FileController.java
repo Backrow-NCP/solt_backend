@@ -87,7 +87,7 @@ public class FileController {
 
             // 이미지의 경우, 썸네일 파일 삭제
             String contentType = getContentType(filePath);
-            if (contentType != null && contentType.startsWith("image")) {
+            if (contentType.startsWith("image")) {
                 deleteThumbnail(safeFileName);
             }
 
@@ -134,7 +134,7 @@ public class FileController {
 
     /** 파일명 검증 */
     private String sanitizeFileName(String fileName) {
-        return fileName.replaceAll("[^a-zA-Z0-9\\.\\-]", "_");
+        return fileName.replaceAll("[^a-zA-Z0-9.\\-]", "_");
     }
 
     /** 파일 경로를 통해 리소스 가져오기 */
