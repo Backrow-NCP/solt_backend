@@ -7,12 +7,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
-@Builder
-@AllArgsConstructor
-@NoArgsConstructor
 @ToString
 @EntityListeners(value = {AuditingEntityListener.class})
 public class Board {
@@ -36,6 +34,12 @@ public class Board {
     @LastModifiedDate
     @Column(name="moddate")
     private LocalDateTime modDate;
+
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
+    private List<BoardImage> boardImages;
 
     public void modify(String title, String content) {
         if (title != null) this.title = title;
