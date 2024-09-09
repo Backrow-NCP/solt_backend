@@ -10,8 +10,10 @@ import org.backrow.solt.dto.PageResponseDTO;
 import org.backrow.solt.service.BoardService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.Map;
 
 @Tag(name = "게시판 API", description = "게시글에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
@@ -47,7 +49,13 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 작성합니다.")
     @PostMapping
-    ResponseEntity<Map<String, Long>> saveBoard(@RequestBody BoardDTO boardDTO) {
+    ResponseEntity<Map<String, Long>> saveBoard(
+            @Valid @RequestBody BoardDTO boardDTO,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            ResponseEntity.badRequest().build();
+        }
         try {
             Long id = boardService.saveBoard(boardDTO);
             return ResponseEntity.ok(Map.of("id", id));
@@ -59,10 +67,18 @@ public class BoardController {
 
     @Operation(summary = "게시글 수정", description = "ID를 통해 특정 게시글을 수정합니다.")
     @PutMapping("/{id}")
-    Map<String, Boolean> modifyBoard(@PathVariable Long id, @RequestBody BoardDTO boardDTO) {
+    Map<String, Boolean> modifyBoard(
+            @PathVariable Long id,
+            @RequestBody BoardDTO boardDTO,
+            BindingResult bindingResult
+    ) {
+        if (bindingResult.hasErrors()) {
+            return Map.of("isSuccess", false);
+        }
         try {
             return Map.of("isSuccess", boardService.modifyBoard(id, boardDTO));
         } catch (Exception e) {
+            log.error(e.getMessage());
             return Map.of("isSuccess", false);
         }
     }

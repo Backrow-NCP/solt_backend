@@ -7,6 +7,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -25,7 +26,7 @@ public class Board {
     private String content;
 
 //    private Member member;
-//    private BoardPlan boardPlan;
+//    private BoardPlan boardPlan; 플랜에 저장된 날짜보다 현재 일자가 나중이어야 함
 
     @CreatedDate
     @Column(name="regdate", updatable=false)
@@ -39,10 +40,14 @@ public class Board {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
-    private List<BoardImage> boardImages;
+    private List<BoardImage> boardImages = new ArrayList<>();
 
-    public void modify(String title, String content) {
+    public void modify(String title, String content, List<BoardImage> boardImages) {
         if (title != null) this.title = title;
         if (content != null) this.content = content;
+        if (boardImages != null) {
+            this.boardImages.clear();
+            this.boardImages.addAll(boardImages);
+        }
     }
 }

@@ -2,7 +2,9 @@ package org.backrow.solt.service;
 
 import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Board;
+import org.backrow.solt.domain.BoardImage;
 import org.backrow.solt.dto.BoardDTO;
+import org.backrow.solt.dto.BoardImageDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
 import org.backrow.solt.repository.BoardRepository;
@@ -47,6 +49,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public long saveBoard(BoardDTO boardDTO) {
         Board board = modelMapper.map(boardDTO, Board.class);
+        setBoardImages(board);
         boardRepository.save(board);
         return board.getBoardId();
     }
@@ -56,9 +59,18 @@ public class BoardServiceImpl implements BoardService {
         Optional<Board> findBoard = boardRepository.findById(id);
         Board board = findBoard.orElseThrow();
 
-        board.modify(boardDTO.getTitle(), boardDTO.getContent());
-        boardRepository.save(board);
+        List<BoardImageDTO> boardImageDTOS = boardDTO.getBoardImages();
+        List<BoardImage> boardImages = null;
+        if (boardImageDTOS != null) {
+            boardImages = boardImageDTOS.stream()
+                    .map((boardImageDTO -> modelMapper.map(boardImageDTO, BoardImage.class)))
+                    .collect(Collectors.toList());
+        }
 
+        board.modify(boardDTO.getTitle(), boardDTO.getContent(), boardImages);
+        setBoardImages(board);
+
+        boardRepository.save(board);
         return true;
     }
 
@@ -69,6 +81,13 @@ public class BoardServiceImpl implements BoardService {
             return true;
         } else {
             throw new NoSuchElementException("Board not found for id: " + id);
+        }
+    }
+
+    private void setBoardImages(Board board) {
+        List<BoardImage> boardImages = board.getBoardImages();
+        if (boardImages != null) {
+            boardImages.forEach(boardImage -> boardImage.setBoard(board));
         }
     }
 }
