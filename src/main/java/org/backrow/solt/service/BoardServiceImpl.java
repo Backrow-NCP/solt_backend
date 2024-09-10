@@ -27,14 +27,14 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public PageResponseDTO<BoardDTO> getBoardList(PageRequestDTO pageRequestDTO) {
-        Pageable pageable = PageRequest.of(pageRequestDTO.getPage(), pageRequestDTO.getSize());
+        Pageable pageable = pageRequestDTO.getPageable();
         Page<Board> boardPage = boardRepository.findAll(pageable);
 
         List<BoardDTO> dtoList = boardPage.stream()
                 .map(board -> modelMapper.map(board, BoardDTO.class))
                 .collect(Collectors.toList());
 
-        return new PageResponseDTO<>(pageRequestDTO, dtoList, boardPage.getTotalPages());
+        return new PageResponseDTO<>(pageRequestDTO, dtoList, (int) boardPage.getTotalElements());
     }
 
     @Override
@@ -84,6 +84,7 @@ public class BoardServiceImpl implements BoardService {
         }
     }
 
+    /** Board 내 Image 엔티티에 참조할 Board를 지정합니다. */
     private void setBoardImages(Board board) {
         List<BoardImage> boardImages = board.getBoardImages();
         if (boardImages != null) {
