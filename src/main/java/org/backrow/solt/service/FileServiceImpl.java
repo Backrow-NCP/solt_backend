@@ -2,8 +2,8 @@ package org.backrow.solt.service;
 
 import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
-import org.backrow.solt.dto.FileDownloadDTO;
-import org.backrow.solt.dto.UploadResultDTO;
+import org.backrow.solt.dto.file.FileDownloadDTO;
+import org.backrow.solt.dto.file.UploadResultDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;

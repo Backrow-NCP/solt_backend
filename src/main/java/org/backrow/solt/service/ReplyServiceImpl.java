@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Reply;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
-import org.backrow.solt.dto.ReplyDTO;
+import org.backrow.solt.dto.reply.ReplyDTO;
 import org.backrow.solt.repository.ReplyRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;

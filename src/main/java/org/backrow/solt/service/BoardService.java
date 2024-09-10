@@ -1,6 +1,6 @@
 package org.backrow.solt.service;
 
-import org.backrow.solt.dto.BoardDTO;
+import org.backrow.solt.dto.board.BoardDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
 

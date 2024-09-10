@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.dto.BoardDTO;
+import org.backrow.solt.dto.board.BoardDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
 import org.backrow.solt.service.BoardService;

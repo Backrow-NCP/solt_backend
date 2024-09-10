@@ -1,7 +1,7 @@
 package org.backrow.solt.service;
 
-import org.backrow.solt.dto.FileDownloadDTO;
-import org.backrow.solt.dto.UploadResultDTO;
+import org.backrow.solt.dto.file.FileDownloadDTO;
+import org.backrow.solt.dto.file.UploadResultDTO;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;

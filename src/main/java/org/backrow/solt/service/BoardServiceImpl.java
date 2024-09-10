@@ -3,14 +3,13 @@ package org.backrow.solt.service;
 import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Board;
 import org.backrow.solt.domain.BoardImage;
-import org.backrow.solt.dto.BoardDTO;
-import org.backrow.solt.dto.BoardImageDTO;
+import org.backrow.solt.dto.board.BoardDTO;
+import org.backrow.solt.dto.board.BoardImageDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
 import org.backrow.solt.repository.BoardRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
