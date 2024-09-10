@@ -42,6 +42,12 @@ public class Board {
             orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
     private List<BoardImage> boardImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    private List<Reply> replies = new ArrayList<>();
+
     public void modify(String title, String content, List<BoardImage> boardImages) {
         if (title != null) this.title = title;
         if (content != null) this.content = content;
