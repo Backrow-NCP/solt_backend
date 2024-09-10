@@ -26,7 +26,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 목록 조회", description = "게시판의 모든 게시글 목록을 페이지로 조회합니다.")
     @GetMapping("/list")
-    ResponseEntity<PageResponseDTO<BoardDTO>> getBoardList(PageRequestDTO pageRequestDTO) {
+    public ResponseEntity<PageResponseDTO<BoardDTO>> getBoardList(PageRequestDTO pageRequestDTO) {
         try {
             PageResponseDTO<BoardDTO> result = boardService.getBoardList(pageRequestDTO);
             return ResponseEntity.ok(result);
@@ -38,7 +38,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 조회", description = "ID를 통해 특정 게시글을 조회합니다.")
     @GetMapping("/{id}")
-    ResponseEntity<BoardDTO> getBoard(@PathVariable Long id) {
+    public ResponseEntity<BoardDTO> getBoard(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(boardService.getBoard(id));
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 작성합니다.")
     @PostMapping
-    ResponseEntity<Map<String, Long>> saveBoard(
+    public ResponseEntity<Map<String, Long>> saveBoard(
             @Valid @RequestBody BoardDTO boardDTO,
             BindingResult bindingResult
     ) {
@@ -67,7 +67,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 수정", description = "ID를 통해 특정 게시글을 수정합니다.")
     @PutMapping("/{id}")
-    Map<String, Boolean> modifyBoard(
+    public Map<String, Boolean> modifyBoard(
             @PathVariable Long id,
             @RequestBody BoardDTO boardDTO,
             BindingResult bindingResult
@@ -85,7 +85,7 @@ public class BoardController {
 
     @Operation(summary = "게시글 삭제", description = "ID를 통해 특정 게시글을 삭제합니다.")
     @DeleteMapping("/{id}")
-    Map<String, Boolean> deleteBoard(@PathVariable Long id) {
+    public Map<String, Boolean> deleteBoard(@PathVariable Long id) {
         try {
             return Map.of("isSuccess", boardService.deleteBoard(id));
         } catch (Exception e) {
