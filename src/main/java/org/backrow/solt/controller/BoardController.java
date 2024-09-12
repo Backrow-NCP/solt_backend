@@ -4,11 +4,11 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.dto.board.BoardDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
+import org.backrow.solt.dto.board.BoardInputDTO;
+import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.service.BoardService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -26,42 +26,42 @@ public class BoardController {
 
     @Operation(summary = "게시글 목록 조회", description = "게시판의 모든 게시글 목록을 페이지로 조회합니다.")
     @GetMapping("/list")
-    public ResponseEntity<PageResponseDTO<BoardDTO>> getBoardList(PageRequestDTO pageRequestDTO) {
+    public ResponseEntity<PageResponseDTO<BoardViewDTO>> getBoardList(PageRequestDTO pageRequestDTO) {
         try {
-            PageResponseDTO<BoardDTO> result = boardService.getBoardList(pageRequestDTO);
+            PageResponseDTO<BoardViewDTO> result = boardService.getBoardList(pageRequestDTO);
             return ResponseEntity.ok(result);
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @Operation(summary = "게시글 조회", description = "ID를 통해 특정 게시글을 조회합니다.")
     @GetMapping("/{id}")
-    public ResponseEntity<BoardDTO> getBoard(@PathVariable Long id) {
+    public ResponseEntity<BoardViewDTO> getBoard(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(boardService.getBoard(id));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 작성합니다.")
     @PostMapping
     public ResponseEntity<Map<String, Long>> saveBoard(
-            @Valid @RequestBody BoardDTO boardDTO,
+            @Valid @RequestBody BoardInputDTO boardInputDTO,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             ResponseEntity.badRequest().build();
         }
         try {
-            Long id = boardService.saveBoard(boardDTO);
+            Long id = boardService.saveBoard(boardInputDTO);
             return ResponseEntity.ok(Map.of("id", id));
         } catch (Exception e) {
             log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.internalServerError().build();
         }
     }
 
@@ -69,14 +69,14 @@ public class BoardController {
     @PutMapping("/{id}")
     public Map<String, Boolean> modifyBoard(
             @PathVariable Long id,
-            @RequestBody BoardDTO boardDTO,
+            @RequestBody BoardInputDTO boardInputDTO,
             BindingResult bindingResult
     ) {
         if (bindingResult.hasErrors()) {
             return Map.of("isSuccess", false);
         }
         try {
-            return Map.of("isSuccess", boardService.modifyBoard(id, boardDTO));
+            return Map.of("isSuccess", boardService.modifyBoard(id, boardInputDTO));
         } catch (Exception e) {
             log.error(e.getMessage());
             return Map.of("isSuccess", false);

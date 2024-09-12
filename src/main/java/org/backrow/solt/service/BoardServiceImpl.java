@@ -3,10 +3,12 @@ package org.backrow.solt.service;
 import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Board;
 import org.backrow.solt.domain.BoardImage;
-import org.backrow.solt.dto.board.BoardDTO;
+import org.backrow.solt.domain.Member;
 import org.backrow.solt.dto.board.BoardImageDTO;
 import org.backrow.solt.dto.PageRequestDTO;
 import org.backrow.solt.dto.PageResponseDTO;
+import org.backrow.solt.dto.board.BoardInputDTO;
+import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.repository.BoardRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -25,40 +27,35 @@ public class BoardServiceImpl implements BoardService {
     private final ModelMapper modelMapper;
 
     @Override
-    public PageResponseDTO<BoardDTO> getBoardList(PageRequestDTO pageRequestDTO) {
+    public PageResponseDTO<BoardViewDTO> getBoardList(PageRequestDTO pageRequestDTO) {
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable();
-        Page<Board> boardPage = boardRepository.findAll(pageable);
 
-        List<BoardDTO> dtoList = boardPage.stream()
-                .map(board -> modelMapper.map(board, BoardDTO.class))
-                .collect(Collectors.toList());
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardView(types, keyword, pageable);
 
-        return new PageResponseDTO<>(pageRequestDTO, dtoList, (int) boardPage.getTotalElements());
+        return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
     }
 
     @Override
-    public BoardDTO getBoard(Long id) {
-        Optional<Board> findBoard = boardRepository.findById(id);
-
-        Board board = findBoard.orElseThrow();
-
-        return modelMapper.map(board, BoardDTO.class);
+    public BoardViewDTO getBoard(Long id) {
+        return boardRepository.searchBoardView(id);
     }
 
     @Override
-    public long saveBoard(BoardDTO boardDTO) {
-        Board board = modelMapper.map(boardDTO, Board.class);
+    public long saveBoard(BoardInputDTO boardInputDTO) {
+        Board board = convertToEntity(boardInputDTO);
         setBoardImages(board);
         boardRepository.save(board);
         return board.getBoardId();
     }
 
     @Override
-    public boolean modifyBoard(Long id, BoardDTO boardDTO) {
+    public boolean modifyBoard(Long id, BoardInputDTO boardInputDTO) {
         Optional<Board> findBoard = boardRepository.findById(id);
         Board board = findBoard.orElseThrow();
 
-        List<BoardImageDTO> boardImageDTOS = boardDTO.getBoardImages();
+        List<BoardImageDTO> boardImageDTOS = boardInputDTO.getBoardImages();
         List<BoardImage> boardImages = null;
         if (boardImageDTOS != null) {
             boardImages = boardImageDTOS.stream()
@@ -66,7 +63,7 @@ public class BoardServiceImpl implements BoardService {
                     .collect(Collectors.toList());
         }
 
-        board.modify(boardDTO.getTitle(), boardDTO.getContent(), boardImages);
+        board.modify(boardInputDTO.getTitle(), boardInputDTO.getContent(), boardImages);
         setBoardImages(board);
 
         boardRepository.save(board);
@@ -89,5 +86,16 @@ public class BoardServiceImpl implements BoardService {
         if (boardImages != null) {
             boardImages.forEach(boardImage -> boardImage.setBoard(board));
         }
+    }
+
+    /** BoardInputDTO를 Board Entity로 매핑합니다. **/
+    private Board convertToEntity(BoardInputDTO boardInputDTO) {
+        Board board = modelMapper.map(boardInputDTO, Board.class);
+        Member member = Member.builder()
+                .memberId(boardInputDTO.getMemberId())
+                .build();
+        board.setMember(member);
+        setBoardImages(board);
+        return board;
     }
 }

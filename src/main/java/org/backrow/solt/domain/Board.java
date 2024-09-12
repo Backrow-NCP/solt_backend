@@ -12,6 +12,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @ToString
 @EntityListeners(value = {AuditingEntityListener.class})
 public class Board {
@@ -25,7 +26,10 @@ public class Board {
     @Column(nullable = false)
     private String content;
 
-//    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
 //    private BoardPlan boardPlan; 플랜에 저장된 날짜보다 현재 일자가 나중이어야 함
 
     @CreatedDate
@@ -47,6 +51,12 @@ public class Board {
             cascade = CascadeType.REMOVE,
             orphanRemoval = true)
     private List<Reply> replies = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    private List<LikeLog> likeLog = new ArrayList<>();
 
     public void modify(String title, String content, List<BoardImage> boardImages) {
         if (title != null) this.title = title;
