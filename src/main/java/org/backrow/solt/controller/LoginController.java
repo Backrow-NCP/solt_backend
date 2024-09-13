@@ -76,7 +76,8 @@ public class LoginController {
     @Operation(summary = "회원가입 POST", description = "POST로 회원가입")
     @PostMapping("/register")
     public ResponseEntity<Map<String,Boolean>> register(RegisterDTO registerDTO){
-//       if(registerDTO.getPassword().length()>=8&&registerDTO.getPassword().length()<=20&&registerDTO.getPassword().contains({"!","@","#","$","%","^","&","*","(",")","-","_","+","="})) {
+        String regex = "^(?=.*[!@#$%^&*()_+=-]).{8,20}$";
+        if(registerDTO.getPassword().matches(regex)) {
            try {
                Map<String, Boolean> response = new HashMap<>();
                response.put("result", loginService.register(registerDTO));
@@ -85,7 +86,7 @@ public class LoginController {
                log.error(e.getMessage());
                return ResponseEntity.internalServerError().build();
            }
-//       }
-//       return ResponseEntity.badRequest().build();
+       }
+       return ResponseEntity.badRequest().build();
     }
 }
