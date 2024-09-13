@@ -33,7 +33,7 @@ import java.util.UUID;
 @Log4j2
 public class MemberServiceImpl implements MemberService {
 
-    @Value("${org.solt.upload.path}")
+    @Value("${org.backrow.upload.path}")
     private String uploadPath;
 
     private final MemberRepository memberRepository;
