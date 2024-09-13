@@ -11,8 +11,8 @@ public class PageResponseDTO<T> {
     private int size;
     private int total;
 
-    private int start;
-    private int end;
+    private int startPage;
+    private int endPage;
 
     private boolean prev;
     private boolean next;
@@ -28,13 +28,13 @@ public class PageResponseDTO<T> {
         this.total = total;
         this.dtoList = dtoList;
 
-        this.end = (int)(Math.ceil(this.page / 10.0)) * 10;
-        this.start = this.end - 9;
+        this.endPage = (int)(Math.ceil(this.page / 10.0)) * 10;
+        this.startPage = this.endPage - 9;
 
         int last = (int)(Math.ceil((total/(double)size)));
-        this.end = Math.min(end, last);
+        this.endPage = Math.min(endPage, last);
 
-        this.prev = this.start > 1;
-        this.next = total > this.end * this.size;
+        this.prev = this.startPage > 1;
+        this.next = total > this.endPage * this.size;
     }
 }
