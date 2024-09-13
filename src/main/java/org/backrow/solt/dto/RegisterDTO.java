@@ -1,9 +1,9 @@
 package org.backrow.solt.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.backrow.solt.domain.ProfileImage;
 
-import java.util.Date;
+import java.sql.Date;
 
 @Data
 @Builder
@@ -18,6 +18,7 @@ public class RegisterDTO {
 
     private String name;
 
+    @JsonFormat(pattern="yyyy-MM-dd")
     private Date birthYear;
 
     private Boolean gender;
