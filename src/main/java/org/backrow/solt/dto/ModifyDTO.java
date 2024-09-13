@@ -1,23 +1,20 @@
 package org.backrow.solt.dto;
 
 import lombok.*;
-import org.backrow.solt.domain.ProfileImage;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class RegisterDTO {
+public class ModifyDTO {
 
-    private String email;
+    private long memberId;
 
     private String password;
 
     private String name;
 
     private Integer birthYear;
-
-    private Boolean gender;
 
 }

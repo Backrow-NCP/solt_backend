@@ -11,9 +11,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class MemberInfoDTO {
 
-    private int member_id;
+    private long memberId;
     private String name;
-    private int birth_year;
+    private int birthYear;
     private boolean gender;
-    private ImageDTO image;
+    
+    private String fileName;
 }
