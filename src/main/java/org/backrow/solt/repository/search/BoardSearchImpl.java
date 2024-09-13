@@ -30,20 +30,22 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(likeLog).on(likeLog.board.eq(board))
                 .groupBy(board);
 
-        for (String type : types) {
-            BooleanBuilder builder = new BooleanBuilder();
-            switch (type) {
-                case "t":
-                    builder.or(titleContatin(keyword));
-                    break;
-                case "c":
-                    builder.or(contentContain(keyword));
-                    break;
-                case "w":
-                    builder.or(writerContain(keyword));
-                    break;
+        if (types != null) {
+            for (String type : types) {
+                BooleanBuilder builder = new BooleanBuilder();
+                switch (type) {
+                    case "t":
+                        builder.or(titleContatin(keyword));
+                        break;
+                    case "c":
+                        builder.or(contentContain(keyword));
+                        break;
+                    case "w":
+                        builder.or(writerContain(keyword));
+                        break;
+                }
+                boardQuery.where(builder);
             }
-            boardQuery.where(builder);
         }
 
         JPQLQuery<BoardViewDTO> boardViewQuery = boardQuery.select(createBoardViewDTOProjection(board, likeLog));
