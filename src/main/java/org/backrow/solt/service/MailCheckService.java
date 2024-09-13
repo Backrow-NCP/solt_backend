@@ -3,7 +3,6 @@ package org.backrow.solt.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.backrow.solt.repository.MemberRepository;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +24,6 @@ public class MailCheckService{
 
     private final MailService mailService;
 
-    private final MemberRepository memberRepository;
-
     @Value("${spring.mail.auth-code-expiration-millis}")
     private long authCodeExpirationMillis;
 
@@ -34,7 +31,6 @@ public class MailCheckService{
         String title = "SoLOTrip(SOLT) 이메일 인증 번호";
         String authCode = this.createCode();
         mailService.sendEmail(email, title, authCode);
-        // 이메일 인증 요청 시 인증 번호 Redis에 저장 ( key = "AuthCode " + Email / value = AuthCode )
         redisService.setValues(AUTH_CODE_PREFIX + email,
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
     }

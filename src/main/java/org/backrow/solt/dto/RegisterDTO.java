@@ -3,6 +3,8 @@ package org.backrow.solt.dto;
 import lombok.*;
 import org.backrow.solt.domain.ProfileImage;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -16,7 +18,7 @@ public class RegisterDTO {
 
     private String name;
 
-    private Integer birthYear;
+    private Date birthYear;
 
     private Boolean gender;
 

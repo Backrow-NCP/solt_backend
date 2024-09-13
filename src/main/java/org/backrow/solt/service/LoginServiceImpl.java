@@ -53,13 +53,12 @@ public class LoginServiceImpl implements LoginService {
     // Security와는 별도로 돌아가는 인증
     @Override
     public int login(LoginDTO loginDTO) {
-        String findPW = loginRepository.findPwByEmail(loginDTO.getEmail());
+        String checkEmail = loginRepository.checkEmail(loginDTO.getEmail());
         String checkPW = loginDTO.getPassword();
-        log.info(findPW);
-        if(findPW == null && findPW != checkPW)
-            throw new RuntimeException("No Password found for email: " + loginDTO.getEmail());
-
-        return (int)loginRepository.findIdByEmail(loginDTO.getEmail());
+        if(checkPassword(checkEmail, checkPW)) {
+            return (int) loginRepository.findIdByEmail(loginDTO.getEmail());
+        }
+        throw new RuntimeException("No Password found for email: " + loginDTO.getEmail());
     }
 
     @Override

@@ -2,6 +2,8 @@ package org.backrow.solt.dto;
 
 import lombok.*;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,6 +17,6 @@ public class ModifyDTO {
 
     private String name;
 
-    private Integer birthYear;
+    private Date birthYear;
 
 }

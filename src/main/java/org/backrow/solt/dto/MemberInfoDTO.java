@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -13,7 +15,7 @@ public class MemberInfoDTO {
 
     private long memberId;
     private String name;
-    private int birthYear;
+    private Date birthYear;
     private boolean gender;
     
     private String fileName;

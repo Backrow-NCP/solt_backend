@@ -7,6 +7,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,13 +25,13 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 9)
     private String password;
 
     @Column(nullable = false)
     private String name;
 
-    private Integer birthYear;
+    private Date birthYear;
 
     private Boolean gender;
 
@@ -43,7 +44,7 @@ public class Member {
     mappedBy = "member")
     private ProfileImage profileImage;
 
-    public void changeMemberInfo(String password, String name, Integer birthYear) {
+    public void changeMemberInfo(String password, String name, Date birthYear) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.password = encoder.encode(password);
         this.name = name;
