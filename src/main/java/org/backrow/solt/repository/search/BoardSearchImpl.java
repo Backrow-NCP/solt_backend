@@ -8,6 +8,7 @@ import com.querydsl.jpa.JPQLQuery;
 import org.backrow.solt.domain.Board;
 import org.backrow.solt.domain.QBoard;
 import org.backrow.solt.domain.QLikeLog;
+import org.backrow.solt.domain.QMember;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -25,9 +26,11 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     public Page<BoardViewDTO> searchBoardView(String[] types, String keyword, Pageable pageable) {
         QBoard board = QBoard.board;
         QLikeLog likeLog = QLikeLog.likeLog;
+        QMember member = QMember.member;
 
         JPQLQuery<Board> boardQuery = from(board)
                 .leftJoin(likeLog).on(likeLog.board.eq(board))
+                .leftJoin(member).on(board.member.eq(member))
                 .groupBy(board);
 
         if (types != null) {
@@ -35,7 +38,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 BooleanBuilder builder = new BooleanBuilder();
                 switch (type) {
                     case "t":
-                        builder.or(titleContatin(keyword));
+                        builder.or(titleContain(keyword));
                         break;
                     case "c":
                         builder.or(contentContain(keyword));
@@ -71,7 +74,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return boardViewQuery.fetchOne();
     }
 
-    private BooleanExpression titleContatin(String keyword) {
+    private BooleanExpression titleContain(String keyword) {
         return keyword != null ? QBoard.board.title.containsIgnoreCase(keyword) : null;
     }
 
