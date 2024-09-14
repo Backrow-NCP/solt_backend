@@ -20,12 +20,9 @@ public class PageRequestDTO {
 
     private String keyword;
 
-    private String link;
-
     public String[] getTypes(){
         if(type==null || type.isEmpty())
             return null;
-
         return type.split("");
     }
 
