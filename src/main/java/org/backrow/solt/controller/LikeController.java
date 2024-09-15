@@ -25,31 +25,12 @@ public class LikeController {
     @Operation(summary = "좋아요 수 조회", description = "ID를 통해 특정 게시글의 좋아요 개수를 조회합니다.")
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Integer>> getLikesByBoardId(@PathVariable Long id) {
-        try {
-            return ResponseEntity.ok(Map.of("likeCount", likeService.getLikesByBoardId(id)));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.internalServerError().build();
-        }
+        return ResponseEntity.ok(Map.of("likeCount", likeService.getLikesByBoardId(id)));
     }
 
     @Operation(summary = "좋아요 등록/취소 토글", description = "게시글 ID와 멤버 ID를 통해 좋아요를 등록/취소합니다.<br>토글 후 좋아요 개수를 반환힙니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Integer>> toggleLike(
-            @Valid @RequestBody LikeDTO likeDTO,
-            BindingResult bindingResult
-    ) {
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().build();
-        }
-        try {
-            return ResponseEntity.ok(Map.of("likeCount", likeService.toggleLike(likeDTO)));
-        } catch (DataIntegrityViolationException e) {
-            log.error(e.getMessage());
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return ResponseEntity.internalServerError().build();
-        }
+    public ResponseEntity<Map<String, Integer>> toggleLike(@Valid @RequestBody LikeDTO likeDTO) {
+        return ResponseEntity.ok(Map.of("likeCount", likeService.toggleLike(likeDTO)));
     }
 }
