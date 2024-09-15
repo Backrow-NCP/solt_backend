@@ -1,7 +1,7 @@
 package org.backrow.solt.service;
 
-import org.backrow.solt.dto.PageRequestDTO;
-import org.backrow.solt.dto.PageResponseDTO;
+import org.backrow.solt.dto.page.PageRequestDTO;
+import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 

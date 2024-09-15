@@ -1,4 +1,4 @@
-package org.backrow.solt.dto;
+package org.backrow.solt.dto.login;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
