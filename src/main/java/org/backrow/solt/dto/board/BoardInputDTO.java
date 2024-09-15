@@ -11,8 +11,6 @@ import java.util.List;
 
 @Data
 public class BoardInputDTO {
-    private Long boardId;
-
     @NotEmpty(message = "글 제목은 반드시 존재해야 합니다.")
     @Size(min = 1, max = 200, message = "글 제목은 1~200자 이내의 문자열이어야 합니다.")
     private String title;
@@ -24,7 +22,7 @@ public class BoardInputDTO {
     @NotNull
     private Long memberId;
 
-//    private BoardPlanDTO boardPlan;
+//    private PlanDTO plan;
 
     private List<BoardImageDTO> boardImages;
 }
