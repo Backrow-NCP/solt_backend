@@ -26,7 +26,7 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
 
     @Operation(summary="Login POST + Spring Security", description ="POST 로그인 + Spring Security")
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<?> getToken(@RequestBody LoginDTO loginDTO) {
         int memberId = loginService.login(loginDTO);
         UsernamePasswordAuthenticationToken creds =
