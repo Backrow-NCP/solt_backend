@@ -38,11 +38,6 @@ public class FileController {
             Resource resource = fileDownloadDTO.getResource();
             String contentType = fileDownloadDTO.getContentType();
 
-            if (resource == null) {
-                log.error("File not found: {}", fileName);
-                return ResponseEntity.notFound().build();
-            }
-
             HttpHeaders headers = new HttpHeaders();
             headers.add(HttpHeaders.CONTENT_TYPE, contentType);
             if (!contentType.startsWith("image")) { // 이미지 파일이 아닐 경우 파일 다운로드 처리.
@@ -50,6 +45,9 @@ public class FileController {
             }
 
             return ResponseEntity.ok().headers(headers).body(resource);
+        } catch (NoSuchFileException e) {
+            log.error("File not found: {}", fileName);
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             log.error("File download failed for {}: {}", fileName, e.getMessage());
             return ResponseEntity.internalServerError().build();
