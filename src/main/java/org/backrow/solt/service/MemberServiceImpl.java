@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import net.coobird.thumbnailator.Thumbnailator;
 import org.backrow.solt.domain.Member;
 import org.backrow.solt.dto.*;
+import org.backrow.solt.dto.file.UploadResultDTO;
 import org.backrow.solt.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,17 +33,13 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Log4j2
 public class MemberServiceImpl implements MemberService {
-
-    @Value("${org.backrow.upload.path}")
-    private String uploadPath;
-
     private final MemberRepository memberRepository;
 
     @Override
     public MemberInfoDTO getMemberInfo(long memberId) {
         Optional<Member> result = memberRepository.findById(memberId);
         Member member = result.orElseThrow();
-        return (MemberInfoDTO) entityToDto(member);
+        return entityToDto(member);
     }
 
     @Override
@@ -68,42 +65,11 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void modifyMemberImage(long memberId, ImageDTO image) {
+    public void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO) {
         Optional<Member> result = memberRepository.findById(memberId);
         Member member = result.orElseThrow();
 
-        member.addImage(image.getUuid(), image.getFileName());
+        member.addImage(uploadResultDTO.getUuid(), uploadResultDTO.getFileName());
         memberRepository.save(member);
-    }
-
-    @Override
-    public ImageDTO uploadImage(ImageUploadDTO imageUploadDTO) {
-
-            MultipartFile multipartFile = (MultipartFile)imageUploadDTO.getImage();
-            String originalFilename = multipartFile.getOriginalFilename();
-
-            String uuid = UUID.randomUUID().toString();
-
-            Path savePath = Paths.get(uploadPath, uuid + "_" + originalFilename);
-
-            boolean image = false;
-
-            try {
-                multipartFile.transferTo(savePath);
-
-                if (Files.probeContentType(savePath).startsWith("image")) {
-                    image = true;
-                    File thumbFile = new File(uploadPath, "s_" + uuid + "_" + originalFilename);
-                    Thumbnailator.createThumbnail(savePath.toFile(), thumbFile, 200, 200);
-                }
-
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-            return (ImageDTO) ImageDTO.builder()
-                    .uuid(uuid)
-                    .fileName(originalFilename)
-                    .img(image)
-                    .build();
     }
 }
