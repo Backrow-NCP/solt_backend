@@ -1,7 +1,7 @@
 package org.backrow.solt.service;
 
-import org.backrow.solt.dto.LoginDTO;
-import org.backrow.solt.dto.RegisterDTO;
+import org.backrow.solt.dto.login.LoginDTO;
+import org.backrow.solt.dto.login.RegisterDTO;
 
 import javax.servlet.http.HttpServletRequest;
 

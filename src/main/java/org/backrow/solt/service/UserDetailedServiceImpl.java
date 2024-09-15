@@ -3,7 +3,7 @@ package org.backrow.solt.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.Member;
-import org.backrow.solt.dto.LoginDTO;
+import org.backrow.solt.dto.login.LoginDTO;
 import org.backrow.solt.repository.LoginRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.core.userdetails.User.UserBuilder;

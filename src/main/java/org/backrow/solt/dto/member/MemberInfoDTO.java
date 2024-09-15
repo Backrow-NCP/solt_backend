@@ -1,4 +1,4 @@
-package org.backrow.solt.dto;
+package org.backrow.solt.dto.member;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;

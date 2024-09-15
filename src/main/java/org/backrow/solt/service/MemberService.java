@@ -1,8 +1,8 @@
 package org.backrow.solt.service;
 
 import org.backrow.solt.domain.Member;
-import org.backrow.solt.dto.MemberInfoDTO;
-import org.backrow.solt.dto.ModifyDTO;
+import org.backrow.solt.dto.member.MemberInfoDTO;
+import org.backrow.solt.dto.member.ModifyDTO;
 import org.backrow.solt.dto.file.UploadResultDTO;
 
 public interface MemberService {
