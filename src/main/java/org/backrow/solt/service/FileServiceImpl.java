@@ -113,7 +113,7 @@ public class FileServiceImpl implements FileService {
             Resource resource = new FileSystemResource(filePath);
 
             if (!resource.exists() || !resource.isReadable()) {
-                return null;
+                throw new NoSuchFileException("File not found: " + fileName);
             }
             return resource;
         } catch (Exception e) {
