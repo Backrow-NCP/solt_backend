@@ -42,7 +42,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(map);
     }
 
-    // 데이터 무결성 제약 위반
+    // 데이터 무결성 제약 위반 처리
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("Data integrity violation: {}", e.getMessage());
