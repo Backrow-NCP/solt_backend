@@ -10,6 +10,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.webjars.NotFoundException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -41,11 +42,18 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(map);
     }
 
-    // 데이터 무결성 제약 위반 처리
+    // 데이터 무결성 제약 위반
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("Data integrity violation: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body("Data integrity violation occurred. Please check your input.");
+    }
+
+    // 리소스 조회 실패
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
+        log.error(e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
     // 기타 선언하지 않은 모든 예외 처리

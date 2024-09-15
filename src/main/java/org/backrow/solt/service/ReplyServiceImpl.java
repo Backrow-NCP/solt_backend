@@ -10,9 +10,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -44,7 +44,7 @@ public class ReplyServiceImpl implements ReplyService {
     @Override
     public boolean modifyReply(Long id, ReplyDTO replyDTO) {
         Optional<Reply> findReply = replyRepository.findById(id);
-        Reply reply = findReply.orElseThrow();
+        Reply reply = findReply.orElseThrow(() -> new NotFoundException("Reply not found: " + id));
 
         reply.modify(replyDTO.getContent());
 
@@ -58,7 +58,7 @@ public class ReplyServiceImpl implements ReplyService {
             replyRepository.deleteById(id);
             return true;
         } else {
-            throw new NoSuchElementException("Reply not found for id: " + id);
+            throw new NotFoundException("Board not found: " + id);
         }
     }
 }
