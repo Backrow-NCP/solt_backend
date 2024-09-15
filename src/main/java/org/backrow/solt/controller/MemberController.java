@@ -27,7 +27,7 @@ public class MemberController {
     private final FileService fileService;
 
     @Operation(summary = "Member정보 가져오기 GET", description = "GET 회원정보")
-    @GetMapping("/info")
+    @GetMapping
     public ResponseEntity<MemberInfoDTO> getMemberInfo(long memberId) {
         try {
             MemberInfoDTO memberInfo = memberService.getMemberInfo(memberId);
@@ -39,7 +39,7 @@ public class MemberController {
     }
 
     @Operation(summary = "Member정보 수정 POST", description = "POST 회원정보수정")
-    @PutMapping("/modify")
+    @PutMapping
     public ResponseEntity<Map<String,Boolean>> modifyMember(ModifyDTO modifyDTO) {
        Map<String,Boolean> response = new HashMap<>();
        try {
@@ -53,7 +53,7 @@ public class MemberController {
     }
 
     @Operation(summary = "회원 삭제 member", description = "DELETE 회원탈퇴")
-    @DeleteMapping("/unregister")
+    @DeleteMapping
     public ResponseEntity<Map<String,Boolean>> deleteMember(long memberId, String password) {
         Map<String,Boolean> response = new HashMap<>();
         try {
