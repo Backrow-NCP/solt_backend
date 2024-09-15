@@ -15,9 +15,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -40,7 +40,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardViewDTO getBoard(Long id) {
-        return boardRepository.searchBoardView(id);
+        BoardViewDTO result = boardRepository.searchBoardView(id);
+        if (result == null) {
+            throw new NotFoundException("Board not found: " + id);
+        }
+        return result;
     }
 
     @Override
@@ -55,7 +59,7 @@ public class BoardServiceImpl implements BoardService {
     @Override
     public boolean modifyBoard(Long id, BoardInputDTO boardInputDTO) {
         Optional<Board> findBoard = boardRepository.findById(id);
-        Board board = findBoard.orElseThrow();
+        Board board = findBoard.orElseThrow(() -> new NotFoundException("Board not found: " + id));
 
         List<BoardImageDTO> boardImageDTOS = boardInputDTO.getBoardImages();
         List<BoardImage> boardImages = null;
@@ -78,7 +82,7 @@ public class BoardServiceImpl implements BoardService {
             boardRepository.deleteById(id);
             return true;
         } else {
-            throw new NoSuchElementException("Board not found for id: " + id);
+            throw new NotFoundException("Board not found: " + id);
         }
     }
 
