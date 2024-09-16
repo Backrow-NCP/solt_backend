@@ -1,11 +1,6 @@
 package org.backrow.solt.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.ConstructorExpression;
-import com.querydsl.core.types.Projections;
-import com.querydsl.core.types.QBean;
-import com.querydsl.core.types.QList;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
 import org.backrow.solt.domain.*;
