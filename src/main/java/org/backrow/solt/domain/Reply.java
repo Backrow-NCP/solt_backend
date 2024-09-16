@@ -28,7 +28,9 @@ public class Reply {
     @OnDelete(action = OnDeleteAction.CASCADE)
     private Board board;
 
-//    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member; // Member 제거 시의 예외가 있어야 함
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_reply_id")
