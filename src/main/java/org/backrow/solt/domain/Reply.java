@@ -2,6 +2,8 @@ package org.backrow.solt.domain;
 
 import lombok.Getter;
 import lombok.ToString;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -23,6 +25,7 @@ public class Reply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Board board;
 
 //    private Member member;
