@@ -1,6 +1,7 @@
 package org.backrow.solt.dto.reply;
 
 import lombok.Data;
+import org.backrow.solt.dto.member.MemberInfoDTO;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -18,7 +19,7 @@ public class ReplyDTO {
     @NotNull(message = "게시글 ID는 반드시 존재해야 합니다.")
     private Long boardId;
 
-//    private Member member;
+    private MemberInfoDTO member;
 
     private Long parentReplyId;
 
