@@ -1,13 +1,15 @@
 package org.backrow.solt.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
+import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import javax.persistence.*;
+import java.sql.Date;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -25,7 +27,7 @@ public class Member {
     @Column(nullable = false)
     private String email;
 
-    @Column(nullable = false, length = 9)
+    @Column(nullable = false)
     private String password;
 
     @Column(nullable = false)
@@ -53,7 +55,7 @@ public class Member {
 
     public void addImage(String uuid, String fileName){
         profileImage = ProfileImage.builder()
-                .uuid(uuid)
+                .uuid("s_" + uuid)
                 .fileName(fileName)
                 .member(this)
                 .build();

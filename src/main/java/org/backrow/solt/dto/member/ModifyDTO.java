@@ -1,8 +1,9 @@
-package org.backrow.solt.dto;
+package org.backrow.solt.dto.member;
 
 import lombok.*;
 
-import java.util.Date;
+import java.sql.Date;
+
 
 @Data
 @Builder

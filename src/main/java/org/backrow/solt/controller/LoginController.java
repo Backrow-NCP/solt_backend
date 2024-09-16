@@ -3,8 +3,8 @@ package org.backrow.solt.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.dto.LoginDTO;
-import org.backrow.solt.dto.RegisterDTO;
+import org.backrow.solt.dto.login.LoginDTO;
+import org.backrow.solt.dto.login.RegisterDTO;
 import org.backrow.solt.service.LoginService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
@@ -26,7 +26,7 @@ public class LoginController {
     private final AuthenticationManager authenticationManager;
 
     @Operation(summary="Login POST + Spring Security", description ="POST 로그인 + Spring Security")
-    @PostMapping("/login")
+    @PostMapping
     public ResponseEntity<?> getToken(@RequestBody LoginDTO loginDTO) {
         int memberId = loginService.login(loginDTO);
         UsernamePasswordAuthenticationToken creds =

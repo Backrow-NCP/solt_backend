@@ -1,18 +1,9 @@
 package org.backrow.solt.service;
 
 import org.backrow.solt.domain.Member;
-import org.backrow.solt.dto.ImageDTO;
-import org.backrow.solt.dto.ImageUploadDTO;
-import org.backrow.solt.dto.MemberInfoDTO;
-import org.backrow.solt.dto.ModifyDTO;
-import org.springframework.core.io.Resource;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.backrow.solt.dto.member.MemberInfoDTO;
+import org.backrow.solt.dto.member.ModifyDTO;
+import org.backrow.solt.dto.file.UploadResultDTO;
 
 public interface MemberService {
 
@@ -22,9 +13,7 @@ public interface MemberService {
 
     void deleteMember(long memberId, String password);
 
-    void modifyMemberImage(long memberId, ImageDTO image);
-
-    ImageDTO uploadImage(ImageUploadDTO imageUploadDTO);
+    void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO);
 
     default Member dtoToEntity(MemberInfoDTO memberInfoDTO) {
         Member member = Member.builder()

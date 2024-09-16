@@ -3,16 +3,18 @@ package org.backrow.solt.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.dto.ImageDTO;
-import org.backrow.solt.dto.ImageUploadDTO;
-import org.backrow.solt.dto.MemberInfoDTO;
-import org.backrow.solt.dto.ModifyDTO;
+import org.backrow.solt.dto.member.MemberInfoDTO;
+import org.backrow.solt.dto.member.ModifyDTO;
+import org.backrow.solt.dto.file.UploadResultDTO;
+import org.backrow.solt.service.FileService;
 import org.backrow.solt.service.MemberService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,9 +24,10 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
+    private final FileService fileService;
 
     @Operation(summary = "Member정보 가져오기 GET", description = "GET 회원정보")
-    @GetMapping("/info")
+    @GetMapping
     public ResponseEntity<MemberInfoDTO> getMemberInfo(long memberId) {
         try {
             MemberInfoDTO memberInfo = memberService.getMemberInfo(memberId);
@@ -36,7 +39,7 @@ public class MemberController {
     }
 
     @Operation(summary = "Member정보 수정 POST", description = "POST 회원정보수정")
-    @PutMapping("/modify")
+    @PutMapping
     public ResponseEntity<Map<String,Boolean>> modifyMember(ModifyDTO modifyDTO) {
        Map<String,Boolean> response = new HashMap<>();
        try {
@@ -50,7 +53,7 @@ public class MemberController {
     }
 
     @Operation(summary = "회원 삭제 member", description = "DELETE 회원탈퇴")
-    @DeleteMapping("/unregister")
+    @DeleteMapping
     public ResponseEntity<Map<String,Boolean>> deleteMember(long memberId, String password) {
         Map<String,Boolean> response = new HashMap<>();
         try {
@@ -65,10 +68,10 @@ public class MemberController {
 
     @Operation(summary = "회원 프로필 사진 수정", description = "POST 회원 프로필 사진 수정")
     @PutMapping(value ="/modifyImage", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<Map<String,Boolean>> modifyMemberImage(long memberId,@ModelAttribute ImageUploadDTO imageUploadDTO) {
+    public ResponseEntity<Map<String,Boolean>> modifyMemberImage(long memberId,@RequestPart("image") MultipartFile image) {
         Map<String, Boolean> response = new HashMap<>();
         try {
-            ImageDTO imageDTO = memberService.uploadImage(imageUploadDTO);
+            UploadResultDTO imageDTO = fileService.uploadFile(List.of(image)).get(0);
             memberService.modifyMemberImage(memberId, imageDTO);
             response.put("result", true);
             return ResponseEntity.ok(response);
