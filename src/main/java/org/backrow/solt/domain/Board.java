@@ -56,12 +56,6 @@ public class Board {
     @Builder.Default
     private Set<Reply> replies = null;
 
-    @OneToMany(mappedBy = "board",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true)
-    private List<Reply> replies = new ArrayList<>();
-
     @CreatedDate
     @Column(name="regdate", updatable=false)
     private LocalDateTime regDate;
