@@ -46,7 +46,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("Data integrity violation: {}", e.getMessage());
-        return ResponseEntity.status(HttpStatus.CONFLICT).body("Data integrity violation occurred. Please check your input.");
+        return ResponseEntity.status(HttpStatus.CONFLICT).body("입력 값이 잘못되었습니다. 다시 한번 확인해주세요.");
     }
 
     // 리소스 조회 실패
