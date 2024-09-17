@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 
 public interface LikeLogRepository extends JpaRepository<LikeLog, LikeLogId> {
     int countByBoardBoardId(Long boardId);
