@@ -11,6 +11,7 @@ import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.repository.BoardRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -78,10 +79,10 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public boolean deleteBoard(Long id) {
-        if (boardRepository.existsById(id)) {
+        try {
             boardRepository.deleteById(id);
             return true;
-        } else {
+        } catch (EmptyResultDataAccessException e) {
             throw new NotFoundException("Board not found: " + id);
         }
     }
@@ -97,11 +98,11 @@ public class BoardServiceImpl implements BoardService {
     /** BoardInputDTO를 Board Entity로 매핑합니다. **/
     private Board convertToEntity(BoardInputDTO boardInputDTO) {
         Board board = modelMapper.map(boardInputDTO, Board.class);
+        board.setBoardId(null);
         Member member = Member.builder()
                 .memberId(boardInputDTO.getMemberId())
                 .build();
         board.setMember(member);
-        setBoardImages(board);
         return board;
     }
 }
