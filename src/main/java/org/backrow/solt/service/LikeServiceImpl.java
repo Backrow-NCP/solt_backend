@@ -1,7 +1,9 @@
 package org.backrow.solt.service;
 
 import lombok.RequiredArgsConstructor;
+import org.backrow.solt.domain.Board;
 import org.backrow.solt.domain.LikeLog;
+import org.backrow.solt.domain.Member;
 import org.backrow.solt.dto.like.LikeDTO;
 import org.backrow.solt.repository.LikeLogRepository;
 import org.springframework.stereotype.Service;
@@ -20,9 +22,20 @@ public class LikeServiceImpl implements LikeService {
     public int toggleLike(LikeDTO likeDTO) {
         int deletedCount = likeLogRepository.deleteByBoardIdAndMemberId(likeDTO.getBoardId(), likeDTO.getMemberId());
         if (deletedCount == 0) {
-            LikeLog likeLog = likeDTO.convertToEntity();
+            LikeLog likeLog = convertToEntity(likeDTO);
             likeLogRepository.save(likeLog);
         }
         return likeLogRepository.countByBoardBoardId(likeDTO.getBoardId());
+    }
+
+    public LikeLog convertToEntity(LikeDTO likeDTO) {
+        Board board = new Board();
+        board.setBoardId(likeDTO.getBoardId());
+        Member member = Member.builder().memberId(likeDTO.getMemberId()).build();
+
+        return LikeLog.builder()
+                .board(board)
+                .member(member)
+                .build();
     }
 }
