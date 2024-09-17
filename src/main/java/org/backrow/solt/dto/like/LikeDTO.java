@@ -1,9 +1,6 @@
 package org.backrow.solt.dto.like;
 
 import lombok.Getter;
-import org.backrow.solt.domain.Board;
-import org.backrow.solt.domain.LikeLog;
-import org.backrow.solt.domain.Member;
 
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
