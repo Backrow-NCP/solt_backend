@@ -1,8 +1,6 @@
 package org.backrow.solt.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -42,8 +40,9 @@ public class Member {
     private LocalDateTime regDate;
 
     @OneToOne(cascade = CascadeType.ALL,
-    orphanRemoval = true,
-    mappedBy = "member")
+            orphanRemoval = true,
+            fetch = FetchType.LAZY)
+    @JoinColumn(name = "profileImageId")
     private ProfileImage profileImage;
 
     public void changeMemberInfo(String password, String name, Date birthYear) {
