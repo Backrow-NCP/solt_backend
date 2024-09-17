@@ -20,8 +20,6 @@ public class ProfileImage {
 
     private String fileName;
 
-    @OneToOne
-    @JoinColumn(name = "memberId")
+    @OneToOne(mappedBy = "profileImage")
     private Member member;
-
 }
