@@ -7,11 +7,9 @@ import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.reply.ReplyDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
+import org.backrow.solt.dto.reply.ReplyInputDTO;
 import org.backrow.solt.service.ReplyService;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -37,8 +35,8 @@ public class ReplyController {
 
     @Operation(summary = "댓글 작성", description = "새로운 댓글을 작성합니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Long>> saveReply(@Valid @RequestBody ReplyDTO replyDTO) {
-        Long id = replyService.saveReply(replyDTO);
+    public ResponseEntity<Map<String, Long>> saveReply(@Valid @RequestBody ReplyInputDTO replyInputDTO) {
+        Long id = replyService.saveReply(replyInputDTO);
         return ResponseEntity.ok(Map.of("id", id));
     }
 
@@ -46,9 +44,9 @@ public class ReplyController {
     @PutMapping("/{id}")
     public Map<String, Boolean> modifyReply(
             @PathVariable Long id,
-            @RequestBody ReplyDTO replyDTO
+            @RequestBody ReplyInputDTO replyInputDTO
     ) {
-        return Map.of("isSuccess", replyService.modifyReply(id, replyDTO));
+        return Map.of("isSuccess", replyService.modifyReply(id, replyInputDTO));
     }
 
     @Operation(summary = "댓글 삭제", description = "ID를 통해 특정 댓글을 삭제합니다.")
