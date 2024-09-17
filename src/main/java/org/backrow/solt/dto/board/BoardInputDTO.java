@@ -1,12 +1,11 @@
 package org.backrow.solt.dto.board;
 
 import lombok.Data;
-import org.backrow.solt.domain.Board;
-import org.backrow.solt.domain.Member;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 import java.util.List;
 
 @Data
@@ -24,5 +23,5 @@ public class BoardInputDTO {
 
 //    private PlanDTO plan;
 
-    private List<BoardImageDTO> boardImages;
+    private List<BoardImageDTO> boardImages = new ArrayList<>();
 }
