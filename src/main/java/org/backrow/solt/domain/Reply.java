@@ -1,7 +1,6 @@
 package org.backrow.solt.domain;
 
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -13,7 +12,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(value = {AuditingEntityListener.class})
 public class Reply {
     @Id
