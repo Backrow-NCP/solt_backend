@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -55,10 +56,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             }
         }
 
-        this.getQuerydsl().applyPagination(pageable, boardQuery);
+        Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
         List<Board> boardEntities = boardQuery.fetch();
         List<BoardViewDTO> boardViewDTOS = boardEntities.stream()
-                .map(boardEntity -> createBoardViewDTO(boardEntity))
+                .map(this::createBoardViewDTO)
                 .collect(Collectors.toList());
         long listCount = boardViewDTOS.size();
 
