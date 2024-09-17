@@ -57,7 +57,7 @@ public class Board {
     public void modify(String title, String content, List<BoardImage> boardImages) {
         if (title != null) this.title = title;
         if (content != null) this.content = content;
-        if (boardImages != null) {
+        if (boardImages != null && !boardImages.isEmpty()) {
             this.boardImages.clear();
             this.boardImages.addAll(boardImages);
         }
