@@ -41,7 +41,7 @@ public class MemberServiceImpl implements MemberService {
        Member member = memberRepository.findById(memberId).orElseThrow();
        boolean matches = encoder.matches(password, member.getPassword());
         if(matches) {
-            memberRepository.deleteById(memberId);
+            memberRepository.save(member.deleteMember());
         } else {
             throw new RuntimeException("password does not match");
         }

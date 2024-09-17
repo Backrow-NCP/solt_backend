@@ -46,6 +46,8 @@ public class Member {
     mappedBy = "member")
     private ProfileImage profileImage;
 
+    private LocalDateTime deleteDate;
+
     public void changeMemberInfo(String password, String name, Date birthYear) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.password = encoder.encode(password);
@@ -59,5 +61,15 @@ public class Member {
                 .fileName(fileName)
                 .member(this)
                 .build();
+    }
+
+    // 회원탈퇴 시 회원의 id, 닉네임을 남겨놓고 나머지 값 제거
+    public void deleteMember() {
+        this.email = null;
+        this.password = null;
+        this.birthYear = null;
+        this.gender = null;
+        this.profileImage = null;
+        this.deleteDate = LocalDateTime.now();
     }
 }
