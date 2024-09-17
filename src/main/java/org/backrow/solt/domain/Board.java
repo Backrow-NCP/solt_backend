@@ -14,6 +14,9 @@ import java.util.List;
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @EntityListeners(value = {AuditingEntityListener.class})
 public class Board {
@@ -45,6 +48,12 @@ public class Board {
             cascade = CascadeType.REMOVE,
             orphanRemoval = true)
     private List<LikeLog> likeLog = new ArrayList<>();
+
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    private List<Reply> replies = new ArrayList<>();
 
     @CreatedDate
     @Column(name="regdate", updatable=false)
