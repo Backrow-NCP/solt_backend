@@ -7,11 +7,9 @@ import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.reply.ReplyDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
+import org.backrow.solt.dto.reply.ReplyInputDTO;
 import org.backrow.solt.service.ReplyService;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -29,61 +27,31 @@ public class ReplyController {
     @GetMapping("/list/{id}")
     public ResponseEntity<PageResponseDTO<ReplyDTO>> getRepliesByBoardId(
             @PathVariable Long id,
-            PageRequestDTO pageRequestDTO) {
-        try {
+            PageRequestDTO pageRequestDTO
+    ) {
             PageResponseDTO<ReplyDTO> result = replyService.getRepliesByBoardId(id, pageRequestDTO);
             return ResponseEntity.ok(result);
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
     }
 
     @Operation(summary = "댓글 작성", description = "새로운 댓글을 작성합니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Long>> saveReply(
-            @Valid @RequestBody ReplyDTO replyDTO,
-            BindingResult bindingResult
-    ) {
-        if (bindingResult.hasErrors()) {
-            ResponseEntity.badRequest().build();
-        }
-        try {
-            Long id = replyService.saveReply(replyDTO);
-            return ResponseEntity.ok(Map.of("id", id));
-        } catch (DataIntegrityViolationException e) {
-            return ResponseEntity.badRequest().build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
+    public ResponseEntity<Map<String, Long>> saveReply(@Valid @RequestBody ReplyInputDTO replyInputDTO) {
+        Long id = replyService.saveReply(replyInputDTO);
+        return ResponseEntity.ok(Map.of("id", id));
     }
 
     @Operation(summary = "댓글 수정", description = "ID를 통해 특정 댓글을 수정합니다.")
     @PutMapping("/{id}")
     public Map<String, Boolean> modifyReply(
             @PathVariable Long id,
-            @RequestBody ReplyDTO replyDTO,
-            BindingResult bindingResult
+            @RequestBody ReplyInputDTO replyInputDTO
     ) {
-        if (bindingResult.hasErrors()) {
-            return Map.of("isSuccess", false);
-        }
-        try {
-            return Map.of("isSuccess", replyService.modifyReply(id, replyDTO));
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return Map.of("isSuccess", false);
-        }
+        return Map.of("isSuccess", replyService.modifyReply(id, replyInputDTO));
     }
 
     @Operation(summary = "댓글 삭제", description = "ID를 통해 특정 댓글을 삭제합니다.")
     @DeleteMapping("/{id}")
     public Map<String, Boolean> deleteReply(@PathVariable Long id) {
-        try {
-            return Map.of("isSuccess", replyService.deleteReply(id));
-        } catch (Exception e) {
-            return Map.of("isSuccess", false);
-        }
+        return Map.of("isSuccess", replyService.deleteReply(id));
     }
 }

@@ -1,7 +1,8 @@
 package org.backrow.solt.domain;
 
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,7 +12,10 @@ import java.time.LocalDateTime;
 
 @Entity
 @Getter
+@Builder
 @ToString
+@NoArgsConstructor
+@AllArgsConstructor
 @EntityListeners(value = {AuditingEntityListener.class})
 public class Reply {
     @Id
@@ -23,9 +27,12 @@ public class Reply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "board_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private Board board;
 
-//    private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member; // Member 제거 시의 예외가 있어야 함
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_reply_id")

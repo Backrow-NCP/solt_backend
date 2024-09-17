@@ -1,18 +1,22 @@
 package org.backrow.solt.domain;
 
 import lombok.*;
+import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @ToString
 @EntityListeners(value = {AuditingEntityListener.class})
 public class Board {
@@ -32,6 +36,26 @@ public class Board {
 
 //    private BoardPlan boardPlan; 플랜에 저장된 날짜보다 현재 일자가 나중이어야 함
 
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
+    @BatchSize(size = 10)
+    private Set<BoardImage> boardImages = new HashSet<>();
+
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    private Set<LikeLog> likeLog = new HashSet<>();
+
+    @OneToMany(mappedBy = "board",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.REMOVE,
+            orphanRemoval = true)
+    @Builder.Default
+    private Set<Reply> replies = null;
+
     @CreatedDate
     @Column(name="regdate", updatable=false)
     private LocalDateTime regDate;
@@ -40,28 +64,10 @@ public class Board {
     @Column(name="moddate")
     private LocalDateTime modDate;
 
-    @OneToMany(mappedBy = "board",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
-    private List<BoardImage> boardImages = new ArrayList<>();
-
-    @OneToMany(mappedBy = "board",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true)
-    private List<Reply> replies = new ArrayList<>();
-
-    @OneToMany(mappedBy = "board",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.REMOVE,
-            orphanRemoval = true)
-    private List<LikeLog> likeLog = new ArrayList<>();
-
-    public void modify(String title, String content, List<BoardImage> boardImages) {
+    public void modify(String title, String content, Set<BoardImage> boardImages) {
         if (title != null) this.title = title;
         if (content != null) this.content = content;
-        if (boardImages != null) {
+        if (boardImages != null && !boardImages.isEmpty()) {
             this.boardImages.clear();
             this.boardImages.addAll(boardImages);
         }

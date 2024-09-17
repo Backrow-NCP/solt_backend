@@ -11,13 +11,15 @@ import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.repository.BoardRepository;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.webjars.NotFoundException;
 
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -39,7 +41,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public BoardViewDTO getBoard(Long id) {
-        return boardRepository.searchBoardView(id);
+        BoardViewDTO result = boardRepository.searchBoardView(id);
+        if (result == null) {
+            throw new NotFoundException("Board not found: " + id);
+        }
+        return result;
     }
 
     @Override
@@ -50,17 +56,18 @@ public class BoardServiceImpl implements BoardService {
         return board.getBoardId();
     }
 
+    @Transactional
     @Override
     public boolean modifyBoard(Long id, BoardInputDTO boardInputDTO) {
         Optional<Board> findBoard = boardRepository.findById(id);
-        Board board = findBoard.orElseThrow();
+        Board board = findBoard.orElseThrow(() -> new NotFoundException("Board not found: " + id));
 
-        List<BoardImageDTO> boardImageDTOS = boardInputDTO.getBoardImages();
-        List<BoardImage> boardImages = null;
+        Set<BoardImageDTO> boardImageDTOS = boardInputDTO.getBoardImages();
+        Set<BoardImage> boardImages = null;
         if (boardImageDTOS != null) {
             boardImages = boardImageDTOS.stream()
                     .map((boardImageDTO -> modelMapper.map(boardImageDTO, BoardImage.class)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         board.modify(boardInputDTO.getTitle(), boardInputDTO.getContent(), boardImages);
@@ -72,17 +79,17 @@ public class BoardServiceImpl implements BoardService {
 
     @Override
     public boolean deleteBoard(Long id) {
-        if (boardRepository.existsById(id)) {
+        try {
             boardRepository.deleteById(id);
             return true;
-        } else {
-            throw new NoSuchElementException("Board not found for id: " + id);
+        } catch (EmptyResultDataAccessException e) {
+            throw new NotFoundException("Board not found: " + id);
         }
     }
 
     /** Board 내 Image 엔티티에 참조할 Board를 지정합니다. */
     private void setBoardImages(Board board) {
-        List<BoardImage> boardImages = board.getBoardImages();
+        Set<BoardImage> boardImages = board.getBoardImages();
         if (boardImages != null) {
             boardImages.forEach(boardImage -> boardImage.setBoard(board));
         }
@@ -91,11 +98,11 @@ public class BoardServiceImpl implements BoardService {
     /** BoardInputDTO를 Board Entity로 매핑합니다. **/
     private Board convertToEntity(BoardInputDTO boardInputDTO) {
         Board board = modelMapper.map(boardInputDTO, Board.class);
+        board.setBoardId(null);
         Member member = Member.builder()
                 .memberId(boardInputDTO.getMemberId())
                 .build();
         board.setMember(member);
-        setBoardImages(board);
         return board;
     }
 }
