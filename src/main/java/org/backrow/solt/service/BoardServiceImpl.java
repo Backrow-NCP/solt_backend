@@ -18,8 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -62,12 +62,12 @@ public class BoardServiceImpl implements BoardService {
         Optional<Board> findBoard = boardRepository.findById(id);
         Board board = findBoard.orElseThrow(() -> new NotFoundException("Board not found: " + id));
 
-        List<BoardImageDTO> boardImageDTOS = boardInputDTO.getBoardImages();
-        List<BoardImage> boardImages = null;
+        Set<BoardImageDTO> boardImageDTOS = boardInputDTO.getBoardImages();
+        Set<BoardImage> boardImages = null;
         if (boardImageDTOS != null) {
             boardImages = boardImageDTOS.stream()
                     .map((boardImageDTO -> modelMapper.map(boardImageDTO, BoardImage.class)))
-                    .collect(Collectors.toList());
+                    .collect(Collectors.toSet());
         }
 
         board.modify(boardInputDTO.getTitle(), boardInputDTO.getContent(), boardImages);
@@ -89,7 +89,7 @@ public class BoardServiceImpl implements BoardService {
 
     /** Board 내 Image 엔티티에 참조할 Board를 지정합니다. */
     private void setBoardImages(Board board) {
-        List<BoardImage> boardImages = board.getBoardImages();
+        Set<BoardImage> boardImages = board.getBoardImages();
         if (boardImages != null) {
             boardImages.forEach(boardImage -> boardImage.setBoard(board));
         }

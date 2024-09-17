@@ -8,8 +8,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -41,19 +41,20 @@ public class Board {
             cascade = CascadeType.ALL,
             orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
     @BatchSize(size = 10)
-    private List<BoardImage> boardImages = new ArrayList<>();
+    private Set<BoardImage> boardImages = new HashSet<>();
 
     @OneToMany(mappedBy = "board",
             fetch = FetchType.LAZY,
             cascade = CascadeType.REMOVE,
             orphanRemoval = true)
-    private List<LikeLog> likeLog = new ArrayList<>();
+    private Set<LikeLog> likeLog = new HashSet<>();
 
     @OneToMany(mappedBy = "board",
             fetch = FetchType.LAZY,
             cascade = CascadeType.REMOVE,
             orphanRemoval = true)
-    private List<Reply> replies = new ArrayList<>();
+    @Builder.Default
+    private Set<Reply> replies = null;
 
     @CreatedDate
     @Column(name="regdate", updatable=false)
@@ -63,7 +64,7 @@ public class Board {
     @Column(name="moddate")
     private LocalDateTime modDate;
 
-    public void modify(String title, String content, List<BoardImage> boardImages) {
+    public void modify(String title, String content, Set<BoardImage> boardImages) {
         if (title != null) this.title = title;
         if (content != null) this.content = content;
         if (boardImages != null && !boardImages.isEmpty()) {

@@ -12,7 +12,9 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
+import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch {
@@ -21,14 +23,18 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
     @Override
+    @Transactional
     public Page<BoardViewDTO> searchBoardView(String[] types, String keyword, Pageable pageable) {
         QBoard board = QBoard.board;
         QLikeLog likeLog = QLikeLog.likeLog;
         QMember member = QMember.member;
+        QBoardImage boardImage = QBoardImage.boardImage;
 
         JPQLQuery<Board> boardQuery = from(board)
-                .leftJoin(member).on(board.member.eq(member))
-                .leftJoin(likeLog).on(likeLog.board.eq(board))
+                .leftJoin(board.member, member).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
+                .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .where(boardImage.isNull().or(boardImage.ord.eq(1)))
                 .groupBy(board);
 
         if (types != null) {
@@ -52,7 +58,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         this.getQuerydsl().applyPagination(pageable, boardQuery);
         List<Board> boardEntities = boardQuery.fetch();
         List<BoardViewDTO> boardViewDTOS = boardEntities.stream()
-                .map(boardEntity -> createBoardViewDTO(boardEntity, false))
+                .map(boardEntity -> createBoardViewDTO(boardEntity))
                 .collect(Collectors.toList());
         long listCount = boardViewDTOS.size();
 
@@ -60,6 +66,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     }
 
     @Override
+    @Transactional
     public BoardViewDTO searchBoardView(Long boardId) {
         QBoard board = QBoard.board;
         QLikeLog likeLog = QLikeLog.likeLog;
@@ -67,15 +74,15 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         QBoardImage boardImage = QBoardImage.boardImage;
 
         JPQLQuery<Board> boardQuery = from(board)
-                .leftJoin(member).on(board.member.eq(member))
-                .leftJoin(boardImage).on(boardImage.board.eq(board))
-                .leftJoin(likeLog).on(likeLog.board.eq(board))
+                .leftJoin(board.member, member).fetchJoin()
+                .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .where(board.boardId.eq(boardId))
                 .groupBy(board);
 
         Board boardEntity = boardQuery.fetchOne();
 
-        return createBoardViewDTO(boardEntity, true);
+        return createBoardViewDTO(boardEntity);
     }
 
     private BooleanExpression titleContain(String keyword) {
@@ -90,32 +97,28 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return keyword != null ? QBoard.board.member.name.containsIgnoreCase(keyword) : null;
     }
 
-    private BoardViewDTO createBoardViewDTO(Board board, boolean includeImage) {
-        BoardViewDTO.BoardViewDTOBuilder builder = BoardViewDTO.builder();
+    private BoardViewDTO createBoardViewDTO(Board board) {
+        if (board == null) return null;
 
         MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
                 .memberId(board.getMember().getMemberId())
                 .name(board.getMember().getName())
                 .build();
-
-        if (includeImage) {
-            List<BoardImageDTO> boardImageDTOS = board.getBoardImages().stream()
-                    .map(boardImageEntity -> BoardImageDTO.builder()
-                            .uuid(boardImageEntity.getUuid())
-                            .fileName(boardImageEntity.getFileName())
-                            .ord(boardImageEntity.getOrd())
-                            .build())
-                    .collect(Collectors.toList());
-            builder.images(boardImageDTOS);
-        }
-
+        Set<BoardImageDTO> boardImageDTOS = board.getBoardImages().stream()
+                .map(boardImageEntity -> BoardImageDTO.builder()
+                        .uuid(boardImageEntity.getUuid())
+                        .fileName(boardImageEntity.getFileName())
+                        .ord(boardImageEntity.getOrd())
+                        .build())
+                .collect(Collectors.toSet());
         int likeCount = board.getLikeLog() != null ? board.getLikeLog().size() : 0;
 
-        return builder
+        return BoardViewDTO.builder()
                 .boardId(board.getBoardId())
                 .title(board.getTitle())
                 .content(board.getContent())
                 .member(memberInfoDTO)
+                .images(boardImageDTOS)
                 .likeCount(likeCount)
                 .regDate(board.getRegDate())
                 .modDate(board.getModDate())
