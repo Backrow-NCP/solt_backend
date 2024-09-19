@@ -7,6 +7,7 @@ import org.backrow.solt.dto.board.BoardViewDTO;
 
 public interface BoardService {
     PageResponseDTO<BoardViewDTO> getBoardList(PageRequestDTO pageRequestDTO);
+    PageResponseDTO<BoardViewDTO> getBoardListByMemberId(Long id, PageRequestDTO pageRequestDTO);
     BoardViewDTO getBoard(Long id);
     long saveBoard(BoardInputDTO boardDTO);
     boolean modifyBoard(Long id, BoardInputDTO boardDTO);
