@@ -30,7 +30,7 @@ public class BoardController {
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "게시글 목록 조회", description = "게시판의 모든 게시글 목록을 페이지로 조회합니다.")
+    @Operation(summary = "작성한 게시글 목록 조회", description = "특정 멤버가 작성한 게시글 목록을 페이지로 조회합니다.")
     @GetMapping("/list/{id}")
     public ResponseEntity<PageResponseDTO<BoardViewDTO>> getBoardListByMemberId(@PathVariable Long id, PageRequestDTO pageRequestDTO) {
         PageResponseDTO<BoardViewDTO> result = boardService.getBoardListByMemberId(id, pageRequestDTO);
