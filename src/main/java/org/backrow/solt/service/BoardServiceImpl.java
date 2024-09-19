@@ -40,6 +40,17 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public PageResponseDTO<BoardViewDTO> getBoardListByMemberId(Long id, PageRequestDTO pageRequestDTO) {
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable();
+
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberId(id, types, keyword, pageable);
+
+        return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
+    }
+
+    @Override
     public BoardViewDTO getBoard(Long id) {
         BoardViewDTO result = boardRepository.searchBoardView(id);
         if (result == null) {

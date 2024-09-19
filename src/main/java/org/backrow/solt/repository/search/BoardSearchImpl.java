@@ -35,7 +35,53 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .leftJoin(board.boardImages, boardImage).fetchJoin()
-                .where(boardImage.isNull().or(boardImage.ord.eq(1)))
+                .where(boardImage.isNull()
+                        .or(boardImage.ord.eq(1)))
+                .groupBy(board);
+
+        if (types != null) {
+            for (String type : types) {
+                BooleanBuilder builder = new BooleanBuilder();
+                switch (type) {
+                    case "t":
+                        builder.or(titleContain(keyword));
+                        break;
+                    case "c":
+                        builder.or(contentContain(keyword));
+                        break;
+                    case "w":
+                        builder.or(writerContain(keyword));
+                        break;
+                }
+                boardQuery.where(builder);
+            }
+        }
+
+        Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
+        List<Board> boardEntities = boardQuery.fetch();
+        List<BoardViewDTO> boardViewDTOS = boardEntities.stream()
+                .map(this::createBoardViewDTO)
+                .collect(Collectors.toList());
+        long listCount = boardViewDTOS.size();
+
+        return new PageImpl<>(boardViewDTOS, pageable, listCount);
+    }
+
+    @Override
+    @Transactional
+    public Page<BoardViewDTO> searchBoardViewByMemberId(Long boardId, String[] types, String keyword, Pageable pageable) {
+        QBoard board = QBoard.board;
+        QLikeLog likeLog = QLikeLog.likeLog;
+        QMember member = QMember.member;
+        QBoardImage boardImage = QBoardImage.boardImage;
+
+        JPQLQuery<Board> boardQuery = from(board)
+                .leftJoin(board.member, member).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
+                .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .where(member.memberId.eq(boardId)
+                        .and(boardImage.isNull()
+                                .or(boardImage.ord.eq(1))))
                 .groupBy(board);
 
         if (types != null) {
