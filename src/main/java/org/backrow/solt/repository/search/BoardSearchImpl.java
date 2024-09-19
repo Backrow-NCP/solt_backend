@@ -40,8 +40,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .groupBy(board);
 
         if (types != null) {
+            BooleanBuilder builder = new BooleanBuilder();
             for (String type : types) {
-                BooleanBuilder builder = new BooleanBuilder();
                 switch (type) {
                     case "t":
                         builder.or(titleContain(keyword));
@@ -53,8 +53,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         builder.or(writerContain(keyword));
                         break;
                 }
-                boardQuery.where(builder);
             }
+            boardQuery.where(builder);
         }
 
         Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
@@ -69,7 +69,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
     @Override
     @Transactional
-    public Page<BoardViewDTO> searchBoardViewByMemberId(Long boardId, String[] types, String keyword, Pageable pageable) {
+    public Page<BoardViewDTO> searchBoardViewByMemberId(Long memberId, String[] types, String keyword, Pageable pageable) {
         QBoard board = QBoard.board;
         QLikeLog likeLog = QLikeLog.likeLog;
         QMember member = QMember.member;
@@ -79,14 +79,14 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .leftJoin(board.boardImages, boardImage).fetchJoin()
-                .where(member.memberId.eq(boardId)
+                .where(board.member.memberId.eq(memberId)
                         .and(boardImage.isNull()
                                 .or(boardImage.ord.eq(1))))
                 .groupBy(board);
 
         if (types != null) {
+            BooleanBuilder builder = new BooleanBuilder();
             for (String type : types) {
-                BooleanBuilder builder = new BooleanBuilder();
                 switch (type) {
                     case "t":
                         builder.or(titleContain(keyword));
@@ -98,8 +98,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         builder.or(writerContain(keyword));
                         break;
                 }
-                boardQuery.where(builder);
             }
+            boardQuery.where(builder);
         }
 
         Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);

@@ -6,6 +6,6 @@ import org.springframework.data.domain.Pageable;
 
 public interface BoardSearch {
     Page<BoardViewDTO> searchBoardView(String[] types, String keyword, Pageable pageable);
-    Page<BoardViewDTO> searchBoardViewByMemberId(Long boardId, String[] types, String keyword, Pageable pageable);
+    Page<BoardViewDTO> searchBoardViewByMemberId(Long memberId, String[] types, String keyword, Pageable pageable);
     BoardViewDTO searchBoardView(Long boardId);
 }
