@@ -6,7 +6,7 @@ import lombok.Data;
 public class RouteDTO {
 
     private int startPlaceId;
-    private String endPlaceId;
+    private int endPlaceId;
     private int price;
     private int transportId;
     private boolean checker;
