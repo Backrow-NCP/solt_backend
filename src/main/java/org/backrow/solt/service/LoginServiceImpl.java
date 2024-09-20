@@ -28,6 +28,7 @@ public class LoginServiceImpl implements LoginService {
 
     private final LoginRepository loginRepository;
 
+    //
     @Override
     public Boolean checkExist(String value, String type) {
         switch (type) {
@@ -38,7 +39,7 @@ public class LoginServiceImpl implements LoginService {
                 String existName = loginRepository.checkName(value);
                 return existName != null && !existName.isEmpty();
         }
-        return null;
+        throw new RuntimeException("Errors on checking " + type + " = "+ value);
     }
 
     // 비밀번호 정확한지 확인가능
