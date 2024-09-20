@@ -11,7 +11,7 @@ public interface MemberService {
 
     void modifyMember(ModifyDTO modifyDTO);
 
-    void deleteMember(long memberId, String password);
+    void deleteMember(long memberId);
 
     void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO);
 

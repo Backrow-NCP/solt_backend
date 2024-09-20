@@ -36,15 +36,9 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void deleteMember(long memberId, String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    public void deleteMember(long memberId) {
        Member member = memberRepository.findById(memberId).orElseThrow();
-       boolean matches = encoder.matches(password, member.getPassword());
-        if(matches) {
             memberRepository.save(member.deleteMember());
-        } else {
-            throw new RuntimeException("password does not match");
-        }
     }
 
     @Override

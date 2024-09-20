@@ -54,10 +54,10 @@ public class MemberController {
 
     @Operation(summary = "회원 삭제 member", description = "DELETE 회원탈퇴")
     @DeleteMapping
-    public ResponseEntity<Map<String,Boolean>> deleteMember(long memberId, String password) {
+    public ResponseEntity<Map<String,Boolean>> deleteMember(long memberId) {
         Map<String,Boolean> response = new HashMap<>();
         try {
-            memberService.deleteMember(memberId, password);
+            memberService.deleteMember(memberId);
             response.put("result", true);
             return ResponseEntity.ok(response);
         } catch (Exception e){
