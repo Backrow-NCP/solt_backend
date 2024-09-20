@@ -15,6 +15,8 @@ public interface MemberService {
 
     void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO);
 
+    void deleteMemberImage(long memberId);
+
     default Member dtoToEntity(MemberInfoDTO memberInfoDTO) {
         Member member = Member.builder()
                 .memberId(memberInfoDTO.getMemberId())

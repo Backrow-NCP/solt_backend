@@ -49,4 +49,12 @@ public class MemberServiceImpl implements MemberService {
         member.addImage(uploadResultDTO.getUuid(), uploadResultDTO.getFileName());
         memberRepository.save(member);
     }
+
+    @Override
+    public void deleteMemberImage(long memberId) {
+        Optional<Member> result = memberRepository.findById(memberId);
+        Member member = result.orElseThrow();
+        member.deleteProfileImage();
+        memberRepository.save(member);
+    }
 }

@@ -71,4 +71,8 @@ public class Member {
         this.deleteDate = LocalDateTime.now();
         return this;
     }
+
+    public void deleteProfileImage() {
+        this.profileImage = null;
+    }
 }

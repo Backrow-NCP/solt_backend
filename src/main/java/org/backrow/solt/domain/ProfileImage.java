@@ -23,5 +23,4 @@ public class ProfileImage {
     @OneToOne
     @JoinColumn(name = "memberId")
     private Member member;
-
 }

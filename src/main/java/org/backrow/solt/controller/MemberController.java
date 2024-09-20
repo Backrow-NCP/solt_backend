@@ -80,4 +80,18 @@ public class MemberController {
             return ResponseEntity.internalServerError().build();
         }
     }
+
+    @Operation(summary = "회원프로필 사진 삭제", description = "DELETE 회원 프로필 사진 삭제")
+    @DeleteMapping(value="/deleteImage")
+    public ResponseEntity<Map<String,Boolean>> deleteMemberImage(long memberId) {
+        Map<String,Boolean> response = new HashMap<>();
+        try {
+            memberService.deleteMemberImage(memberId);
+            response.put("result", true);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
 }
