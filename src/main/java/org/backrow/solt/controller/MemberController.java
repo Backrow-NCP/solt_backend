@@ -54,10 +54,10 @@ public class MemberController {
 
     @Operation(summary = "회원 삭제 member", description = "DELETE 회원탈퇴")
     @DeleteMapping
-    public ResponseEntity<Map<String,Boolean>> deleteMember(long memberId, String password) {
+    public ResponseEntity<Map<String,Boolean>> deleteMember(long memberId) {
         Map<String,Boolean> response = new HashMap<>();
         try {
-            memberService.deleteMember(memberId, password);
+            memberService.deleteMember(memberId);
             response.put("result", true);
             return ResponseEntity.ok(response);
         } catch (Exception e){
@@ -76,6 +76,20 @@ public class MemberController {
             response.put("result", true);
             return ResponseEntity.ok(response);
         }catch (Exception e){
+            log.error(e.getMessage());
+            return ResponseEntity.internalServerError().build();
+        }
+    }
+
+    @Operation(summary = "회원프로필 사진 삭제", description = "DELETE 회원 프로필 사진 삭제")
+    @DeleteMapping(value="/deleteImage")
+    public ResponseEntity<Map<String,Boolean>> deleteMemberImage(long memberId) {
+        Map<String,Boolean> response = new HashMap<>();
+        try {
+            memberService.deleteMemberImage(memberId);
+            response.put("result", true);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
