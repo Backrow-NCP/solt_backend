@@ -46,11 +46,10 @@ public class Member {
 
     private LocalDateTime deleteDate;
 
-    public void changeMemberInfo(String password, String name, Date birthYear) {
+    public void changeMemberInfo(String password, String name) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.password = encoder.encode(password);
         this.name = name;
-        this.birthYear = birthYear;
     }
 
     public void addImage(String uuid, String fileName){
@@ -62,6 +61,7 @@ public class Member {
     }
 
     // 회원탈퇴 시 회원의 id, 닉네임을 남겨놓고 나머지 값 제거
+    // email과 password는 Null값이 될 수 없으므로 "NotExist"라는 String으로 변환
     public Member deleteMember() {
         this.email = "NotExist";
         this.password = "NotExist";

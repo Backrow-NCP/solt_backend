@@ -30,7 +30,7 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> result = memberRepository.findById(modifyDTO.getMemberId());
         Member member = result.orElseThrow();
 
-        member.changeMemberInfo(modifyDTO.getPassword(), modifyDTO.getName(), modifyDTO.getBirthYear());
+        member.changeMemberInfo(modifyDTO.getPassword(), modifyDTO.getName());
 
         memberRepository.save(member);
     }
