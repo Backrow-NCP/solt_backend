@@ -1,8 +1,6 @@
 package org.backrow.solt.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.hibernate.annotations.Formula;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -64,12 +62,13 @@ public class Member {
     }
 
     // 회원탈퇴 시 회원의 id, 닉네임을 남겨놓고 나머지 값 제거
-    public void deleteMember() {
-        this.email = null;
-        this.password = null;
+    public Member deleteMember() {
+        this.email = "NotExist";
+        this.password = "NotExist";
         this.birthYear = null;
         this.gender = null;
         this.profileImage = null;
         this.deleteDate = LocalDateTime.now();
+        return this;
     }
 }
