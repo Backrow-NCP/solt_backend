@@ -4,6 +4,7 @@ import org.backrow.solt.dto.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.repository.PlanRepository;
+import org.backrow.solt.service.ai.AIPlanMaker;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ public class PlanServiceImpl implements PlanService {
 
     @Autowired
     private PlanRepository planRepository;
+    private AIPlanMaker aiPlanMaker;
 
     @Override
     public PlanDTO getPlan(int planId) {

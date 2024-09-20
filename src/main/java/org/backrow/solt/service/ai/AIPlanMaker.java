@@ -6,6 +6,6 @@ import org.backrow.solt.dto.PlanDTO;
 import java.util.List;
 
 public interface AIPlanMaker {
-    PlanDTO aiRecommend(PlanDTO planDTO);
+    PlanDTO aiRecommend();
     List<ClovaDTO> runFetching();
 }

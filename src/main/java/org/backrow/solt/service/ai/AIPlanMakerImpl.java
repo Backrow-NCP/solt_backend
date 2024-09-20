@@ -9,15 +9,15 @@ import java.util.List;
 public class AIPlanMakerImpl implements AIPlanMaker {
 
     @Override
-    public PlanDTO aiRecommend(PlanDTO planDTO) {
+    public PlanDTO aiRecommend() {
         // AI 추천 알고리즘 로직
-        return null; // 실제 로직으로 변경 필요
+        return null;
     }
 
     @Override
     public List<ClovaDTO> runFetching() {
         // 외부 API와 통신하는 로직
-        return null; // 실제 로직으로 변경 필요
+        return null;
     }
 }
 
