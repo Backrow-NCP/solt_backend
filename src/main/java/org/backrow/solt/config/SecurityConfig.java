@@ -29,8 +29,8 @@ import java.util.Arrays;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-    private final AuthenticationFilter authenticationFilter;
-    private final AuthEntryPoint authEntryPoint;
+//    private final AuthenticationFilter authenticationFilter;
+//    private final AuthEntryPoint authEntryPoint;
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
@@ -49,13 +49,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/logout","/swagger-ui/**").permitAll()
-//                .anyRequest().permitAll();
+//                .antMatchers("/", "/login", "/logout","/swagger-ui/**").permitAll()
+                .anyRequest().permitAll();
 //         테스트용 모든 요청 허가
-                .anyRequest().authenticated().and()
-                .formLogin().and()
-                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
+//                .anyRequest().authenticated().and()
+//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
     }
 
     @Bean
