@@ -1,6 +1,7 @@
 package org.backrow.solt.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,33 +10,24 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class PlanDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int planId;
 
     private String title;
+
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 
     private boolean confirm;
-    private MemberDTO member;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    //private MemberDTO member;
+
     private List<PlaceDTO> place;
+    private List<RouteDTO> route;
+    private List<Theme> themes;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "place_id", referencedColumnName = "startPlaceId")
-    private RouteDTO route;
-
-    @ManyToMany
-    @JoinTable(
-            name = "themes",
-            joinColumns = @JoinColumn(name = "plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "theme_id"))
-    private List<ThemeDTO> themes;
 }

@@ -1,6 +1,7 @@
 package org.backrow.solt.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,13 +12,11 @@ import javax.persistence.Id;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
 public class PlaceDTO {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int placeId;
 
     private String placeName;
@@ -28,6 +27,7 @@ public class PlaceDTO {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
+    
+    private boolean checker; //AI 판단 여부
 
-    private boolean checker;
 }

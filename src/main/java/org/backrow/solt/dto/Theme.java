@@ -1,13 +1,16 @@
 package org.backrow.solt.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
-
-import javax.persistence.Id;
+import lombok.NoArgsConstructor;
 
 @Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Theme {
 
-    @Id
     private String id;
 
     private String category;
