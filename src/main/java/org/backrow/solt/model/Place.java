@@ -1,17 +1,23 @@
 package org.backrow.solt.model;
 
-import javax.persistence.Entity;
+import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 public class Place {
 
-    private Long poinId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long pointId;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "plan_id")
     private Plan plan;
+
     private String placeName;
-    private int price;
     private String addr;
+    private int price;
+
     private LocalDateTime startTime;
     private LocalDateTime endTime;
 
