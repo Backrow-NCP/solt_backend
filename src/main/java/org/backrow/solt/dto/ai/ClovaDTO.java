@@ -1,4 +1,4 @@
-package org.backrow.solt.dto;
+package org.backrow.solt.dto.ai;
 
 import lombok.Data;
 
