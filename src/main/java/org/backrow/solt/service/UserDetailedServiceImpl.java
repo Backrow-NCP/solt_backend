@@ -24,17 +24,18 @@ public class UserDetailedServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Member member  = loginRepository.findByEmail(email);
-        Optional<LoginDTO> loginDTO  = Optional.ofNullable(modelMapper.map(member, LoginDTO.class));
+        Member member = loginRepository.findByEmail(email);
+        Optional<LoginDTO> loginDTO = Optional.ofNullable(modelMapper.map(member, LoginDTO.class));
 
-        UserBuilder userBuilder =  null;
+        UserBuilder userBuilder = null;
 
-        if(loginDTO.isPresent()) {
+        if (!loginDTO.isPresent()) {
             throw new UsernameNotFoundException(email);
         } else {
             LoginDTO currentUser = loginDTO.get();
             userBuilder = org.springframework.security.core.userdetails.User.withUsername(currentUser.getEmail());
             userBuilder.password(currentUser.getPassword());
+            userBuilder.roles("USER");
         }
         return userBuilder.build();
     }

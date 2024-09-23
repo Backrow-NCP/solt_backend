@@ -28,23 +28,26 @@ public class LoginController {
     @Operation(summary="Login POST + Spring Security", description ="POST 로그인 + Spring Security")
     @PostMapping
     public ResponseEntity<?> getToken(@RequestBody LoginDTO loginDTO) {
-        int memberId = loginService.login(loginDTO);
-        UsernamePasswordAuthenticationToken creds =
-                new UsernamePasswordAuthenticationToken(
-                        loginDTO.getEmail(),
-                        loginDTO.getPassword());
+            long memberId = loginService.login(loginDTO);
+            UsernamePasswordAuthenticationToken creds =
+                    new UsernamePasswordAuthenticationToken(
+                            loginDTO.getEmail(),
+                            loginDTO.getPassword());
 
-        Authentication auth = authenticationManager.authenticate(creds);
+            Authentication auth = authenticationManager.authenticate(creds);
 
-        String jwts = loginService.getToken(auth.getName());
+            String jwts = loginService.getToken(auth.getName());
+            String refreshToken = loginService.getRefreshToken(auth.getName());
+            loginService.saveRefreshToken(auth.getName(), refreshToken);
 
-        Map<String, Object> responseBody = new HashMap<>();
-        responseBody.put("memberId", memberId);
+            Map<String, Object> responseBody = new HashMap<>();
+            responseBody.put("memberId", memberId);
+            responseBody.put("refreshToken", refreshToken);
 
-        return ResponseEntity.ok()
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwts)
-                .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
-                .body(responseBody);
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwts)
+                    .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
+                    .body(responseBody);
     }
 
     @Operation(summary="이름 또는 이메일 중복체크 GET", description = "GET으로 중복이름,이메일 확인")
