@@ -1,11 +1,10 @@
-package org.backrow.solt.dto;
+package org.backrow.solt.dto.plan;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 

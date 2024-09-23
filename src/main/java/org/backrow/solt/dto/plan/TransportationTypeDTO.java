@@ -1,8 +1,6 @@
-package org.backrow.solt.dto;
+package org.backrow.solt.dto.plan;
 
 import lombok.Data;
-
-import javax.persistence.Id;
 
 @Data
 public class TransportationTypeDTO {
