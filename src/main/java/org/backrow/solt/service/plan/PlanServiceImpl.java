@@ -1,19 +1,22 @@
 package org.backrow.solt.service.plan;
 
+import lombok.RequiredArgsConstructor;
 import org.backrow.solt.dto.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.repository.PlanRepository;
-import org.backrow.solt.service.ai.AIPlanMaker;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
+import org.webjars.NotFoundException;
 
 @Service
+@RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
 
-    @Autowired
-    private PlanRepository planRepository;
-    private AIPlanMaker aiPlanMaker;
+    private final PlanRepository planRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public PlanDTO getPlan(int planId) {
@@ -28,27 +31,32 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
+    public long savePlan(PlanDTO planDTO) {
+        // Plan 작성 로직
+        return 0L;
+    }
+
+    @Override
+    public boolean modifyPlan(int planId, PlanDTO planDTO) {
+        // Plan 수정 로직
+        return false;
+    }
+
+    @Override
     public boolean deletePlan(int planId) {
         // Plan 삭제 로직
-        return false; // 실제 로직으로 변경 필요
-    }
-
-    @Override
-    public boolean modifyPlan(PlanDTO planDTO) {
-        // Plan 수정 로직
-        return false; // 실제 로직으로 변경 필요
-    }
-
-    @Override
-    public long savePlan(PlanDTO planDTO) {
-        // Plan 저장 로직
-        return 0L; // 실제 로직으로 변경 필요
+        try{
+            planRepository.deleteById((long)planId);
+            return true;
+        }catch (EmptyResultDataAccessException e){
+            throw new NotFoundException("Plan not found" + planId);
+        }
     }
 
     @Override
     public PlanDTO aiRecommend(PlanDTO planDTO) {
-        // AI 추천 로직
-        return null; // 실제 로직으로 변경 필요
+        return null;
     }
+
 }
 
