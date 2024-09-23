@@ -1,22 +1,43 @@
 package org.backrow.solt.dto.page;
 
-import lombok.Data;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.ToString;
+
 import java.util.List;
 
-@Data
+@Getter
+@ToString
 public class PageResponseDTO<T> {
-    private List<T> dataList;   // 해당 페이지의 데이터 목록
-    private int totalPages;     // 총 페이지 수
-    private long totalElements; // 전체 데이터 수
-    private int currentPage;    // 현재 페이지 번호
-    private int size;           // 한 페이지에 표시할 데이터 수
+    private int page;
+    private int size;
+    private int total;
 
-    public PageResponseDTO(List<T> dataList, int totalPages, long totalElements, int currentPage, int size) {
-        this.dataList = dataList;
-        this.totalPages = totalPages;
-        this.totalElements = totalElements;
-        this.currentPage = currentPage;
-        this.size = size;
+    private int startPage;
+    private int endPage;
+
+    private boolean prev;
+    private boolean next;
+
+    private List<T> dtoList;
+
+    @Builder(builderMethodName = "withAll")
+    public PageResponseDTO(PageRequestDTO pageRequestDTO, List<T> dtoList, int total) {
+        if(total <= 0) return;
+
+        this.page = pageRequestDTO.getPage();
+        this.size = pageRequestDTO.getSize();
+        this.total = total;
+        this.dtoList = dtoList;
+
+        this.endPage = (int)(Math.ceil(this.page / 10.0)) * 10;
+        this.startPage = this.endPage - 9;
+
+        int last = (int)(Math.ceil((total/(double)size)));
+        this.endPage = Math.min(endPage, last);
+
+        this.prev = this.startPage > 1;
+        this.next = total > this.endPage * this.size;
     }
 }
 
