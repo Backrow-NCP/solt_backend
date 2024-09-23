@@ -1,6 +1,6 @@
 package org.backrow.solt.service.plan;
 
-import org.backrow.solt.dto.PlanDTO;
+import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 
