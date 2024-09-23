@@ -8,7 +8,10 @@ import org.backrow.solt.dto.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.service.plan.PlanService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 import java.util.Map;
 
 @Tag(name = "Plan API", description = "Plan에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API")
@@ -20,36 +23,39 @@ public class PlanController {
 
     private final PlanService planService;
 
-    @Operation(summary = "Plan 조회", description = "PlanID에 따른 플랜 조회")
-    @GetMapping("/plan/{planId}")
-    public PlanDTO getPlan(@PathVariable int planId) {
-        return planService.getPlan(planId);
+    @Operation(summary = "Plan 리스트 조회", description = "Plan 리스트 조회 ")
+    @GetMapping("/planList")
+    public ResponseEntity<PageResponseDTO<PlanDTO>> getPlanList(PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<PlanDTO> result = planService.getPlanList(pageRequestDTO);
+        return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Plan 리스트 조회", description = "Plan 리스트 조회 ")
-    @GetMapping
-    public PageResponseDTO<PlanDTO> getPlanList(PageRequestDTO pageRequestDTO) {
-        return planService.getPlanList(pageRequestDTO);
+    @Operation(summary = "Plan 조회", description = "PlanID에 따른 플랜 조회")
+    @GetMapping("/plan/{planId}")
+    public ResponseEntity<PlanDTO> getPlan(@PathVariable int planId) {
+        PlanDTO result = planService.getPlan(planId);
+        return ResponseEntity.ok(result);
+    }
+
+    @Operation(summary = "Plan 작성", description = "새로운 Plan 작성")
+    @PostMapping
+    public ResponseEntity<Map<String, Long>> savePlan(@Valid @RequestBody PlanDTO planDTO) {
+        Long planId = planService.savePlan(planDTO);
+        return ResponseEntity.ok(Map.of("planId", planId));
+    }
+
+    @Operation(summary = "Plan 수정", description = "Plan ID를 통한 수정")
+    @PutMapping
+    public Map<String, Boolean> modifyPlan(
+            @PathVariable int planId,
+            @RequestBody PlanDTO planDTO) {
+        return Map.of("modify", planService.modifyPlan(planId, planDTO));
     }
 
     @Operation(summary = "Plan 삭제", description = "Plan ID를 통한 삭제")
     @DeleteMapping("/{planId}")
     public Map<String, Boolean> deletePlan(@PathVariable int planId) {
-        boolean delete = planService.deletePlan(planId);
-        return Map.of("DELETE", delete);
-    }
-
-    @Operation(summary = "Plan 수정", description = "Plan ID를 통한 수정")
-    @PutMapping
-    public Map<String, Boolean> modifyPlan(@RequestBody PlanDTO planDTO) {
-        boolean modified = planService.modifyPlan(planDTO);
-        return Map.of("modified", modified);
-    }
-
-    @Operation(summary = "Plan 작성", description = "새로운 Plan 작성")
-    @PostMapping
-    public long savePlan(@RequestBody PlanDTO planDTO) {
-        return planService.savePlan(planDTO);
+        return Map.of("delete", planService.deletePlan(planId));
     }
 
     @PostMapping("/aiRecommend")
