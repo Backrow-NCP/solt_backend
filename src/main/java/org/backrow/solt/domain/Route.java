@@ -1,4 +1,4 @@
-package org.backrow.solt.model;
+package org.backrow.solt.domain;
 
 import lombok.Getter;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package org.backrow.solt.model;
+package org.backrow.solt.domain;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
