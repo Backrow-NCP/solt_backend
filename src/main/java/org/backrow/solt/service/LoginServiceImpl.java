@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import java.security.Key;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +28,7 @@ public class LoginServiceImpl implements LoginService {
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     private final LoginRepository loginRepository;
+    private final TokenService tokenService;
 
     //
     @Override
@@ -105,5 +107,16 @@ public class LoginServiceImpl implements LoginService {
             return user;
         }
         return null;
+    }
+
+    @Override
+    public String getRefreshToken(String email) {
+        return UUID.randomUUID().toString();
+    }
+
+    @Override
+    public void saveRefreshToken(String email, String refreshToken) {
+        long expiration = EXPIRATION_TIME*10;
+        tokenService.saveRefreshToken(email, refreshToken, expiration);
     }
 }

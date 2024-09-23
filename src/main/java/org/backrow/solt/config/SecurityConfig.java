@@ -49,7 +49,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-//                .antMatchers("/", "/login", "/logout","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
+//                .antMatchers("/", "/login", "/logout","/swagger-ui/**").permitAll()
                 .anyRequest().permitAll();
 //         테스트용 모든 요청 허가
 //                .anyRequest().authenticated().and()
