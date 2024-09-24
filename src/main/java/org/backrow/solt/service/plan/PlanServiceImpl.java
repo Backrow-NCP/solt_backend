@@ -1,13 +1,13 @@
 package org.backrow.solt.service.plan;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.dto.PlanDTO;
+import org.backrow.solt.domain.Plan;
+import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.repository.PlanRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.data.crossstore.ChangeSetPersister;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
@@ -27,7 +27,7 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public PageResponseDTO<PlanDTO> getPlanList(PageRequestDTO pageRequestDTO) {
         // Plan 리스트 조회 로직
-        return null; // 실제 로직으로 변경 필요
+        return null;
     }
 
     @Override
@@ -39,14 +39,14 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public boolean modifyPlan(int planId, PlanDTO planDTO) {
         // Plan 수정 로직
-        return false;
+        return true;
     }
 
     @Override
     public boolean deletePlan(int planId) {
         // Plan 삭제 로직
         try{
-            planRepository.deleteById((long)planId);
+            planRepository.deleteById(planId);
             return true;
         }catch (EmptyResultDataAccessException e){
             throw new NotFoundException("Plan not found" + planId);
