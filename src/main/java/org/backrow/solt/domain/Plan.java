@@ -4,6 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.backrow.solt.dto.plan.PlaceDTO;
+import org.backrow.solt.dto.plan.RouteDTO;
+import org.backrow.solt.dto.plan.Theme;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -22,13 +27,21 @@ public class Plan {
 
     private String title;
 
-    private LocalDateTime regDate;
-    private LocalDateTime modDate;
-
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
     private List<Place> places;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
     private List<Route> routes;
+
+    @CreatedDate
+    @Column(name = "regdate", updatable = false)
+    private LocalDateTime regDate;
+
+    @LastModifiedDate
+    @Column(name = "moddate")
+    private LocalDateTime modDate;
+
+    public void modify(int planId, List<PlaceDTO> place, List<RouteDTO> route, List<Theme> themes) {
+    }
 
 }

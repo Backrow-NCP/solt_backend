@@ -1,13 +1,18 @@
 package org.backrow.solt.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Service
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class Route {
 
     @Id
@@ -22,7 +27,7 @@ public class Route {
     @JoinColumn(name = "end_place_id")
     private Place endPlace;
 
-    private int price;
+    private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transportation_id")
