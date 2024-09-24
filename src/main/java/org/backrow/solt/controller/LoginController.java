@@ -37,7 +37,7 @@ public class LoginController {
             Authentication auth = authenticationManager.authenticate(creds);
 
             String jwts = loginService.getToken(auth.getName());
-            String refreshToken = loginService.getRefreshToken(auth.getName());
+            String refreshToken = loginService.getRefreshToken();
             loginService.saveRefreshToken(auth.getName(), refreshToken);
 
             Map<String, Object> responseBody = new HashMap<>();

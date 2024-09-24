@@ -1,13 +1,17 @@
 package org.backrow.solt.service;
 
+import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
 
 @Service
+@Log4j2
+@RequiredArgsConstructor
 public class TokenServiceImpl implements TokenService {
 
-    private RedisService redisService;
+    private final RedisService redisService;
 
     @Override
     public void saveRefreshToken(String email, String refreshToken, long expiration) {

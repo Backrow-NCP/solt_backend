@@ -2,6 +2,7 @@ package org.backrow.solt.filter;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.service.LoginService;
 import org.backrow.solt.service.TokenService;
 import org.springframework.http.HttpHeaders;
@@ -19,6 +20,7 @@ import java.io.IOException;
 
 @Component
 @RequiredArgsConstructor
+@Log4j2
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final LoginService loginService;
@@ -27,9 +29,11 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
+        log.info("JWT: " + jwt);
         if(jwt != null) {
             try{
             String email = loginService.getAuthUser(request);
+            log.info("FILTER : " +email);
             Authentication auth =
                     new UsernamePasswordAuthenticationToken(email,
                             null, java.util.Collections.emptyList());
