@@ -19,7 +19,7 @@ public interface LoginService {
 
     String getAuthUser(HttpServletRequest request);
 
-    String getRefreshToken(String email);
+    String getRefreshToken();
 
     void saveRefreshToken(String email, String refreshToken);
 }

@@ -1,5 +1,6 @@
 package org.backrow.solt.service;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -95,22 +96,27 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String getAuthUser(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-
+        log.info("LOGINSERVICE getAuthUser : "+token);
         if(token != null){
+            try{
             String user = Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(token.replace(PREFIX,""))
                     .getBody()
                     .getSubject();
-
             return user;
+        } catch(ExpiredJwtException e){
+            log.info("Access Token expired");
+            } catch(Exception e){
+                log.info("Token parsing error");
+            }
         }
         return null;
     }
 
     @Override
-    public String getRefreshToken(String email) {
+    public String getRefreshToken() {
         return UUID.randomUUID().toString();
     }
 
