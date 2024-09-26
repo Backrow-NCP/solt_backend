@@ -1,19 +1,18 @@
 package org.backrow.solt.fetcher;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 @Component
+@RequiredArgsConstructor
 public class FetchManager {
 
     private final List<Fetcher<?>> fetchers;
 
-    // 모든 Fetcher들을 주입받음
-    @Autowired
-    public FetchManager(List<Fetcher<?>> fetchers) {
-        this.fetchers = fetchers;
+    public List<?> fetch(){
+        return null;
     }
 
     // 각 Fetcher의 fetch 메서드를 실행

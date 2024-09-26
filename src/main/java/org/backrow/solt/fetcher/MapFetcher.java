@@ -1,5 +1,6 @@
 package org.backrow.solt.fetcher;
 
+import org.backrow.solt.dto.ai.GoogleMapDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -7,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Component
-public class MapFetcher implements Fetcher {
+public class MapFetcher implements Fetcher<GoogleMapDTO> {
 
     private final String apiKey;
 
@@ -17,8 +18,8 @@ public class MapFetcher implements Fetcher {
     }
 
     @Override
-    public List<GoogleMapDTO> fetch() {
+    public GoogleMapDTO fetch() {
         // Google Maps API에서 데이터를 가져오는 로직
-        return new ArrayList<>();
+        return null;
     }
 }
