@@ -1,23 +1,19 @@
 package org.backrow.solt.service.ai;
 
+import lombok.RequiredArgsConstructor;
 import org.backrow.solt.dto.ai.ClovaDTO;
 import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.fetcher.FetchManager;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+@Service
+@RequiredArgsConstructor
 public class AIPlanMakerImpl implements AIPlanMaker {
 
     private final FetchManager fetchManager;
-
-    @Autowired
-    public AIPlanMakerImpl(FetchManager fetchManager) {
-        this.fetchManager = fetchManager;
-    }
 
     @Override
     public PlanDTO aiRecommend(PlanDTO planDTO) {

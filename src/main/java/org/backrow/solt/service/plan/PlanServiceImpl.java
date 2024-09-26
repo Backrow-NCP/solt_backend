@@ -1,12 +1,10 @@
 package org.backrow.solt.service.plan;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Plan;
 import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.repository.PlanRepository;
-import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
@@ -16,7 +14,6 @@ import org.webjars.NotFoundException;
 public class PlanServiceImpl implements PlanService {
 
     private final PlanRepository planRepository;
-    private final ModelMapper modelMapper;
 
     @Override
     public PlanDTO getPlan(int planId) {
