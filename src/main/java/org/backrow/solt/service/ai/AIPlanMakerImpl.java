@@ -1,6 +1,6 @@
 package org.backrow.solt.service.ai;
 
-import org.backrow.solt.dto.ClovaDTO;
+import org.backrow.solt.dto.ai.ClovaDTO;
 import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.fetcher.FetchManager;
 import org.springframework.beans.factory.annotation.Autowired;

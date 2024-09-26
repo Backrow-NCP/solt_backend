@@ -1,6 +1,6 @@
 package org.backrow.solt.fetcher;
 
-import org.backrow.solt.dto.ClovaDTO;
+import org.backrow.solt.dto.ai.ClovaDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
