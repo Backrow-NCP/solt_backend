@@ -1,8 +1,12 @@
 package org.backrow.solt.dto.plan;
 
-import lombok.Data;
+import lombok.*;
 
-@Data
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class TransportationTypeDTO {
 
     private int id;
