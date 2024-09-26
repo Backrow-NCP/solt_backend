@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.stereotype.Service;
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = "routes")
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,16 +20,17 @@ public class Route {
     private int id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "start_place_id")
+    @JoinColumn(name = "start_place_id", nullable = false)
     private Place startPlace;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "end_place_id")
+    @JoinColumn(name = "end_place_id", nullable = false)
     private Place endPlace;
 
+    @Column(nullable = false)
     private Integer price;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "transportation_id")
+    @JoinColumn(name = "transportation_id", nullable = false)
     private TransportationType transport;
 }

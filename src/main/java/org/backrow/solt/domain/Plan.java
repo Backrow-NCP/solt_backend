@@ -19,12 +19,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "plans")
 public class Plan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long boardPlanId;
 
+    @Column(nullable = false)
     private String title;
 
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
@@ -33,15 +35,7 @@ public class Plan {
     @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
     private List<Route> routes;
 
-    @CreatedDate
-    @Column(name = "regdate", updatable = false)
     private LocalDateTime regDate;
-
-    @LastModifiedDate
-    @Column(name = "moddate")
     private LocalDateTime modDate;
-
-    public void modify(int planId, List<PlaceDTO> place, List<RouteDTO> route, List<Theme> themes) {
-    }
 
 }

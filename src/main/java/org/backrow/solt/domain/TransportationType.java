@@ -12,13 +12,14 @@ import javax.persistence.*;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Table(name = "transportation_types")
 public class TransportationType {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(unique=true)
+    @Column(nullable = false, unique=true)
     private String type;
 
 }
