@@ -30,9 +30,7 @@ public class Plan {
     private List<Route> routes;
 
     @ManyToMany
-    @JoinTable(name = "plan_themes",
-            joinColumns = @JoinColumn(name = "plan_id"),
-            inverseJoinColumns = @JoinColumn(name = "theme_id"))
+    @JoinTable(name = "plan_theme", joinColumns = @JoinColumn(name = "plan_id"), inverseJoinColumns = @JoinColumn(name = "theme_id"))
     private List<Theme> themes;
 
     private LocalDateTime regDate;
