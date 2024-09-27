@@ -16,7 +16,6 @@ public class PlaceDTO {
     private String placeName;
     private String addr;
 
-    private int planId;
     private int price;
 
     private LocalDateTime startTime;
