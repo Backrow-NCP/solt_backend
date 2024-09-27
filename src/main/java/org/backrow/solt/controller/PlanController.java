@@ -45,11 +45,12 @@ public class PlanController {
     }
 
     @Operation(summary = "Plan 수정", description = "Plan ID를 통한 수정")
-    @PutMapping
-    public Map<String, Boolean> modifyPlan(
+    @PutMapping("/{planId}")
+    public ResponseEntity<Map<String, Boolean>> modifyPlan(
             @PathVariable int planId,
             @RequestBody PlanDTO planDTO) {
-        return Map.of("modify", planService.modifyPlan(planId, planDTO));
+        boolean modified = planService.modifyPlan(planId, planDTO);
+        return ResponseEntity.ok(Map.of("modify", modified));
     }
 
     @Operation(summary = "Plan 삭제", description = "Plan ID를 통한 삭제")
