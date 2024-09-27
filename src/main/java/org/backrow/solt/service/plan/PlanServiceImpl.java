@@ -56,14 +56,5 @@ public class PlanServiceImpl implements PlanService {
         return null;
     }
 
-    // Entity -> DTO
-    private PlanDTO convertToDTO(Plan plan) {
-        return null;
-    }
-
-    // DTO -> Entity
-    private Plan convertToEntity(PlanDTO planDTO) {
-        return null;
-    }
 }
 
