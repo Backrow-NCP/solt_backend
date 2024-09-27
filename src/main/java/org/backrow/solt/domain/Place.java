@@ -7,7 +7,6 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -19,7 +18,7 @@ public class Place {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long pointId;
+    private Long placeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "plan_id", nullable = false)
@@ -35,11 +34,5 @@ public class Place {
 
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-
-    @OneToMany(mappedBy = "startPlace", cascade = CascadeType.ALL)
-    private List<Route> startRoutes;
-
-    @OneToMany(mappedBy = "endPlace", cascade = CascadeType.ALL)
-    private List<Route> endRoutes;
 
 }
