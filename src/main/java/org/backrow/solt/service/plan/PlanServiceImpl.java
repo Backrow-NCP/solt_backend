@@ -1,6 +1,7 @@
 package org.backrow.solt.service.plan;
 
 import lombok.RequiredArgsConstructor;
+import org.backrow.solt.domain.Plan;
 import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
@@ -55,5 +56,14 @@ public class PlanServiceImpl implements PlanService {
         return null;
     }
 
+    // Entity -> DTO
+    private PlanDTO convertToDTO(Plan plan) {
+        return null;
+    }
+
+    // DTO -> Entity
+    private Plan convertToEntity(PlanDTO planDTO) {
+        return null;
+    }
 }
 
