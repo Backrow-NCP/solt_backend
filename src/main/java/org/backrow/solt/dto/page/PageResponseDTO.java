@@ -1,8 +1,6 @@
 package org.backrow.solt.dto.page;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import java.util.List;
 
@@ -40,4 +38,3 @@ public class PageResponseDTO<T> {
         this.next = total > this.endPage * this.size;
     }
 }
-
