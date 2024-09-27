@@ -1,25 +1,19 @@
 package org.backrow.solt.domain;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.backrow.solt.dto.plan.PlaceDTO;
-import org.backrow.solt.dto.plan.RouteDTO;
+import lombok.*;
 import org.backrow.solt.dto.plan.Theme;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
+@Table(name = "plans")
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "plans")
+@Builder
 public class Plan {
 
     @Id
@@ -29,11 +23,17 @@ public class Plan {
     @Column(nullable = false)
     private String title;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Place> places;
 
-    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "plan", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Route> routes;
+
+    @ManyToMany
+    @JoinTable(name = "plan_themes",
+            joinColumns = @JoinColumn(name = "plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "theme_id"))
+    private List<Theme> themes;
 
     private LocalDateTime regDate;
     private LocalDateTime modDate;
