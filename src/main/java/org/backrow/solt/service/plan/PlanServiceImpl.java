@@ -2,6 +2,7 @@ package org.backrow.solt.service.plan;
 
 import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Plan;
+import org.backrow.solt.dto.plan.PlanConvertion;
 import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
@@ -10,16 +11,21 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
+import javax.persistence.EntityNotFoundException;
+
 @Service
 @RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
 
     private final PlanRepository planRepository;
+    private final PlanConvertion planConvertion;
 
     @Override
     public PlanDTO getPlan(int planId) {
         // Plan 조회 로직
-        return null; // 실제 로직으로 변경 필요
+        Plan plan = planRepository.findById(planId)
+                                  .orElseThrow(() -> new EntityNotFoundException("Plan not found" + planId));
+        return planConvertion.convertToDTO(plan);
     }
 
     @Override
@@ -31,7 +37,9 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public long savePlan(PlanDTO planDTO) {
         // Plan 작성 로직
-        return 0L;
+        Plan plan = planConvertion.convertToEntity(planDTO);
+        planRepository.save(plan);
+        return plan.getPlanId();
     }
 
     @Override
