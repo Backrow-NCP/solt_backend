@@ -17,7 +17,7 @@ public class Route {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private int placeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "start_place_id", nullable = false)
