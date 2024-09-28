@@ -1,6 +1,7 @@
 package org.backrow.solt.dto.plan;
 
 import lombok.*;
+import org.backrow.solt.dto.member.MemberInfoDTO;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +22,7 @@ public class PlanDTO {
 
     private boolean confirm;
 
-    //private MemberDTO member;
+    private MemberInfoDTO member;
 
     private List<PlaceDTO> place;
     private List<RouteDTO> route;
