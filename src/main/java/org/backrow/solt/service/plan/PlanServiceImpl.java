@@ -8,10 +8,14 @@ import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.repository.PlanRepository;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
 import javax.persistence.EntityNotFoundException;
+import java.awt.print.Pageable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +35,13 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public PageResponseDTO<PlanDTO> getPlanList(PageRequestDTO pageRequestDTO) {
         // Plan 리스트 조회 로직
-        return null;
+        Pageable pageable = pageRequestDTO.getPageable();
+        Page<Plan> planPage = planRepository.findAll(pageable);
+
+        List<PlanDTO> planDTOList = planPage.getContent().stream()
+                .map(planConvertion::convertToDTO)
+                .collect(Collectors.toList());
+        return new PageResponseDTO<>(planDTOList, planPage.getTotalElements(), planPage.getTotalPages());
     }
 
     @Override
@@ -65,4 +75,3 @@ public class PlanServiceImpl implements PlanService {
     }
 
 }
-
