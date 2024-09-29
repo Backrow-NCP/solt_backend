@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.webjars.NotFoundException;
 
-import javax.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -28,7 +27,7 @@ public class PlanServiceImpl implements PlanService {
     public PlanDTO getPlan(int planId) {
         // Plan 조회 로직
         Plan plan = planRepository.findById(planId)
-                                  .orElseThrow(() -> new EntityNotFoundException("Plan not found : " + planId));
+                                  .orElseThrow(() -> new NotFoundException("Plan not found : " + planId));
         return planConvertion.convertToDTO(plan);
     }
 
@@ -56,7 +55,7 @@ public class PlanServiceImpl implements PlanService {
     public boolean modifyPlan(int planId, PlanDTO planDTO) {
         // Plan 수정 로직
         Plan existingPlan = planRepository.findById(planId)
-                .orElseThrow(()-> new EntityNotFoundException("Plan not found: " + planId));
+                .orElseThrow(()-> new NotFoundException("Plan not found: " + planId));
 
         existingPlan.setTitle(planDTO.getTitle());
         existingPlan.setConfirm(planDTO.isConfirm());
