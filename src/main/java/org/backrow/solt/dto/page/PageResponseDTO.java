@@ -1,6 +1,7 @@
 package org.backrow.solt.dto.page;
 
 import lombok.*;
+import org.backrow.solt.dto.plan.PlanDTO;
 
 import java.util.List;
 
