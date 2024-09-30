@@ -1,6 +1,7 @@
 package org.backrow.solt.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.login.LoginDTO;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 
+@Tag(name = "로그인,회원가입 API", description = "로그인 시 회원확인, 중복체크, 비밀번호확인, 회원가입을 수행하는 API입니다.")
 @RestController
 @RequiredArgsConstructor
 @Log4j2
