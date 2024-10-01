@@ -23,6 +23,8 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -49,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers("/", "/login", "/logout","/swagger-ui/**").permitAll()
+                .antMatchers(POST,"/", "/login", "/logout","/login/token","/swagger-ui/**").permitAll()
 //                .anyRequest().permitAll();
 //         테스트용 모든 요청 허가
                 .anyRequest().authenticated().and()

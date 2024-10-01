@@ -31,7 +31,6 @@ public class LoginServiceImpl implements LoginService {
     private final LoginRepository loginRepository;
     private final TokenService tokenService;
 
-    //
     @Override
     public Boolean checkExist(String value, String type) {
         switch (type) {
