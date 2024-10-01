@@ -25,7 +25,6 @@ import java.net.http.HttpTimeoutException;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final LoginService loginService;
-    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

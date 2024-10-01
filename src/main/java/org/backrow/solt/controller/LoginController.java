@@ -76,6 +76,7 @@ public class LoginController {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + newAccessToken)
                     .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
                     .body(responseBody);
+
         } catch (Exception e) {
             responseBody.put("result","RefreshToken_Expired");
             return ResponseEntity.status(401).body(responseBody);
