@@ -6,7 +6,7 @@ import lombok.*;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class Theme {
+public class ThemeDTO {
     private String id;
     private String category;
 }

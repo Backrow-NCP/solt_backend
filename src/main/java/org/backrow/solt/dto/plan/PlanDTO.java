@@ -25,6 +25,6 @@ public class PlanDTO {
 
     private List<PlaceDTO> place;
     private List<RouteDTO> route;
-    private List<Theme> themes;
+    private List<ThemeDTO> themes;
 
 }
