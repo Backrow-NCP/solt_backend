@@ -1,10 +1,10 @@
 package org.backrow.solt.dto.plan;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Place;
-import org.backrow.solt.domain.Plan;
-import org.backrow.solt.domain.Route;
-import org.backrow.solt.domain.TransportationType;
+import org.backrow.solt.domain.plan.Place;
+import org.backrow.solt.domain.plan.Plan;
+import org.backrow.solt.domain.plan.Route;
+import org.backrow.solt.domain.plan.TransportationType;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
