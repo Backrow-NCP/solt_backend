@@ -1,4 +1,4 @@
-package org.backrow.solt.service;
+package org.backrow.solt.security;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
