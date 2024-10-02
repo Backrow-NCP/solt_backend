@@ -1,4 +1,4 @@
-package org.backrow.solt.domain;
+package org.backrow.solt.domain.plan;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

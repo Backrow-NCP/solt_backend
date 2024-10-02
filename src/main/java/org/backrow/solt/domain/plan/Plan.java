@@ -1,4 +1,4 @@
-package org.backrow.solt.domain;
+package org.backrow.solt.domain.plan;
 
 import lombok.*;
 import org.backrow.solt.dto.plan.Theme;
@@ -9,8 +9,7 @@ import java.util.List;
 
 @Entity
 @Table(name = "plans")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
