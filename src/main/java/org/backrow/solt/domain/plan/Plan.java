@@ -1,7 +1,6 @@
 package org.backrow.solt.domain.plan;
 
 import lombok.*;
-import org.backrow.solt.dto.plan.Theme;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -29,8 +28,13 @@ public class Plan {
     private List<Route> routes;
 
     @ManyToMany
-    @JoinTable(name = "plan_theme", joinColumns = @JoinColumn(name = "plan_id"), inverseJoinColumns = @JoinColumn(name = "theme_id"))
+    @JoinTable(
+            name = "plan_theme",
+            joinColumns = @JoinColumn(name = "plan_id"),
+            inverseJoinColumns = @JoinColumn(name = "theme_id")
+    )
     private List<Theme> themes;
+
 
     private LocalDateTime regDate;
     private LocalDateTime modDate;
