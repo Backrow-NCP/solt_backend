@@ -23,14 +23,16 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static org.springframework.http.HttpMethod.POST;
+
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final UserDetailsService userDetailsService;
-//    private final AuthenticationFilter authenticationFilter;
-//    private final AuthEntryPoint authEntryPoint;
+    private final AuthenticationFilter authenticationFilter;
+    private final AuthEntryPoint authEntryPoint;
 
     @Bean
     public AuthenticationManager authenticationManager() throws Exception {
@@ -49,12 +51,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-//                .antMatchers("/", "/login", "/logout","/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**", "/swagger-ui.html", "/webjars/**").permitAll()
-                .anyRequest().permitAll();
+                .antMatchers(POST,"/", "/login", "/logout","/login/token","/swagger-ui/**").permitAll()
+//                .anyRequest().permitAll();
 //         테스트용 모든 요청 허가
-//                .anyRequest().authenticated().and()
-//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
+                .anyRequest().authenticated().and()
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
     }
 
     @Bean

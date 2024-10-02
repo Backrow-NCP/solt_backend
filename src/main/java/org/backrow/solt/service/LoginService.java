@@ -18,4 +18,8 @@ public interface LoginService {
     String getToken(String email);
 
     String getAuthUser(HttpServletRequest request);
+
+    String getRefreshToken();
+
+    void saveRefreshToken(String email, String refreshToken);
 }

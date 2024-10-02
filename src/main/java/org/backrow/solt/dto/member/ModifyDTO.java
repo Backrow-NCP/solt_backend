@@ -17,7 +17,4 @@ public class ModifyDTO {
     private String password;
 
     private String name;
-
-    private Date birthYear;
-
 }

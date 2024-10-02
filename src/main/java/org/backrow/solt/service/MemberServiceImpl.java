@@ -30,21 +30,15 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> result = memberRepository.findById(modifyDTO.getMemberId());
         Member member = result.orElseThrow();
 
-        member.changeMemberInfo(modifyDTO.getPassword(), modifyDTO.getName(), modifyDTO.getBirthYear());
+        member.changeMemberInfo(modifyDTO.getPassword(), modifyDTO.getName());
 
         memberRepository.save(member);
     }
 
     @Override
-    public void deleteMember(long memberId, String password) {
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+    public void deleteMember(long memberId) {
        Member member = memberRepository.findById(memberId).orElseThrow();
-       boolean matches = encoder.matches(password, member.getPassword());
-        if(matches) {
-            memberRepository.deleteById(memberId);
-        } else {
-            throw new RuntimeException("password does not match");
-        }
+            memberRepository.save(member.deleteMember());
     }
 
     @Override
@@ -53,6 +47,14 @@ public class MemberServiceImpl implements MemberService {
         Member member = result.orElseThrow();
 
         member.addImage(uploadResultDTO.getUuid(), uploadResultDTO.getFileName());
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void deleteMemberImage(long memberId) {
+        Optional<Member> result = memberRepository.findById(memberId);
+        Member member = result.orElseThrow();
+        member.deleteProfileImage();
         memberRepository.save(member);
     }
 }
