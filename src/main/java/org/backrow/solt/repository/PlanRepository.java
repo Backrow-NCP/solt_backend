@@ -1,6 +1,6 @@
 package org.backrow.solt.repository;
 
-import org.backrow.solt.domain.Plan;
+import org.backrow.solt.domain.plan.Plan;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
