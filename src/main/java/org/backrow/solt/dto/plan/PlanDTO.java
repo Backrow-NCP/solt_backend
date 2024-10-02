@@ -6,8 +6,7 @@ import org.backrow.solt.dto.member.MemberInfoDTO;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
