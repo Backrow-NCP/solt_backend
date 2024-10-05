@@ -13,11 +13,13 @@ import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -48,9 +50,11 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public boolean modifyReply(Long id, ReplyInputDTO replyInputDTO) {
-        Optional<Reply> findReply = replyRepository.findById(id);
-        Reply reply = findReply.orElseThrow(() -> new NotFoundException("Reply not found: " + id));
+    public boolean modifyReply(Long replyId, ReplyInputDTO replyInputDTO, Long memberId) {
+        Optional<Reply> findReply = replyRepository.findById(replyId);
+        Reply reply = findReply.orElseThrow(() -> new NotFoundException("Reply not found: " + replyId));
+        if (!Objects.equals(reply.getMember().getMemberId(), memberId))
+            throw new AccessDeniedException("You do not have permission to modify this reply.");
 
         reply.modify(replyInputDTO.getContent());
 
@@ -59,12 +63,12 @@ public class ReplyServiceImpl implements ReplyService {
     }
 
     @Override
-    public boolean deleteReply(Long id) {
+    public boolean deleteReply(Long replyId, Long memberId) {
         try {
-            replyRepository.deleteById(id);
+            replyRepository.deleteByReplyIdAndMember_MemberId(replyId, memberId);
             return true;
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Reply not found: " + id);
+            throw new NotFoundException("Reply not found: " + replyId);
         }
     }
 

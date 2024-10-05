@@ -10,6 +10,7 @@ import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.service.BoardService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -45,8 +46,11 @@ public class BoardController {
 
     @Operation(summary = "게시글 작성", description = "새로운 게시글을 작성합니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Long>> saveBoard(@Valid @RequestBody BoardInputDTO boardInputDTO) {
-        Long id = boardService.saveBoard(boardInputDTO);
+    public ResponseEntity<Map<String, Long>> saveBoard(
+            @Valid @RequestBody BoardInputDTO boardInputDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        Long id = boardService.saveBoard(boardInputDTO, userDetails.getMemberId());
         return ResponseEntity.ok(Map.of("id", id));
     }
 
@@ -54,14 +58,18 @@ public class BoardController {
     @PutMapping("/{id}")
     public Map<String, Boolean> modifyBoard(
             @PathVariable Long id,
-            @RequestBody BoardInputDTO boardInputDTO
+            @RequestBody BoardInputDTO boardInputDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return Map.of("isSuccess", boardService.modifyBoard(id, boardInputDTO));
+        return Map.of("isSuccess", boardService.modifyBoard(id, boardInputDTO, userDetails.getMemberId()));
     }
 
     @Operation(summary = "게시글 삭제", description = "ID를 통해 특정 게시글을 삭제합니다.")
     @DeleteMapping("/{id}")
-    public Map<String, Boolean> deleteBoard(@PathVariable Long id) {
-        return Map.of("isSuccess", boardService.deleteBoard(id));
+    public Map<String, Boolean> deleteBoard(
+            @PathVariable Long id,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return Map.of("isSuccess", boardService.deleteBoard(id, userDetails.getMemberId()));
     }
 }
