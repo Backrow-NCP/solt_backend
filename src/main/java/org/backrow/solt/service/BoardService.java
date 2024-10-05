@@ -9,7 +9,7 @@ public interface BoardService {
     PageResponseDTO<BoardViewDTO> getBoardList(PageRequestDTO pageRequestDTO);
     PageResponseDTO<BoardViewDTO> getBoardListByMemberId(Long id, PageRequestDTO pageRequestDTO);
     BoardViewDTO getBoard(Long id);
-    long saveBoard(BoardInputDTO boardDTO);
-    boolean modifyBoard(Long id, BoardInputDTO boardDTO);
-    boolean deleteBoard(Long id);
+    long saveBoard(BoardInputDTO boardDTO, Long memberId);
+    boolean modifyBoard(Long boardId, BoardInputDTO boardDTO, Long memberId);
+    boolean deleteBoard(Long boardId, Long memberId);
 }
