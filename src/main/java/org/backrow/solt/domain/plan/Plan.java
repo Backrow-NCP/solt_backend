@@ -35,7 +35,6 @@ public class Plan {
     )
     private List<Theme> themes;
 
-
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 
