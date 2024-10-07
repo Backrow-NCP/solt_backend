@@ -1,6 +1,7 @@
 package org.backrow.solt.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -8,6 +9,7 @@ import org.backrow.solt.dto.reply.ReplyDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.reply.ReplyInputDTO;
+import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.ReplyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
