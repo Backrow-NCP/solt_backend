@@ -9,17 +9,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PlaceDTO {
-
-    private int placeId;
-
+    private Long placeId;
     private String placeName;
     private String addr;
-
-    private int price;
-
+    private Integer price;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
-    
-    private boolean checker; //AI 판단 여부
-
+    private Boolean checker; // AI 판단 여부
 }

@@ -1,25 +1,21 @@
 package org.backrow.solt.domain.plan;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
-@Table(name = "transportation_types")
+@AllArgsConstructor
+@ToString
 public class TransportationType {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
-    @Column(nullable = false, unique=true)
+    @Column(nullable = false, unique = true)
     private String type;
-
 }

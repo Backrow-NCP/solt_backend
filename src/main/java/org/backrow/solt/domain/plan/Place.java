@@ -1,9 +1,6 @@
 package org.backrow.solt.domain.plan;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -11,11 +8,11 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "place")
+@ToString(exclude = "plan")
 public class Place {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long placeId;
@@ -28,11 +25,15 @@ public class Place {
     private String placeName;
 
     @Column(nullable = false)
+    @Builder.Default
+    private int price = 0;
+
+    @Column(nullable = false)
     private String addr;
 
-    private int price;
-
+    @Column(nullable = false)
     private LocalDateTime startTime;
-    private LocalDateTime endTime;
 
+    @Column(nullable = false)
+    private LocalDateTime endTime;
 }

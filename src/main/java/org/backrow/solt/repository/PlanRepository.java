@@ -1,9 +1,8 @@
 package org.backrow.solt.repository;
 
 import org.backrow.solt.domain.plan.Plan;
+import org.backrow.solt.repository.search.PlanSearch;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-@Repository
-public interface PlanRepository extends JpaRepository<Plan, Integer> {
+public interface PlanRepository extends JpaRepository<Plan, Long>, PlanSearch {
 }

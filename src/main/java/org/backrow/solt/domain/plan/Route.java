@@ -1,40 +1,43 @@
 package org.backrow.solt.domain.plan;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "routes")
 @Getter
 @Setter
-@AllArgsConstructor
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
+@ToString(exclude = "plan")
 public class Route {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int placeId;
+    private Long routeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "start_place_id", nullable = false)
-    private Place startPlace;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "end_place_id", nullable = false)
-    private Place endPlace;
+    @JoinColumn(name = "plan_id", nullable = false)
+    private Plan plan;
 
     @Column(nullable = false)
-    private Integer price;
+    private LocalDateTime startTime;
+
+    @Column(nullable = false)
+    private LocalDateTime endTime;
+
+    @Column(nullable = false)
+    @Builder.Default
+    private int price = 0;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transportation_id", nullable = false)
-    private TransportationType transport;
+    private TransportationType transportationType;
 
-    @ManyToOne
-    @JoinColumn(name = "plan_id")
-    private Plan plan;
+    @Column(nullable = false)
+    private int distance;
+
+    @Column(nullable = false)
+    private int travelTime;
 }

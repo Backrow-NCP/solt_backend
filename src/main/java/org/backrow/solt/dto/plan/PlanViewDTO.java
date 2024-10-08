@@ -4,27 +4,20 @@ import lombok.*;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class PlanDTO {
-
-    private int planId;
-
+public class PlanViewDTO {
+    private Long planId;
     private String title;
-
+//    private Boolean confirm;
+    private MemberInfoDTO member;
+    private Set<PlaceDTO> places;
+    private Set<RouteDTO> routes;
+//    private Set<ThemeDTO> themes;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
-
-    private boolean confirm;
-
-    private MemberInfoDTO member;
-
-    private List<PlaceDTO> place;
-    private List<RouteDTO> route;
-    private List<ThemeDTO> themes;
-
 }

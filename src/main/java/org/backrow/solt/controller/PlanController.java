@@ -4,9 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.dto.plan.PlanDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
+import org.backrow.solt.dto.plan.PlanInputDTO;
+import org.backrow.solt.dto.plan.PlanViewDTO;
 import org.backrow.solt.service.plan.PlanService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -14,53 +15,53 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.Map;
 
-@Tag(name = "Plan API", description = "Plan에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API")
+@Tag(name = "여행 일정 API", description = "플랜에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
 @RestController
 @RequestMapping("/plan")
 @RequiredArgsConstructor
 @Log4j2
 public class PlanController {
-
     private final PlanService planService;
 
-    @Operation(summary = "Plan 리스트 조회", description = "Plan 리스트 조회 ")
-    @GetMapping("/planList")
-    public ResponseEntity<PageResponseDTO<PlanDTO>> getPlanList(PageRequestDTO pageRequestDTO) {
-        PageResponseDTO<PlanDTO> result = planService.getPlanList(pageRequestDTO);
+    @Operation(summary = "멤버의 플랜 리스트 조회", description = "멤버 ID를 통해 특정 멤버의 플랜 목록을 페이지로 조회합니다.")
+    @GetMapping("/list/{id}")
+    public ResponseEntity<PageResponseDTO<PlanViewDTO>> getPlanList(@PathVariable Long id, PageRequestDTO pageRequestDTO) {
+        PageResponseDTO<PlanViewDTO> result = planService.getPlanList(id, pageRequestDTO);
         return ResponseEntity.ok(result);
     }
 
-    @Operation(summary = "Plan 조회", description = "PlanID에 따른 플랜 조회")
-    @GetMapping("/plan/{planId}")
-    public ResponseEntity<PlanDTO> getPlan(@PathVariable int planId) {
-        PlanDTO result = planService.getPlan(planId);
-        return ResponseEntity.ok(result);
+    @Operation(summary = "플랜 조회", description = "ID를 통해 특정 플랜을 조회합니다.")
+    @GetMapping("/{id}")
+    public ResponseEntity<PlanViewDTO> getPlan(@PathVariable Long id) {
+        return ResponseEntity.ok(planService.getPlan(id));
     }
 
-    @Operation(summary = "Plan 작성", description = "새로운 Plan 작성")
+    @Operation(summary = "플랜 작성", description = "새로운 플랜을 저장합니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Long>> savePlan(@Valid @RequestBody PlanDTO planDTO) {
-        Long planId = planService.savePlan(planDTO);
-        return ResponseEntity.ok(Map.of("planId", planId));
+    public ResponseEntity<Map<String, Long>> savePlan(@Valid @RequestBody PlanInputDTO planInputDTO) {
+        long id = planService.savePlan(planInputDTO);
+        return ResponseEntity.ok(Map.of("id", id));
     }
 
-    @Operation(summary = "Plan 수정", description = "Plan ID를 통한 수정")
-    @PutMapping("/{planId}")
+    @Operation(summary = "플랜 수정", description = "플랜 ID를 통해 특정 플랜을 수정합니다.")
+    @PutMapping("/{id}")
     public ResponseEntity<Map<String, Boolean>> modifyPlan(
-            @PathVariable int planId,
-            @RequestBody PlanDTO planDTO) {
-        boolean modified = planService.modifyPlan(planId, planDTO);
-        return ResponseEntity.ok(Map.of("modify", modified));
+            @PathVariable Long id,
+            @Valid @RequestBody PlanInputDTO planInputDTO
+    ) {
+        return ResponseEntity.ok(
+                Map.of("isSuccess", planService.modifyPlan(id, planInputDTO)));
     }
 
-    @Operation(summary = "Plan 삭제", description = "Plan ID를 통한 삭제")
-    @DeleteMapping("/{planId}")
-    public Map<String, Boolean> deletePlan(@PathVariable int planId) {
-        return Map.of("delete", planService.deletePlan(planId));
+    @Operation(summary = "플랜 삭제", description = "ID를 통해 특정 플랜을 삭제합니다.")
+    @DeleteMapping("/{id}")
+    public Map<String, Boolean> deletePlan(@PathVariable Long id) {
+        return Map.of("isSuccess", planService.deletePlan(id));
     }
 
-    @PostMapping("/aiRecommend")
-    public PlanDTO aiRecommend(@RequestBody PlanDTO planDTO) {
-        return planService.aiRecommend(planDTO);
+    @Operation(summary = "추천 플랜 생성", description = "AI를 통해 여행 일정에 맞는 플랜을 추천받습니다.")
+    @PostMapping("/recom")
+    public ResponseEntity<PlanViewDTO> recommendPlan(@RequestBody PlanInputDTO planInputDTO) {
+        return ResponseEntity.ok(planService.recommendPlan(planInputDTO));
     }
 }
