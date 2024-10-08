@@ -1,6 +1,7 @@
 package org.backrow.solt.service.ai;
 
 import org.backrow.solt.domain.plan.Place;
+import org.backrow.solt.dto.plan.PlaceDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,13 +20,13 @@ public class PlanAiService {
         this.restTemplate = restTemplate;
     }
 
-    public List<Place> getRecommendedPlaces(String location, String theme) {
+    public List<PlaceDTO> getRecommendedPlaces(String location, String theme) {
         String clovaApiUrl = "input Clova Api Address";
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(clovaApiUrl)
                 .queryParam("location", location)
                 .queryParam("theme", theme); // 수정해야함
 
-        ResponseEntity<Place[]> response = restTemplate.getForEntity(builder.toUriString(), Place[].class);
+        ResponseEntity<PlaceDTO[]> response = restTemplate.getForEntity(builder.toUriString(), PlaceDTO[].class);
 
         if(response.getStatusCode() == HttpStatus.OK){
             return Arrays.asList(response.getBody());
