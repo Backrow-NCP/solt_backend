@@ -8,6 +8,7 @@ import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
+import org.backrow.solt.dto.plan.RouteDTO;
 import org.backrow.solt.repository.PlanRepository;
 import org.backrow.solt.service.ai.MapAPIService;
 import org.backrow.solt.service.ai.PlanAiService;
@@ -115,12 +116,59 @@ public class PlanServiceImpl implements PlanService {
         Optional<Plan> findPlan = planRepository.findById(id);
         Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + id));
 
-        Set<Place> places = mapToEntitySet(planInputDTO.getPlaces(), Place.class);
-        Set<Route> routes = mapToEntitySet(planInputDTO.getRoutes(), Route.class);
-//        Set<Theme> themes = mapToEntitySet(planInputDTO.getThemes(), Theme.class);
+        // 1. 기존에 사용자가 입력한 장소와 checker 값 확인
+        Set<PlaceDTO> userInputPlaces = planInputDTO.getPlaces();
+
+        // 2. AI가 변경 가능한 장소만 따로 리스트로 저장 (checker가 false인 경우만)
+        List<PlaceDTO> modifiablePlaces = userInputPlaces.stream()
+                .filter(placeDTO -> !placeDTO.getChecker()) // AI가 변경할 수 있는 곳만 필터링
+                .collect(Collectors.toList());
+
+        // 3. Clova AI를 통해 장소 추천 받기 (AI가 변경 가능한 장소만)
+        List<PlaceDTO> recommendedPlaces = planAiService.getRecommendedPlaces(
+                planInputDTO.getLocation(), planInputDTO.getTheme(), modifiablePlaces);
+
+
+        // 4. Place 및 Route 데이터를 처리하고 변환
+        Set<Place> places = new HashSet<>();
+        Set<Route> routes = new HashSet<>();
+
+        List<PlaceDTO> finalPlaces = new ArrayList<>(userInputPlaces); // 기본적으로 사용자가 입력한 값을 사용
+        // AI가 추천한 값이 있으면, 이를 checker가 false인 값만 교체
+        for (int i = 0; i < recommendedPlaces.size(); i++) {
+            PlaceDTO recommendedPlace = recommendedPlaces.get(i);
+            if (!finalPlaces.get(i).getChecker()) {
+                finalPlaces.set(i, recommendedPlace); // checker가 false인 경우 AI가 추천한 장소로 교체
+            }
+        }
+
+        // 변환된 장소 리스트로 엔티티 생성
+        for (int i = 0; i < finalPlaces.size(); i++) {
+            PlaceDTO placeDTO = finalPlaces.get(i);
+            Place place = modelMapper.map(placeDTO, Place.class);
+            places.add(place);
+
+            // 경로 생성 (첫 번째 장소는 경로 생성 안함)
+            if (i < finalPlaces.size() - 1) {
+                PlaceDTO nextPlaceDTO = finalPlaces.get(i + 1);
+                Integer travelTime = mapAPIService.getTravelTime(placeDTO.getAddr(), nextPlaceDTO.getAddr());
+
+                RouteDTO routeDTO = planInputDTO.getRoutes().stream()
+                        .filter(route -> !route.getChecker()) // AI가 수정할 수 있는 경로만 필터링
+                        .findFirst().orElse(null);
+
+                if (routeDTO != null) {
+                    Route route = modelMapper.map(routeDTO, Route.class);
+                    route.setStartPlace(place);
+                    route.setEndPlace(modelMapper.map(nextPlaceDTO, Place.class));
+                    route.setTravelTime(travelTime);
+                    routes.add(route);
+                }
+            }
 
         plan.modify(planInputDTO.getTitle(), places, routes);
         planRepository.save(plan);
+
         return true;
     }
 
