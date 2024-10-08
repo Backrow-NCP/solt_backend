@@ -1,17 +1,21 @@
 package org.backrow.solt.domain.plan;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 
-@Data
 @Entity
-@Table(name = "theme")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Theme {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private Long themeId;
 
+    @Column(nullable = false)
     private String name;
 }

@@ -1,5 +1,6 @@
 package org.backrow.solt.dto.plan;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import lombok.Data;
 
 import javax.validation.constraints.NotEmpty;
@@ -23,7 +24,8 @@ public class PlanInputDTO {
 
     private Set<RouteDTO> routes = new HashSet<>();
 
-//    private Set<Long> themes = new HashSet<>();
+    @JsonDeserialize(as = HashSet.class)
+    private Set<Long> themes = new HashSet<>();
 
 //    private String location;
 

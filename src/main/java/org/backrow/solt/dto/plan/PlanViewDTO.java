@@ -17,7 +17,7 @@ public class PlanViewDTO {
     private MemberInfoDTO member;
     private Set<PlaceDTO> places;
     private Set<RouteDTO> routes;
-//    private Set<ThemeDTO> themes;
+    private Set<ThemeDTO> themes;
     private LocalDateTime regDate;
     private LocalDateTime modDate;
 }

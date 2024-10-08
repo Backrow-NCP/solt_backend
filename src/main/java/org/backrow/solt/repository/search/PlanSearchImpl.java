@@ -2,14 +2,12 @@ package org.backrow.solt.repository.search;
 
 import com.querydsl.jpa.JPQLQuery;
 import org.backrow.solt.domain.*;
-import org.backrow.solt.domain.plan.Plan;
-import org.backrow.solt.domain.plan.QPlace;
-import org.backrow.solt.domain.plan.QPlan;
-import org.backrow.solt.domain.plan.QRoute;
+import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
 import org.backrow.solt.dto.plan.RouteDTO;
+import org.backrow.solt.dto.plan.ThemeDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -33,12 +31,16 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
         QPlace place = QPlace.place;
         QRoute route = QRoute.route;
         QMember member = QMember.member;
+        QThemeLog themeLog = QThemeLog.themeLog;
+        QTheme theme = QTheme.theme;
 
         JPQLQuery<Plan> planQuery = from(plan)
                 .leftJoin(plan.places, place).fetchJoin()
                 .leftJoin(plan.routes, route).fetchJoin()
                 .leftJoin(plan.member, member).fetchJoin()
-                .groupBy(plan);
+                .leftJoin(plan.themes, themeLog).fetchJoin()
+                .leftJoin(themeLog.theme, theme).fetchJoin()
+                .distinct();
 
         if (keyword != null) {
             planQuery.where(QPlan.plan.title.containsIgnoreCase(keyword));
@@ -61,13 +63,17 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
         QPlace place = QPlace.place;
         QRoute route = QRoute.route;
         QMember member = QMember.member;
+        QThemeLog themeLog = QThemeLog.themeLog;
+        QTheme theme = QTheme.theme;
 
         JPQLQuery<Plan> planQuery = from(plan)
                 .leftJoin(plan.places, place).fetchJoin()
                 .leftJoin(plan.routes, route).fetchJoin()
                 .leftJoin(plan.member, member).fetchJoin()
+                .leftJoin(plan.themes, themeLog).fetchJoin()
+                .leftJoin(themeLog.theme, theme).fetchJoin()
                 .where(plan.planId.eq(planId))
-                .groupBy(plan);
+                .distinct();
 
         Plan planEntity = planQuery.fetchOne();
 
@@ -102,6 +108,12 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                         .travelTime(routeEntity.getTravelTime())
                         .build())
                 .collect(Collectors.toSet());
+        Set<ThemeDTO> themeDTOS = plan.getThemes().stream()
+                .map(themeLogEntity -> ThemeDTO.builder()
+                        .themeId(themeLogEntity.getTheme().getThemeId())
+                        .name(themeLogEntity.getTheme().getName())
+                        .build())
+                .collect(Collectors.toSet());
 
         return PlanViewDTO.builder()
                 .planId(plan.getPlanId())
@@ -109,6 +121,7 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                 .member(memberInfoDTO)
                 .places(placeDTOS)
                 .routes(routeDTOS)
+                .themes(themeDTOS)
                 .regDate(plan.getRegDate())
                 .modDate(plan.getModDate())
                 .build();

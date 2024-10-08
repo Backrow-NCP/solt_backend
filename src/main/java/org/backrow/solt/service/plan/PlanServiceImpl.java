@@ -7,12 +7,14 @@ import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
+import org.backrow.solt.repository.ThemeLogRepository;
 import org.backrow.solt.repository.PlanRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
 import java.util.Optional;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
     private final PlanRepository planRepository;
+    private final ThemeLogRepository themeLogRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -45,14 +48,25 @@ public class PlanServiceImpl implements PlanService {
         return result;
     }
 
+    @Transactional
     @Override
     public long savePlan(PlanInputDTO planInputDTO) {
         Plan plan = convertToEntity(planInputDTO);
         assignPlanToEntities(plan);
         planRepository.save(plan);
+
+        Set<ThemeLog> themeLogs = planInputDTO.getThemes().stream()
+                        .map(themeId -> ThemeLog.builder()
+                                .theme(Theme.builder()
+                                        .themeId(themeId).build())
+                                .plan(plan).build())
+                        .collect(Collectors.toSet());
+        themeLogRepository.saveAll(themeLogs);
+
         return plan.getPlanId();
     }
 
+    @Transactional
     @Override
     public boolean modifyPlan(long id, PlanInputDTO planInputDTO) {
         Optional<Plan> findPlan = planRepository.findById(id);
@@ -60,7 +74,6 @@ public class PlanServiceImpl implements PlanService {
 
         Set<Place> places = mapToEntitySet(planInputDTO.getPlaces(), Place.class);
         Set<Route> routes = mapToEntitySet(planInputDTO.getRoutes(), Route.class);
-//        Set<Theme> themes = mapToEntitySet(planInputDTO.getThemes(), Theme.class);
 
         plan.modify(planInputDTO.getTitle(), places, routes);
         planRepository.save(plan);

@@ -7,6 +7,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ThemeDTO {
-    private String id;
-    private String category;
+    private Long themeId;
+    private String name;
 }

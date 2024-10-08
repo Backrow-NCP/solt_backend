@@ -39,7 +39,11 @@ public class Plan {
             orphanRemoval = true)
     private Set<Route> routes = new HashSet<>();
 
-//    private Set<Theme> themes = new HashSet<>(); // Plan 수정을 위해 생성 시 적용한 테마가 저장되어야 함.
+    @OneToMany(mappedBy = "plan",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<ThemeLog> themes = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
