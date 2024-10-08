@@ -8,6 +8,8 @@ import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
 import org.backrow.solt.repository.PlanRepository;
+import org.backrow.solt.service.ai.MapAPIService;
+import org.backrow.solt.service.ai.PlanAiService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -22,8 +24,12 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class PlanServiceImpl implements PlanService {
+
     private final PlanRepository planRepository;
     private final ModelMapper modelMapper;
+
+    private final PlanAiService planAiService;
+    private final MapAPIService googleMapService;
 
     @Override
     public PageResponseDTO<PlanViewDTO> getPlanList(long id, PageRequestDTO pageRequestDTO) { // List 조회 시에는 Plan의 세부 내용은 필요 없지 않을까..?
