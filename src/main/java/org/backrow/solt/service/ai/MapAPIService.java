@@ -19,7 +19,7 @@ public class MapAPIService {
     }
 
     public Integer getTravelTime(String origin, String destination) {
-        String googleMapsApiUrl = "https://maps.googleapis.com/maps/api/distancematrix/json";
+        String googleMapsApiUrl = "Input Google Map API Key";
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromHttpUrl(googleMapsApiUrl)
                 .queryParam("origins", origin)
                 .queryParam("destinations", destination)
@@ -29,13 +29,16 @@ public class MapAPIService {
 
         if (response.getStatusCode() == HttpStatus.OK) {
             Map<String, Object> body = response.getBody();
-            // 이동 시간 추출 (예: "duration" 값 사용)
+
+            // 이동 시간 추출
             List<Map<String, Object>> rows = (List<Map<String, Object>>) body.get("rows");
             List<Map<String, Object>> elements = (List<Map<String, Object>>) rows.get(0).get("elements");
             Map<String, Object> duration = (Map<String, Object>) elements.get(0).get("duration");
-            return (Integer) duration.get("value"); // 시간(초) 반환
+            Integer totalSeconds = (Integer) duration.get("value"); // 초 단위의 시간 반환
+
+            return totalSeconds / 60; // 분 단위로 반환
         }
 
-        throw new RuntimeException("Google Maps API로부터 시간 정보를 받아오는데 실패하였습니다.");
+        throw new RuntimeException("Failed to fetch travel time from Google Maps API");
     }
 }
