@@ -53,11 +53,11 @@ public class LoginServiceImpl implements LoginService {
 
     // Security와는 별도로 돌아가는 인증
     @Override
-    public int login(LoginDTO loginDTO) {
+    public long login(LoginDTO loginDTO) {
         String checkEmail = loginRepository.checkEmail(loginDTO.getEmail());
         String checkPW = loginDTO.getPassword();
         if(checkPassword(checkEmail, checkPW)) {
-            return (int) loginRepository.findIdByEmail(loginDTO.getEmail());
+            return (long) loginRepository.findIdByEmail(loginDTO.getEmail());
         }
         throw new RuntimeException("No Password found for email: " + loginDTO.getEmail());
     }
@@ -122,5 +122,10 @@ public class LoginServiceImpl implements LoginService {
     public void saveRefreshToken(String email, String refreshToken) {
         long expiration = EXPIRATION_TIME*10;
         tokenService.saveRefreshToken(email, refreshToken, expiration);
+    }
+
+    @Override
+    public long getMemberId(String email) {
+        return (long) loginRepository.findIdByEmail(email);
     }
 }

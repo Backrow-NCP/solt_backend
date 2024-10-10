@@ -26,7 +26,6 @@ import java.io.IOException;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final LoginService loginService;
-    private final UserDetailedServiceImpl userDetailedServiceImpl;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -34,9 +33,12 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if(jwt != null) {
             try{
             String email = loginService.getAuthUser(request);
+            long memberId = loginService.getMemberId(email);
 
-//            UserDetails 를 저장하는방식
-            CustomUserDetails userDetails = (CustomUserDetails) userDetailedServiceImpl.loadUserByUsername(email);
+            CustomUserDetails userDetails = new CustomUserDetails.CustomUserDetailsBuilder()
+                        .memberId(memberId)
+                        .build();
+
             Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(auth);
 
