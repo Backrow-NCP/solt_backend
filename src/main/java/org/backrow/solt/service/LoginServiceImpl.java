@@ -95,7 +95,6 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public String getAuthUser(HttpServletRequest request) {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("LOGINSERVICE getAuthUser : "+token);
         if(token != null){
             try{
             String user = Jwts.parserBuilder()
