@@ -67,7 +67,7 @@ public class Plan {
     @Column(name = "moddate")
     private LocalDateTime modDate;
 
-    public void modify(String title, Set<Place> places, Set<Route> routes) {
+    public void modify(String title, Set<Place> places, Set<Route> routes, LocalDate startDate, LocalDate endDate) {
         if (title != null) this.title = title;
 
         if (places != null && !places.isEmpty()) {
@@ -91,5 +91,9 @@ public class Plan {
                 }
             }
         }
+
+        if (startDate != null) this.startDate = startDate;
+
+        if (endDate != null) this.endDate = endDate;
     }
 }

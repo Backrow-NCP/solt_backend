@@ -1,6 +1,7 @@
-package org.backrow.solt.domain;
+package org.backrow.solt.domain.board;
 
 import lombok.*;
+import org.backrow.solt.domain.Member;
 import org.hibernate.annotations.BatchSize;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -34,7 +35,9 @@ public class Board {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-//    private BoardPlan boardPlan; 플랜에 저장된 날짜보다 현재 일자가 나중이어야 함
+    @OneToOne(fetch = FetchType.LAZY,
+            cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    private BoardPlan boardPlan;
 
     @OneToMany(mappedBy = "board",
             fetch = FetchType.LAZY,

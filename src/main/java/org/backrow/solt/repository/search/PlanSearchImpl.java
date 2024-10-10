@@ -46,14 +46,15 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
             planQuery.where(QPlan.plan.title.containsIgnoreCase(keyword));
         }
 
+        long totalCount = planQuery.fetchCount();
         Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, planQuery);
+
         List<Plan> planEntities = planQuery.fetch();
         List<PlanViewDTO> planViewDTOS = planEntities.stream()
                 .map(this::createPlanViewDTO)
                 .collect(Collectors.toList());
-        long listCount = planViewDTOS.size();
 
-        return new PageImpl<>(planViewDTOS, pageable, listCount);
+        return new PageImpl<>(planViewDTOS, pageable, totalCount);
     }
 
     @Override

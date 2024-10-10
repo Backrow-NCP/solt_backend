@@ -1,8 +1,8 @@
 package org.backrow.solt.service;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Board;
-import org.backrow.solt.domain.LikeLog;
+import org.backrow.solt.domain.board.Board;
+import org.backrow.solt.domain.board.LikeLog;
 import org.backrow.solt.domain.Member;
 import org.backrow.solt.dto.like.LikeDTO;
 import org.backrow.solt.repository.LikeLogRepository;

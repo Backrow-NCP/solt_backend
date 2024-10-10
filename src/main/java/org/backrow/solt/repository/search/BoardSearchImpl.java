@@ -1,12 +1,19 @@
 package org.backrow.solt.repository.search;
 
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
-import org.backrow.solt.domain.*;
+import org.backrow.solt.domain.QMember;
+import org.backrow.solt.domain.board.*;
+import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.board.BoardImageDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.dto.member.MemberInfoDTO;
+import org.backrow.solt.dto.plan.PlaceDTO;
+import org.backrow.solt.dto.plan.PlanViewDTO;
+import org.backrow.solt.dto.plan.RouteDTO;
+import org.backrow.solt.dto.plan.ThemeDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -23,14 +30,20 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         super(Board.class);
     }
 
+    private final QBoard board = QBoard.board;
+    private final QLikeLog likeLog = QLikeLog.likeLog;
+    private final QMember member = QMember.member;
+    private final QBoardImage boardImage = QBoardImage.boardImage;
+    private final QBoardPlan boardPlan = QBoardPlan.boardPlan;
+    private final QBoardPlace boardPlace = QBoardPlace.boardPlace;
+    private final QBoardRoute boardRoute = QBoardRoute.boardRoute;
+    private final QPlan plan = QPlan.plan;
+    private final QThemeLog themeLog = QThemeLog.themeLog;
+    private final QTheme theme = QTheme.theme;
+
     @Override
     @Transactional
     public Page<BoardViewDTO> searchBoardView(String[] types, String keyword, Pageable pageable) {
-        QBoard board = QBoard.board;
-        QLikeLog likeLog = QLikeLog.likeLog;
-        QMember member = QMember.member;
-        QBoardImage boardImage = QBoardImage.boardImage;
-
         JPQLQuery<Board> boardQuery = from(board)
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
@@ -39,41 +52,27 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .groupBy(board);
 
         if (types != null) {
+            BooleanBuilder builder = new BooleanBuilder();
             for (String type : types) {
-                BooleanBuilder builder = new BooleanBuilder();
-                switch (type) {
-                    case "t":
-                        builder.or(titleContain(keyword));
-                        break;
-                    case "c":
-                        builder.or(contentContain(keyword));
-                        break;
-                    case "w":
-                        builder.or(writerContain(keyword));
-                        break;
-                }
-                boardQuery.where(builder);
+                builder.or(containsKeyword(type, keyword));
             }
+            boardQuery.where(builder);
         }
 
+        long totalCount = boardQuery.fetchCount();
         Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
+
         List<Board> boardEntities = boardQuery.fetch();
         List<BoardViewDTO> boardViewDTOS = boardEntities.stream()
                 .map(this::createBoardViewDTO)
                 .collect(Collectors.toList());
-        long listCount = boardViewDTOS.size();
 
-        return new PageImpl<>(boardViewDTOS, pageable, listCount);
+        return new PageImpl<>(boardViewDTOS, pageable, totalCount);
     }
 
     @Override
     @Transactional
     public BoardViewDTO searchBoardView(Long boardId) {
-        QBoard board = QBoard.board;
-        QLikeLog likeLog = QLikeLog.likeLog;
-        QMember member = QMember.member;
-        QBoardImage boardImage = QBoardImage.boardImage;
-
         JPQLQuery<Board> boardQuery = from(board)
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.boardImages, boardImage).fetchJoin()
@@ -86,16 +85,55 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return createBoardViewDTO(boardEntity);
     }
 
-    private BooleanExpression titleContain(String keyword) {
-        return keyword != null ? QBoard.board.title.containsIgnoreCase(keyword) : null;
+    @Transactional
+    @Override
+    public BoardViewDTO searchBoardViewWithBoardPlan(Long boardId) {
+        JPQLQuery<Tuple> boardQuery = from(board)
+                .leftJoin(board.member, member).fetchJoin()
+                .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
+                .leftJoin(board.boardPlan, boardPlan).fetchJoin()
+                .leftJoin(boardPlan.places, boardPlace).fetchJoin()
+                .leftJoin(boardPlan.routes, boardRoute).fetchJoin()
+                .leftJoin(boardPlan.originPlan, plan).fetchJoin()
+                .leftJoin(plan.themes, themeLog).fetchJoin()
+                .leftJoin(themeLog.theme, theme).fetchJoin()
+                .where(board.boardId.eq(boardId))
+                .distinct()
+                .select(board, member, boardImage, likeLog, boardPlan, boardPlace, boardRoute, plan, themeLog, theme);
+
+        List<Tuple> results = boardQuery.fetch();
+
+        if (results.isEmpty()) return null;
+
+        Tuple result = results.get(0);
+        Board boardEntity = result.get(board);
+
+        Set<ThemeDTO> themeDTOS = boardEntity.getBoardPlan().getOriginPlan().getThemes().stream()
+                .map(ThemeLog::getTheme)
+                .filter(Objects::nonNull)
+                .map(themeEntity -> ThemeDTO.builder()
+                        .themeId(themeEntity.getThemeId())
+                        .name(themeEntity.getName())
+                        .build())
+                .collect(Collectors.toSet());
+
+        BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
+        PlanViewDTO planViewDTO = createPlanViewDTO(boardEntity.getBoardPlan(), themeDTOS);
+        boardViewDTO.setPlan(planViewDTO);
+
+        return boardViewDTO;
     }
 
-    private BooleanExpression contentContain(String keyword) {
-        return keyword != null ? QBoard.board.content.containsIgnoreCase(keyword) : null;
-    }
 
-    private BooleanExpression writerContain(String keyword) {
-        return keyword != null ? QBoard.board.member.name.containsIgnoreCase(keyword) : null;
+    private BooleanExpression containsKeyword(String type, String keyword) {
+        if (keyword == null) return null;
+        switch (type) {
+            case "t": return board.title.containsIgnoreCase(keyword);
+            case "c": return board.content.containsIgnoreCase(keyword);
+            case "w": return board.member.name.containsIgnoreCase(keyword);
+            default: return null;
+        }
     }
 
     private BoardViewDTO createBoardViewDTO(Board board) {
@@ -123,6 +161,43 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .likeCount(likeCount)
                 .regDate(board.getRegDate())
                 .modDate(board.getModDate())
+                .build();
+    }
+
+    private PlanViewDTO createPlanViewDTO(BoardPlan plan, Set<ThemeDTO> themeDTOS) {
+        if (plan == null) return null;
+
+        Set<PlaceDTO> placeDTOS = plan.getPlaces().stream()
+                .map(placeEntity -> PlaceDTO.builder()
+                        .placeId(placeEntity.getPlaceId())
+                        .placeName(placeEntity.getPlaceName())
+                        .addr(placeEntity.getAddr())
+                        .price(placeEntity.getPrice())
+                        .startTime(placeEntity.getStartTime())
+                        .endTime(placeEntity.getEndTime())
+                        .build())
+                .collect(Collectors.toSet());
+        Set<RouteDTO> routeDTOS = plan.getRoutes().stream()
+                .map(routeEntity -> RouteDTO.builder()
+                        .routeId(routeEntity.getRouteId())
+                        .startTime(routeEntity.getStartTime())
+                        .endTime(routeEntity.getEndTime())
+                        .price(routeEntity.getPrice())
+                        .transportationId(routeEntity.getTransportationType().getId())
+                        .distance(routeEntity.getDistance())
+                        .travelTime(routeEntity.getTravelTime())
+                        .build())
+                .collect(Collectors.toSet());
+
+        return PlanViewDTO.builder()
+                .planId(plan.getPlanId())
+                .title(plan.getTitle())
+                .places(placeDTOS)
+                .routes(routeDTOS)
+                .themes(themeDTOS)
+                .location(plan.getLocation())
+                .startDate(plan.getStartDate())
+                .endDate(plan.getEndDate())
                 .build();
     }
 }

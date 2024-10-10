@@ -1,6 +1,6 @@
 package org.backrow.solt.repository;
 
-import org.backrow.solt.domain.Board;
+import org.backrow.solt.domain.board.Board;
 import org.backrow.solt.repository.search.BoardSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

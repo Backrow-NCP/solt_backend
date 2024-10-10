@@ -78,7 +78,12 @@ public class PlanServiceImpl implements PlanService {
         Set<Place> places = mapToEntitySet(planInputDTO.getPlaces(), Place.class);
         Set<Route> routes = mapToEntitySet(planInputDTO.getRoutes(), Route.class);
 
-        plan.modify(planInputDTO.getTitle(), places, routes);
+        plan.modify(
+                planInputDTO.getTitle(),
+                places,
+                routes,
+                planInputDTO.getStartDate(),
+                planInputDTO.getEndDate());
         planRepository.save(plan);
         return true;
     }
