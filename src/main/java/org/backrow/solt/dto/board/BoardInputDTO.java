@@ -1,7 +1,6 @@
 package org.backrow.solt.dto.board;
 
 import lombok.Data;
-import org.backrow.solt.dto.plan.PlanInputDTO;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;

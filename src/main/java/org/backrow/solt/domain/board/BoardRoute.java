@@ -1,7 +1,6 @@
 package org.backrow.solt.domain.board;
 
 import lombok.*;
-import org.backrow.solt.domain.plan.Plan;
 import org.backrow.solt.domain.plan.TransportationType;
 
 import javax.persistence.*;

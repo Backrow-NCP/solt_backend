@@ -1,7 +1,6 @@
 package org.backrow.solt.domain.board;
 
 import lombok.*;
-import org.backrow.solt.domain.plan.Plan;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
