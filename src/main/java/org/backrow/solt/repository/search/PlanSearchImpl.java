@@ -122,6 +122,9 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                 .places(placeDTOS)
                 .routes(routeDTOS)
                 .themes(themeDTOS)
+                .location(plan.getLocation())
+                .startDate(plan.getStartDate())
+                .endDate(plan.getEndDate())
                 .regDate(plan.getRegDate())
                 .modDate(plan.getModDate())
                 .build();

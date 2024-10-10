@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -48,6 +49,15 @@ public class Plan {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @Column(nullable = false)
+    private String location;
+
+    @Column(nullable = false)
+    private LocalDate startDate;
+
+    @Column(nullable = false)
+    private LocalDate endDate;
 
     @CreatedDate
     @Column(name = "regdate", updatable = false)
