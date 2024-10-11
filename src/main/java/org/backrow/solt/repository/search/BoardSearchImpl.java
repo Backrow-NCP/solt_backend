@@ -95,8 +95,9 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(plan.themes, themeLog).fetchJoin()
                 .leftJoin(themeLog.theme, theme).fetchJoin()
                 .where(boardImage.isNull().or(boardImage.ord.eq(1)))
-                .distinct()
-                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
+                .groupBy(board.boardId)
+                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
+                .orderBy(board.regDate.desc());
 
         if (types != null) {
             BooleanBuilder builder = new BooleanBuilder();
@@ -110,31 +111,30 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
 
         List<Tuple> results = boardQuery.fetch();
-        List<Board> boardEntities = results.stream()
-                .map(tuple -> tuple.get(board))
-                .collect(Collectors.toList());
 
-        List<BoardViewDTO> boardViewDTOS = boardEntities.stream()
-                .map(boardEntity -> {
+        List<BoardViewDTO> boardViewDTOS = results.stream()
+                .map(tuple -> {
+                    Board boardEntity = tuple.get(board);
                     BoardPlan boardPlan = boardEntity.getBoardPlan();
 
                     Set<ThemeDTO> themeDTOS = createThemeDTOS(boardEntity);
                     BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
-                    PlanViewDTO planViewDTO = PlanViewDTO.builder()
-                                    .planId(boardPlan.getPlanId())
-                                    .title(boardPlan.getTitle())
-                                    .themes(themeDTOS)
-                                    .location(boardPlan.getLocation())
-                                    .startDate(boardPlan.getStartDate())
-                                    .endDate(boardPlan.getEndDate())
-                                    .build();
-
+                    PlanViewDTO planViewDTO = null;
+                    if (boardPlan != null) {
+                        planViewDTO = PlanViewDTO.builder()
+                                .planId(boardPlan.getPlanId())
+                                .title(boardPlan.getTitle())
+                                .themes(themeDTOS)
+                                .location(boardPlan.getLocation())
+                                .startDate(boardPlan.getStartDate())
+                                .endDate(boardPlan.getEndDate())
+                                .build();
+                    }
                     boardViewDTO.setPlan(planViewDTO);
                     return boardViewDTO;
                 })
                 .collect(Collectors.toList());
 
-        System.out.println(boardViewDTOS);
         return new PageImpl<>(boardViewDTOS, pageable, totalCount);
     }
 
