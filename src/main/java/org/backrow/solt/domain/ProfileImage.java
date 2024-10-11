@@ -16,8 +16,6 @@ public class ProfileImage {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int imageId;
 
-    private String uuid;
-
     private String fileName;
 
     @OneToOne(mappedBy = "profileImage")
