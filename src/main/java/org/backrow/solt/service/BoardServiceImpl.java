@@ -37,7 +37,7 @@ public class BoardServiceImpl implements BoardService {
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable();
 
-        Page<BoardViewDTO> boardPage = boardRepository.searchBoardView(types, keyword, pageable);
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewWithBoardPlan(types, keyword, pageable);
 
         return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
     }

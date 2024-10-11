@@ -20,9 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardSearch {
@@ -85,6 +83,61 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return createBoardViewDTO(boardEntity);
     }
 
+    @Override
+    @Transactional
+    public Page<BoardViewDTO> searchBoardViewWithBoardPlan(String[] types, String keyword, Pageable pageable) {
+        JPQLQuery<Tuple> boardQuery = from(board)
+                .leftJoin(board.member, member).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
+                .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .leftJoin(board.boardPlan, boardPlan).fetchJoin()
+                .leftJoin(boardPlan.originPlan, plan).fetchJoin()
+                .leftJoin(plan.themes, themeLog).fetchJoin()
+                .leftJoin(themeLog.theme, theme).fetchJoin()
+                .where(boardImage.isNull().or(boardImage.ord.eq(1)))
+                .distinct()
+                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
+
+        if (types != null) {
+            BooleanBuilder builder = new BooleanBuilder();
+            for (String type : types) {
+                builder.or(containsKeyword(type, keyword));
+            }
+            boardQuery.where(builder);
+        }
+
+        long totalCount = boardQuery.fetchCount();
+        Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
+
+        List<Tuple> results = boardQuery.fetch();
+        List<Board> boardEntities = results.stream()
+                .map(tuple -> tuple.get(board))
+                .collect(Collectors.toList());
+
+        List<BoardViewDTO> boardViewDTOS = boardEntities.stream()
+                .map(boardEntity -> {
+                    BoardPlan boardPlan = boardEntity.getBoardPlan();
+
+                    Set<ThemeDTO> themeDTOS = createThemeDTOS(boardEntity);
+                    BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
+                    PlanViewDTO planViewDTO = PlanViewDTO.builder()
+                                    .planId(boardPlan.getPlanId())
+                                    .title(boardPlan.getTitle())
+                                    .themes(themeDTOS)
+                                    .location(boardPlan.getLocation())
+                                    .startDate(boardPlan.getStartDate())
+                                    .endDate(boardPlan.getEndDate())
+                                    .build();
+
+                    boardViewDTO.setPlan(planViewDTO);
+                    return boardViewDTO;
+                })
+                .collect(Collectors.toList());
+
+        System.out.println(boardViewDTOS);
+        return new PageImpl<>(boardViewDTOS, pageable, totalCount);
+    }
+
     @Transactional
     @Override
     public BoardViewDTO searchBoardViewWithBoardPlan(Long boardId) {
@@ -109,14 +162,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         Tuple result = results.get(0);
         Board boardEntity = result.get(board);
 
-        Set<ThemeDTO> themeDTOS = boardEntity.getBoardPlan().getOriginPlan().getThemes().stream()
-                .map(ThemeLog::getTheme)
-                .filter(Objects::nonNull)
-                .map(themeEntity -> ThemeDTO.builder()
-                        .themeId(themeEntity.getThemeId())
-                        .name(themeEntity.getName())
-                        .build())
-                .collect(Collectors.toSet());
+        Set<ThemeDTO> themeDTOS = createThemeDTOS(boardEntity);
 
         BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
         PlanViewDTO planViewDTO = createPlanViewDTO(boardEntity.getBoardPlan(), themeDTOS);
@@ -134,6 +180,21 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             case "w": return board.member.name.containsIgnoreCase(keyword);
             default: return null;
         }
+    }
+
+    private Set<ThemeDTO> createThemeDTOS(Board boardEntity) {
+        return Optional.ofNullable(boardEntity.getBoardPlan())
+                .map(BoardPlan::getOriginPlan)
+                .map(Plan::getThemes)
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(ThemeLog::getTheme)
+                .filter(Objects::nonNull)
+                .map(themeEntity -> ThemeDTO.builder()
+                        .themeId(themeEntity.getThemeId())
+                        .name(themeEntity.getName())
+                        .build())
+                .collect(Collectors.toSet());
     }
 
     private BoardViewDTO createBoardViewDTO(Board board) {
