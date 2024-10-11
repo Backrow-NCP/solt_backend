@@ -107,7 +107,6 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .build();
         Set<BoardImageDTO> boardImageDTOS = board.getBoardImages().stream()
                 .map(boardImageEntity -> BoardImageDTO.builder()
-                        .uuid(boardImageEntity.getUuid())
                         .fileName(boardImageEntity.getFileName())
                         .ord(boardImageEntity.getOrd())
                         .build())

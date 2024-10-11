@@ -45,8 +45,7 @@ public class MemberServiceImpl implements MemberService {
     public void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO) {
         Optional<Member> result = memberRepository.findById(memberId);
         Member member = result.orElseThrow();
-
-        member.addImage(uploadResultDTO.getUuid(), uploadResultDTO.getFileName());
+        member.addImage(uploadResultDTO.getFileName());
         memberRepository.save(member);
     }
 

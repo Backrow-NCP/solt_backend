@@ -11,9 +11,8 @@ import javax.persistence.*;
 @Setter
 @ToString(exclude = "board")
 public class BoardImage {
-    @Id
-    private String uuid;
 
+    @Id
     @Column(nullable = false)
     private String fileName;
 

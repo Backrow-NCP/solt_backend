@@ -9,6 +9,7 @@ import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.service.BoardService;
+import org.backrow.solt.service.FileStorageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
