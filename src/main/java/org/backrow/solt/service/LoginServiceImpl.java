@@ -24,14 +24,13 @@ import java.util.UUID;
 public class LoginServiceImpl implements LoginService {
 
     // 1000ms 단위라서 *1000해줘야 한다
-    static final long EXPIRATION_TIME = 60*60*24*1000;
+    static final long EXPIRATION_TIME = 60*60*24*100;
     static final String PREFIX = "Bearer ";
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
     private final LoginRepository loginRepository;
     private final TokenService tokenService;
 
-    //
     @Override
     public Boolean checkExist(String value, String type) {
         switch (type) {

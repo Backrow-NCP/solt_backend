@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.net.http.HttpTimeoutException;
 
 @Component
 @RequiredArgsConstructor
@@ -24,34 +25,21 @@ import java.io.IOException;
 public class AuthenticationFilter extends OncePerRequestFilter {
 
     private final LoginService loginService;
-    private final TokenService tokenService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-        log.info("JWT: " + jwt);
         if(jwt != null) {
             try{
             String email = loginService.getAuthUser(request);
-            log.info("FILTER : " +email);
             Authentication auth =
                     new UsernamePasswordAuthenticationToken(email,
                             null, java.util.Collections.emptyList());
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (ExpiredJwtException e){
-            String refreshToken = request.getParameter("refreshToken");
-            if(refreshToken != null) {
-                String email = loginService.getAuthUser(request);
-            if(tokenService.validateRefreshToken(email, refreshToken)) {
-                String newAccessToken = loginService.getToken(email);
-                response.setHeader("Authorization", "Bearer " + newAccessToken);
-                Authentication auth =  new UsernamePasswordAuthenticationToken(email,
-                        null, java.util.Collections.emptyList());
-                SecurityContextHolder.getContext().setAuthentication(auth);
+                response.setHeader(HttpHeaders.EXPIRES,"AccessToken");
+                }
             }
-            }
-            }
-        }
         filterChain.doFilter(request, response);
     }
 }
