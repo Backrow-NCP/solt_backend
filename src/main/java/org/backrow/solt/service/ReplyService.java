@@ -8,6 +8,6 @@ import org.backrow.solt.dto.reply.ReplyInputDTO;
 public interface ReplyService {
     PageResponseDTO<ReplyDTO> getRepliesByBoardId(Long id, PageRequestDTO pageRequestDTO);
     long saveReply(ReplyInputDTO replyInputDTO);
-    boolean modifyReply(Long id, ReplyInputDTO replyInputDTO);
-    boolean deleteReply(Long id);
+    boolean modifyReply(Long boardId, ReplyInputDTO replyInputDTO, Long memberId);
+    boolean deleteReply(Long boardId, Long memberId);
 }
