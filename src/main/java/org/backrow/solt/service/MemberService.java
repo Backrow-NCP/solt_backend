@@ -28,7 +28,7 @@ public interface MemberService {
         if(memberInfoDTO.getFileName() != null){
             String[] arr = memberInfoDTO.getFileName().split("_");
             member.addImage(arr[0],arr[1]);
-            }
+        }
         return member;
     }
 

@@ -16,10 +16,12 @@ import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +45,17 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
+    public PageResponseDTO<BoardViewDTO> getBoardListByMemberId(Long id, PageRequestDTO pageRequestDTO) {
+        String[] types = pageRequestDTO.getTypes();
+        String keyword = pageRequestDTO.getKeyword();
+        Pageable pageable = pageRequestDTO.getPageable();
+
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberIdWithBoardPlan(id, types, keyword, pageable);
+
+        return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
+    }
+
+    @Override
     public BoardViewDTO getBoard(Long id) {
         BoardViewDTO result = boardRepository.searchBoardViewWithBoardPlan(id);
         if (result == null) {
@@ -53,7 +66,9 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public long saveBoard(BoardInputDTO boardInputDTO) {
+    public long saveBoard(BoardInputDTO boardInputDTO, Long memberId) {
+        boardInputDTO.setMemberId(memberId);
+
         Board board = convertToEntity(boardInputDTO);
         setBoardImages(board);
 
@@ -69,9 +84,11 @@ public class BoardServiceImpl implements BoardService {
 
     @Transactional
     @Override
-    public boolean modifyBoard(Long id, BoardModifyDTO boardModifyDTO) {
-        Optional<Board> findBoard = boardRepository.findById(id);
-        Board board = findBoard.orElseThrow(() -> new NotFoundException("Board not found: " + id));
+    public boolean modifyBoard(Long boardId, BoardModifyDTO boardModifyDTO, Long memberId) {
+        Optional<Board> findBoard = boardRepository.findById(boardId);
+        Board board = findBoard.orElseThrow(() -> new NotFoundException("Board not found: " + boardId));
+        if (!Objects.equals(board.getMember().getMemberId(), memberId))
+            throw new AccessDeniedException("You do not have permission to modify this post.");
 
         Set<BoardImageDTO> boardImageDTOS = boardModifyDTO.getBoardImages();
         Set<BoardImage> boardImages = null;
@@ -89,12 +106,12 @@ public class BoardServiceImpl implements BoardService {
     }
 
     @Override
-    public boolean deleteBoard(Long id) {
+    public boolean deleteBoard(Long boardId, Long memberId) {
         try {
-            boardRepository.deleteById(id);
+            boardRepository.deleteByBoardIdAndMember_MemberId(boardId, memberId);
             return true;
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Board not found: " + id);
+            throw new NotFoundException("Board not found or you do not have permission to delete it.");
         }
     }
 

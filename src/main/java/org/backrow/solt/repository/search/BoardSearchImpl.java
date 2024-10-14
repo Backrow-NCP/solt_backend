@@ -138,6 +138,63 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         return new PageImpl<>(boardViewDTOS, pageable, totalCount);
     }
 
+    @Override
+    @Transactional
+    public Page<BoardViewDTO> searchBoardViewByMemberIdWithBoardPlan(Long memberId, String[] types, String keyword, Pageable pageable) {
+        JPQLQuery<Tuple> boardQuery = from(board)
+                .leftJoin(board.member, member).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
+                .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .leftJoin(board.boardPlan, boardPlan).fetchJoin()
+                .leftJoin(boardPlan.originPlan, plan).fetchJoin()
+                .leftJoin(plan.themes, themeLog).fetchJoin()
+                .leftJoin(themeLog.theme, theme).fetchJoin()
+                .where((boardImage.isNull()
+                        .or(boardImage.ord.eq(1)))
+                        .and(member.memberId.eq(memberId)))
+                .groupBy(board.boardId)
+                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
+                .orderBy(board.regDate.desc());
+
+        if (types != null) {
+            BooleanBuilder builder = new BooleanBuilder();
+            for (String type : types) {
+                builder.or(containsKeyword(type, keyword));
+            }
+            boardQuery.where(builder);
+        }
+
+        long totalCount = boardQuery.fetchCount();
+        Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, boardQuery);
+
+        List<Tuple> results = boardQuery.fetch();
+
+        List<BoardViewDTO> boardViewDTOS = results.stream()
+                .map(tuple -> {
+                    Board boardEntity = tuple.get(board);
+                    BoardPlan boardPlan = boardEntity.getBoardPlan();
+
+                    Set<ThemeDTO> themeDTOS = createThemeDTOS(boardEntity);
+                    BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
+                    PlanViewDTO planViewDTO = null;
+                    if (boardPlan != null) {
+                        planViewDTO = PlanViewDTO.builder()
+                                .planId(boardPlan.getPlanId())
+                                .title(boardPlan.getTitle())
+                                .themes(themeDTOS)
+                                .location(boardPlan.getLocation())
+                                .startDate(boardPlan.getStartDate())
+                                .endDate(boardPlan.getEndDate())
+                                .build();
+                    }
+                    boardViewDTO.setPlan(planViewDTO);
+                    return boardViewDTO;
+                })
+                .collect(Collectors.toList());
+
+        return new PageImpl<>(boardViewDTOS, pageable, totalCount);
+    }
+
     @Transactional
     @Override
     public BoardViewDTO searchBoardViewWithBoardPlan(Long boardId) {

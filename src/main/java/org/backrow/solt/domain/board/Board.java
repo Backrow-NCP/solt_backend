@@ -44,12 +44,14 @@ public class Board {
             cascade = CascadeType.ALL,
             orphanRemoval = true) // boardImage를 지울 때, 파일이 삭제되도록 처리해야 함.
     @BatchSize(size = 10)
+    @Builder.Default
     private Set<BoardImage> boardImages = new HashSet<>();
 
     @OneToMany(mappedBy = "board",
             fetch = FetchType.LAZY,
             cascade = CascadeType.REMOVE,
             orphanRemoval = true)
+    @Builder.Default
     private Set<LikeLog> likeLog = new HashSet<>();
 
     @OneToMany(mappedBy = "board",
