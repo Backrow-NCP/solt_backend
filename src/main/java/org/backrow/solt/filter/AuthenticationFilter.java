@@ -30,26 +30,26 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(jwt != null) {
             try{
-            String email = loginService.getAuthUser(request);
-            long memberId = loginService.getMemberId(email);
+                String email = loginService.getAuthUser(request);
+                long memberId = loginService.getMemberId(email);
 
-            CustomUserDetails userDetails = new CustomUserDetails.CustomUserDetailsBuilder()
-                        .memberId(memberId)
-                        .build();
+                CustomUserDetails userDetails = new CustomUserDetails.CustomUserDetailsBuilder()
+                            .memberId(memberId)
+                            .build();
 
-            Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(auth);
+                Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(auth);
 
-//            기존의 이메일만 저장하는 방식
-//            Authentication auth =
-//                    new UsernamePasswordAuthenticationToken(email,
-//                            null, java.util.Collections.emptyList());
-//            SecurityContextHolder.getContext().setAuthentication(auth);
+    //            기존의 이메일만 저장하는 방식
+    //            Authentication auth =
+    //                    new UsernamePasswordAuthenticationToken(email,
+    //                            null, java.util.Collections.emptyList());
+    //            SecurityContextHolder.getContext().setAuthentication(auth);
 
-        } catch (ExpiredJwtException e){
+            } catch (ExpiredJwtException e){
                 response.setHeader(HttpHeaders.EXPIRES,"AccessToken");
-                }
             }
+        }
         filterChain.doFilter(request, response);
     }
 }
