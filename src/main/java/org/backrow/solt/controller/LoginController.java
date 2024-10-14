@@ -35,6 +35,7 @@ public class LoginController {
     @Operation(summary="Login POST + Spring Security", description ="POST 로그인 + Spring Security")
     @PostMapping
     public ResponseEntity<?> getToken(@RequestBody LoginDTO loginDTO) {
+        try {
             long memberId = loginService.login(loginDTO);
             UsernamePasswordAuthenticationToken creds =
                     new UsernamePasswordAuthenticationToken(
@@ -55,6 +56,9 @@ public class LoginController {
                     .header(HttpHeaders.AUTHORIZATION, "Bearer " + jwts)
                     .header(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS, "Authorization")
                     .body(responseBody);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
     }
 
     @Operation(summary = "refresh토큰을 받아서 새로운 Access토큰 반환", description = "POST refresh토큰으로 Access토큰 새로 갱신")
