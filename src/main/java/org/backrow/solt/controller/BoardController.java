@@ -12,7 +12,6 @@ import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.BoardService;
-import org.backrow.solt.service.FileStorageService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -54,6 +53,7 @@ public class BoardController {
             @Valid @RequestBody BoardInputDTO boardInputDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        System.out.println(userDetails);
         Long id = boardService.saveBoard(boardInputDTO, userDetails.getMemberId());
         return ResponseEntity.ok(Map.of("id", id));
     }

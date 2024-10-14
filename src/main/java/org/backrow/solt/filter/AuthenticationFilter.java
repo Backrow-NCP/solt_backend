@@ -31,8 +31,9 @@ public class AuthenticationFilter extends OncePerRequestFilter {
         if(jwt != null) {
             try{
                 String email = loginService.getAuthUser(request);
+                log.info(email);
                 long memberId = loginService.getMemberId(email);
-
+                log.info(memberId);
                 CustomUserDetails userDetails = new CustomUserDetails.CustomUserDetailsBuilder()
                             .memberId(memberId)
                             .build();
