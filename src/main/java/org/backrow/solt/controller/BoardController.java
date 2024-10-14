@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.backrow.solt.dto.board.BoardModifyDTO;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.board.BoardInputDTO;
@@ -60,10 +61,10 @@ public class BoardController {
     @PutMapping("/{id}")
     public Map<String, Boolean> modifyBoard(
             @PathVariable Long id,
-            @RequestBody BoardInputDTO boardInputDTO,
+            @RequestBody BoardModifyDTO boardModifyDTO
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return Map.of("isSuccess", boardService.modifyBoard(id, boardInputDTO, userDetails.getMemberId()));
+        return Map.of("isSuccess", boardService.modifyBoard(id, boardModifyDTO));
     }
 
     @Operation(summary = "게시글 삭제", description = "ID를 통해 특정 게시글을 삭제합니다.")

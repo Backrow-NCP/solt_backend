@@ -1,4 +1,4 @@
-package org.backrow.solt.domain;
+package org.backrow.solt.domain.board;
 
 import lombok.Getter;
 import lombok.Setter;

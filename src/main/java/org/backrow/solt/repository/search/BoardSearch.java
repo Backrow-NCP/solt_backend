@@ -8,4 +8,6 @@ public interface BoardSearch {
     Page<BoardViewDTO> searchBoardView(String[] types, String keyword, Pageable pageable);
     Page<BoardViewDTO> searchBoardViewByMemberId(Long memberId, String[] types, String keyword, Pageable pageable);
     BoardViewDTO searchBoardView(Long boardId);
+    Page<BoardViewDTO> searchBoardViewWithBoardPlan(String[] types, String keyword, Pageable pageable);
+    BoardViewDTO searchBoardViewWithBoardPlan(Long boardId);
 }

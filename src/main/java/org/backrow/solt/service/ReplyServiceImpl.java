@@ -1,9 +1,9 @@
 package org.backrow.solt.service;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Board;
+import org.backrow.solt.domain.board.Board;
 import org.backrow.solt.domain.Member;
-import org.backrow.solt.domain.Reply;
+import org.backrow.solt.domain.board.Reply;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.reply.ReplyDTO;

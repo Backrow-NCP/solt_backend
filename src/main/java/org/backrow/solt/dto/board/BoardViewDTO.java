@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.backrow.solt.dto.member.MemberInfoDTO;
+import org.backrow.solt.dto.plan.PlanViewDTO;
 
 import java.time.LocalDateTime;
 import java.util.Set;
@@ -17,8 +18,8 @@ public class BoardViewDTO {
         private Long boardId;
         private String title;
         private String content;
-//        private PlanDTO plan;
         private MemberInfoDTO member;
+        private PlanViewDTO plan;
         private Set<BoardImageDTO> images;
         private Integer likeCount;
         private LocalDateTime regDate;
