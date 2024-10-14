@@ -1,6 +1,7 @@
 package org.backrow.solt.config;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,7 @@ import org.springframework.data.redis.serializer.StringRedisSerializer;
 @RequiredArgsConstructor
 @Configuration
 @EnableRedisRepositories
+@Log4j2
 public class RedisConfig {
 
     private final RedisProperties redisProperties;
@@ -21,6 +23,7 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
+//        return new LettuceConnectionFactory("redisc-pndru.vpc-cdb.ntruss.com",6379);
     }
 
     // serializer 설정으로 redis-cli를 통해 직접 데이터를 조회할 수 있도록 설정

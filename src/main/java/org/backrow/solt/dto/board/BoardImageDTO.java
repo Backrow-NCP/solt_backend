@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BoardImageDTO {
-    private String uuid;
     private String fileName;
     private int ord;
 }
