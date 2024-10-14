@@ -61,10 +61,10 @@ public class BoardController {
     @PutMapping("/{id}")
     public Map<String, Boolean> modifyBoard(
             @PathVariable Long id,
-            @RequestBody BoardModifyDTO boardModifyDTO
+            @RequestBody BoardModifyDTO boardModifyDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return Map.of("isSuccess", boardService.modifyBoard(id, boardModifyDTO));
+        return Map.of("isSuccess", boardService.modifyBoard(id, boardModifyDTO, userDetails.getMemberId()));
     }
 
     @Operation(summary = "게시글 삭제", description = "ID를 통해 특정 게시글을 삭제합니다.")
