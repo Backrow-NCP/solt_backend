@@ -30,7 +30,7 @@ public class MailCheckService{
     public void sendCodeToEmail(String email) {
         String title = "SoLOTrip(SOLT) 이메일 인증 번호";
         String authCode = this.createCode();
-        mailService.sendEmail(email, title, authCode);
+//        mailService.sendEmail(email, title, authCode);
         log.info("SAVE in Redis Server : "+authCode);
         redisService.setValues(AUTH_CODE_PREFIX + email,
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
