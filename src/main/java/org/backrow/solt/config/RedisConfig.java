@@ -22,7 +22,6 @@ public class RedisConfig {
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
-//        return new LettuceConnectionFactory("redisc-pndru.vpc-cdb.ntruss.com",6379);
     }
 
     @Bean
