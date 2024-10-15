@@ -152,8 +152,8 @@ public class BoardServiceImpl implements BoardService {
                         .placeName(place.getPlaceName())
                         .price(place.getPrice())
                         .addr(place.getAddr())
-                        .startTime(place.getStartTime())
-                        .endTime(place.getEndTime())
+//                        .startTime(place.getStartTime())
+//                        .endTime(place.getEndTime())
                         .build())
                 .collect(Collectors.toSet());
         boardPlan.setPlaces(places);

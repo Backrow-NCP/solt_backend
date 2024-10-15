@@ -94,8 +94,8 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                         .placeName(placeEntity.getPlaceName())
                         .addr(placeEntity.getAddr())
                         .price(placeEntity.getPrice())
-                        .startTime(placeEntity.getStartTime())
-                        .endTime(placeEntity.getEndTime())
+//                        .startTime(placeEntity.getStartTime())
+//                        .endTime(placeEntity.getEndTime())
                         .build())
                 .collect(Collectors.toSet());
         Set<RouteDTO> routeDTOS = plan.getRoutes().stream()
