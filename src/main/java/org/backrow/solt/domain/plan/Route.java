@@ -21,11 +21,13 @@ public class Route {
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
+    /*
     @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
     private LocalDateTime endTime;
+     */
 
     @Column(nullable = false)
     @Builder.Default

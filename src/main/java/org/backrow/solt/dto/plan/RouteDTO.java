@@ -10,8 +10,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class RouteDTO {
     private Long routeId;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+//    private LocalDateTime startTime;
+//    private LocalDateTime endTime;
     private Integer price;
     private Integer transportationId;
     private Integer distance;
