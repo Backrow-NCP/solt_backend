@@ -96,7 +96,6 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                         .price(placeEntity.getPrice())
 //                        .startTime(placeEntity.getStartTime())
 //                        .endTime(placeEntity.getEndTime())
-                        .date(placeEntity.getDate())
                         .build())
                 .collect(Collectors.toSet());
         Set<RouteDTO> routeDTOS = plan.getRoutes().stream()
@@ -104,7 +103,6 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                         .routeId(routeEntity.getRouteId())
 //                        .startTime(routeEntity.getStartTime())
 //                        .endTime(routeEntity.getEndTime())
-                        .date(routeEntity.getDate())
                         .price(routeEntity.getPrice())
                         .transportationId(routeEntity.getTransportationType().getId())
                         .distance(routeEntity.getDistance())
