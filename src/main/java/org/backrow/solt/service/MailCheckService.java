@@ -29,9 +29,12 @@ public class MailCheckService{
     private long authCodeExpirationMillis;
 
     public void sendCodeToEmail(String email) {
+        log.info("1111111");
         String title = "SoLOTrip(SOLT) 이메일 인증 번호";
+        log.info("222222");
         String authCode = this.createCode();
-//        mailService.sendEmail(email, title, authCode);
+        log.info("33333333");
+        mailService.sendEmail(email, title, authCode);
         log.info("SAVE in Redis Server : "+authCode);
         redisService.setValues(AUTH_CODE_PREFIX + email,
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
