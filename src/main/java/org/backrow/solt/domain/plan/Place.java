@@ -3,7 +3,9 @@ package org.backrow.solt.domain.plan;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -24,6 +26,9 @@ public class Place {
     @Column(nullable = false)
     private String placeName;
 
+    @Column
+    private String description;
+
     @Column(nullable = false)
     @Builder.Default
     private int price = 0;
@@ -32,7 +37,7 @@ public class Place {
     private String addr;
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     /*
     @Column(nullable = false)

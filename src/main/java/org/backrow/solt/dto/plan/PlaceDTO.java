@@ -2,8 +2,7 @@ package org.backrow.solt.dto.plan;
 
 import lombok.*;
 
-import javax.persistence.Column;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 @Data
 @Builder
@@ -16,6 +15,7 @@ public class PlaceDTO {
     private Integer price;
 //    private LocalDateTime startTime;
 //    private LocalDateTime endTime;
-    private LocalDateTime date;
+    private LocalDate date;
+    private String description;
     private Boolean checker; // AI 판단 여부
 }
