@@ -104,8 +104,6 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                         .routeId(routeEntity.getRouteId())
 //                        .startTime(routeEntity.getStartTime())
 //                        .endTime(routeEntity.getEndTime())
-                        .startPlaceId(routeEntity.getStartPlaceId())
-                        .endPlaceId(routeEntity.getEndPlaceId())
                         .date(routeEntity.getDate())
                         .price(routeEntity.getPrice())
                         .transportationId(routeEntity.getTransportationType().getId())

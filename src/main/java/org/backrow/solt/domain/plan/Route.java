@@ -31,14 +31,6 @@ public class Route {
     private LocalDateTime endTime;
      */
 
-    @OneToOne
-    @JoinColumn(name = "start_place_id_place_id")
-    private Place startPlaceId;
-
-    @OneToOne
-    @JoinColumn(name = "end_place_id_place_id")
-    private Place endPlaceId;
-
     @Column(nullable = false)
     private LocalDate date;
 
