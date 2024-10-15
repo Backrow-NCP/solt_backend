@@ -3,6 +3,7 @@ package org.backrow.solt.dto.plan;
 import lombok.*;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Data
 @Builder
@@ -13,8 +14,8 @@ public class PlaceDTO {
     private String placeName;
     private String addr;
     private Integer price;
-//    private LocalDateTime startTime;
-//    private LocalDateTime endTime;
+    private LocalDateTime startTime;
+    private LocalDateTime endTime;
     private LocalDate date;
     private String description;
     private Boolean checker; // AI 판단 여부

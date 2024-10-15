@@ -37,13 +37,8 @@ public class Place {
     private String addr;
 
     @Column(nullable = false)
-    private LocalDate date;
-
-    /*
-    @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
     private LocalDateTime endTime;
-     */
 }
