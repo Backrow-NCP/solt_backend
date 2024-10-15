@@ -30,6 +30,9 @@ public class Route {
      */
 
     @Column(nullable = false)
+    private LocalDateTime date;
+
+    @Column(nullable = false)
     @Builder.Default
     private int price = 0;
 
