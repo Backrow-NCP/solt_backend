@@ -2,7 +2,9 @@ package org.backrow.solt.dto.plan;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Builder
@@ -12,7 +14,7 @@ public class RouteDTO {
     private Long routeId;
 //    private LocalDateTime startTime;
 //    private LocalDateTime endTime;
-    private LocalDateTime date;
+    private LocalDate date;
     private Integer price;
     private Integer transportationId;
     private Integer distance;

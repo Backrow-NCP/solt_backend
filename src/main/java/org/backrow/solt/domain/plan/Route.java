@@ -3,7 +3,9 @@ package org.backrow.solt.domain.plan;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Entity
 @Getter
@@ -30,7 +32,7 @@ public class Route {
      */
 
     @Column(nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(nullable = false)
     @Builder.Default
