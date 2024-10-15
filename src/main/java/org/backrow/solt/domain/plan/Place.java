@@ -31,9 +31,11 @@ public class Place {
     @Column(nullable = false)
     private String addr;
 
+    /*
     @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
     private LocalDateTime endTime;
+     */
 }

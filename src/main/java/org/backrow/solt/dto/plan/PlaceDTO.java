@@ -13,7 +13,7 @@ public class PlaceDTO {
     private String placeName;
     private String addr;
     private Integer price;
-    private LocalDateTime startTime;
-    private LocalDateTime endTime;
+//    private LocalDateTime startTime;
+//    private LocalDateTime endTime;
     private Boolean checker; // AI 판단 여부
 }
