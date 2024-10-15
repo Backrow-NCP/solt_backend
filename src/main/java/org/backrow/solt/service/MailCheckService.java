@@ -29,31 +29,13 @@ public class MailCheckService{
     private long authCodeExpirationMillis;
 
     public void sendCodeToEmail(String email) {
-        log.info("1111111");
         String title = "SoLOTrip(SOLT) 이메일 인증 번호";
-        log.info("222222");
-//        String authCode = this.createCode();
-        String authCode = "123456";
-                log.info("33333333");
+        int code = 100000 + (int)(Math.random() * 899999);
+        String authCode = String.valueOf(code);
         mailService.sendEmail(email, title, authCode);
         log.info("SAVE in Redis Server : "+authCode);
         redisService.setValues(AUTH_CODE_PREFIX + email,
                 authCode, Duration.ofMillis(this.authCodeExpirationMillis));
-    }
-
-    private String createCode() {
-        int length = 6;
-        try {
-            Random random = SecureRandom.getInstanceStrong();
-            StringBuilder builder = new StringBuilder();
-            for (int i = 0; i < length; i++) {
-                builder.append(random.nextInt(10));
-            }
-            return builder.toString();
-        } catch (NoSuchAlgorithmException e) {
-            log.debug("MemberService.createCode() exception occur");
-            throw new RuntimeException(e);
-        }
     }
 
     public boolean verifiedCode(String email, String authCode) {
