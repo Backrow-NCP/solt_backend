@@ -1,6 +1,7 @@
 package org.backrow.solt.dto.plan;
 
 import lombok.*;
+import org.backrow.solt.domain.plan.Place;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,6 +15,8 @@ public class RouteDTO {
     private Long routeId;
 //    private LocalDateTime startTime;
 //    private LocalDateTime endTime;
+    private Place startPlaceId;
+    private Place endPlaceId;
     private LocalDate date;
     private Integer price;
     private Integer transportationId;
