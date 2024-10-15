@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,18 +19,24 @@ public class RedisConfig {
 //   private final RedisProperties redisProperties;
 
    @Value("${spring.data.redis.host}")
-    private String hostName;
+    private String host;
 
     @Value("${spring.data.redis.port}")
     private int port;
 
     @Bean
-    public LettuceConnectionFactory lettuceConnectionFactory() {
-        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
-        redisStandaloneConfiguration.setHostName(hostName);
-        redisStandaloneConfiguration.setPort(port);
-        return new LettuceConnectionFactory(redisStandaloneConfiguration);
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
+        return new LettuceConnectionFactory(config);
     }
+
+//    @Bean
+//    public LettuceConnectionFactory lettuceConnectionFactory() {
+//        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+//        redisStandaloneConfiguration.setHostName(hostName);
+//        redisStandaloneConfiguration.setPort(port);
+//        return new LettuceConnectionFactory(redisStandaloneConfiguration);
+//    }
 
 //    @Bean
 //    public RedisConnectionFactory redisConnectionFactory() {
@@ -41,7 +48,7 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setKeySerializer(new StringRedisSerializer());
         redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(lettuceConnectionFactory());
+        redisTemplate.setConnectionFactory(redisConnectionFactory());
 
         return redisTemplate;
     }
