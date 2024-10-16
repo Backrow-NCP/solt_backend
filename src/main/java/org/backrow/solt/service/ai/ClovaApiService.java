@@ -1,6 +1,7 @@
 package org.backrow.solt.service.ai;
 
 import org.backrow.solt.domain.plan.api.RoutesResponses;
+import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +42,21 @@ public class ClovaApiService {
         }else{
             throw new RuntimeException("Error getting response from Clova API: " + response.getStatusCode().toString());
         }
+    }
 
+    public String createClovaRequestBody(PlanInputDTO planInputDTO){
+        // json 형식의 요청 파일 생성
+        StringBuilder requestBody = new StringBuilder();
+        requestBody.append("{");
+        requestBody.append("\"title\":\"").append(planInputDTO.getTitle()).append("\",");
+        requestBody.append("\"location\":\"").append(planInputDTO.getLocation()).append("\",");
+        requestBody.append("\"startDate\":\"").append(planInputDTO.getStartDate()).append("\",");
+        requestBody.append("\"endDate\":\"").append(planInputDTO.getEndDate()).append("\",");
+        requestBody.append("\"themes\":").append(planInputDTO.getThemes()).append(",");
+        requestBody.append("\"memberId\":").append(planInputDTO.getMemberId());
+        requestBody.append("}");
+
+        return requestBody.toString();
     }
 
 }
