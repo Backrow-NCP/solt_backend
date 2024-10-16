@@ -51,7 +51,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-//                .antMatchers("/", "/login","/login/token","/board/list","/swagger-ui/**","/swagger-ui/index.html#").permitAll()
+//                .antMatchers("/", "/login","/login/token","/board/list","/swagger-ui/index.html#","loadbalancer").permitAll()
                 .anyRequest().permitAll();
 //         테스트용 모든 요청 허가
 //                .anyRequest().authenticated().and()

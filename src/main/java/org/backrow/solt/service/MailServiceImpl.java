@@ -24,7 +24,6 @@ public class MailServiceImpl implements MailService {
         }
     }
 
-    // 발신할 이메일 데이터 세팅
     public SimpleMailMessage createEmailForm(String toEmail, String title, String text) {
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(toEmail);

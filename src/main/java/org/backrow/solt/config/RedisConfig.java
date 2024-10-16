@@ -1,37 +1,60 @@
 package org.backrow.solt.config;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.log4j.Log4j2;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.repository.configuration.EnableRedisRepositories;
-import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @RequiredArgsConstructor
 @Configuration
 @EnableRedisRepositories
-@Log4j2
 public class RedisConfig {
 
-    private final RedisProperties redisProperties;
+   @Value("${spring.redis.host}")
+    private String host = "211.188.49.197";
 
-    @Bean
-    public RedisConnectionFactory redisConnectionFactory() {
-        return new LettuceConnectionFactory(redisProperties.getHost(), redisProperties.getPort());
-//        return new LettuceConnectionFactory("redisc-pndru.vpc-cdb.ntruss.com",6379);
+    @Value("${spring.redis.port}")
+    private int port = 6379;
+
+    @Value("${spring.redis.password}")
+    private String password = "solt123";
+
+    public LettuceConnectionFactory lettuceConnectionFactory() {
+        RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
+        redisStandaloneConfiguration.setHostName(host);
+        redisStandaloneConfiguration.setPort(port);
+        redisStandaloneConfiguration.setPassword(password);
+        return new LettuceConnectionFactory(redisStandaloneConfiguration);
     }
 
-    @Bean
-    public RedisTemplate<String, Object> redisTemplate() {
-        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
-        redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new StringRedisSerializer());
-        redisTemplate.setConnectionFactory(redisConnectionFactory());
+//    @Bean
+//    public RedisConnectionFactory redisConnectionFactory() {
+//        LettuceConnectionFactory lettuceConnectionFactory = new LettuceConnectionFactory();
+//        lettuceConnectionFactory.setHostName(host);
+//        lettuceConnectionFactory.setPort(port);
+//        lettuceConnectionFactory.setPassword(password);
+//        return lettuceConnectionFactory;
+//    }
 
-        return redisTemplate;
+//    @Bean
+//    public RedisTemplate<String, Object> redisTemplate() {
+//        RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+//        redisTemplate.setKeySerializer(new StringRedisSerializer());
+//        redisTemplate.setValueSerializer(new StringRedisSerializer());
+//        redisTemplate.setConnectionFactory(lettuceConnectionFactory());
+//
+//        return redisTemplate;
+//    }
+
+    @Bean
+    public RedisTemplate<String, Object> deliveryRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, Object> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        return template;
     }
 }
