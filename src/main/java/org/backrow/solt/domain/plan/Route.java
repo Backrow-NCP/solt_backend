@@ -31,6 +31,14 @@ public class Route {
     private LocalDateTime endTime;
      */
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "start_place_id", nullable = false)
+    private Place startPlaceId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "end_place_id", nullable = false)
+    private Place endPlaceId;
+
     @Column(nullable = false)
     private LocalDate date;
 
