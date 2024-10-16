@@ -41,7 +41,12 @@ public class PlanController {
 
     @Operation(summary = "플랜 작성", description = "새로운 플랜을 저장합니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Long>> savePlan(@Valid @RequestBody PlanInputDTO planInputDTO) {
+    public ResponseEntity<Map<String, Long>> savePlan(
+            @Valid @RequestBody PlanInputDTO planInputDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        long memberId = userDetails.getMemberId();
+        planInputDTO.setMemberId(memberId);
         long id = planService.savePlan(planInputDTO);
         return ResponseEntity.ok(Map.of("id", id));
     }
