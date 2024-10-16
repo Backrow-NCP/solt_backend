@@ -16,13 +16,13 @@ public interface LoginService {
 
     boolean register(RegisterDTO registerDTO);
 
-    String getToken(String email);
+    String getToken(String email, Long memberId);
 
     String getAuthUser(HttpServletRequest request);
+
+    Long getMemberId(HttpServletRequest request);
 
     String getRefreshToken();
 
     void saveRefreshToken(String email, String refreshToken);
-
-    long getMemberId(String email);
 }

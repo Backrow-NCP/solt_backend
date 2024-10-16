@@ -4,9 +4,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.apache.catalina.connector.Response;
 import org.backrow.solt.dto.login.LoginDTO;
 import org.backrow.solt.dto.login.RegisterDTO;
+import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.LoginService;
 import org.backrow.solt.service.TokenService;
 import org.springframework.http.HttpHeaders;
@@ -15,6 +15,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import javax.security.auth.login.AccountExpiredException;
@@ -31,6 +32,7 @@ public class LoginController {
     private final LoginService loginService;
     private final AuthenticationManager authenticationManager;
     private final TokenService tokenService;
+    private final UserDetailsService userDetailsService;
 
     @Operation(summary="Login POST + Spring Security", description ="POST 로그인 + Spring Security")
     @PostMapping
@@ -44,7 +46,7 @@ public class LoginController {
 
             Authentication auth = authenticationManager.authenticate(creds);
 
-            String jwts = loginService.getToken(auth.getName());
+            String jwts = loginService.getToken(auth.getName(), ((CustomUserDetails) auth.getPrincipal()).getMemberId());
             String refreshToken = loginService.getRefreshToken();
             loginService.saveRefreshToken(auth.getName(), refreshToken);
 
@@ -68,7 +70,10 @@ public class LoginController {
 
         try {
             tokenService.validateRefreshToken(email, refreshToken);
-            String newAccessToken = loginService.getToken(email);
+
+            CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(email);
+
+            String newAccessToken = loginService.getToken(email, user.getMemberId());
 
             responseBody.put("result","TRUE");
 

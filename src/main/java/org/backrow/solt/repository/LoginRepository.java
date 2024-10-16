@@ -17,7 +17,7 @@ public interface LoginRepository extends JpaRepository<Member, Long> {
     String findPwByEmail(@Param("email") String email);
 
     @Query("select m.memberId from Member m where m.email = :email")
-    int findIdByEmail(@Param("email") String email);
+    Long findIdByEmail(@Param("email") String email);
 
     @Query("select m from Member m where m.email= :email")
     Member findByEmail(@Param("email") String email);

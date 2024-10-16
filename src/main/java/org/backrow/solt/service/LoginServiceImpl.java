@@ -1,5 +1,6 @@
 package org.backrow.solt.service;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -83,9 +84,10 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String getToken(String email) {
+    public String getToken(String email, Long memberId) {
         String token = Jwts.builder()
                 .setSubject(email)
+                .claim("memberId", memberId)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)
                 .compact();
@@ -97,15 +99,36 @@ public class LoginServiceImpl implements LoginService {
         String token = request.getHeader(HttpHeaders.AUTHORIZATION);
         if(token != null){
             try{
-            String user = Jwts.parserBuilder()
-                    .setSigningKey(key)
-                    .build()
-                    .parseClaimsJws(token.replace(PREFIX,""))
-                    .getBody()
-                    .getSubject();
-            return user;
-        } catch(ExpiredJwtException e){
-            log.info("Access Token expired");
+                String user = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(token.replace(PREFIX,""))
+                        .getBody()
+                        .getSubject();
+                log.info(user);
+                return user;
+            } catch(ExpiredJwtException e){
+                log.info("Access Token expired");
+            } catch(Exception e){
+                log.info("Token parsing error");
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Long getMemberId(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION);
+        if(token != null){
+            try{
+                Claims claims = Jwts.parserBuilder()
+                        .setSigningKey(key)
+                        .build()
+                        .parseClaimsJws(token.replace(PREFIX,""))
+                        .getBody();
+                return claims.get("memberId", Long.class);
+            } catch(ExpiredJwtException e){
+                log.info("Access Token expired");
             } catch(Exception e){
                 log.info("Token parsing error");
             }
@@ -122,10 +145,5 @@ public class LoginServiceImpl implements LoginService {
     public void saveRefreshToken(String email, String refreshToken) {
         long expiration = EXPIRATION_TIME*10;
         tokenService.saveRefreshToken(email, refreshToken, expiration);
-    }
-
-    @Override
-    public long getMemberId(String email) {
-        return (long) loginRepository.findIdByEmail(email);
     }
 }
