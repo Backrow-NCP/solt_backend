@@ -1,14 +1,9 @@
 package org.backrow.solt.domain.personality;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.*;
-import org.backrow.solt.domain.BoardImage;
-import org.hibernate.annotations.BatchSize;
 
 import javax.persistence.*;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Entity
 @Getter
