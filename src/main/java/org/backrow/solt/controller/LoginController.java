@@ -18,7 +18,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
-import javax.security.auth.login.AccountExpiredException;
 import java.util.HashMap;
 import java.util.Map;
 

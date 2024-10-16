@@ -49,7 +49,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public boolean checkPassword(String email, String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        return (Boolean)encoder.matches(password, loginRepository.findPwByEmail(email));
+        return encoder.matches(password, loginRepository.findPwByEmail(email));
     }
 
     // Security와는 별도로 돌아가는 인증
@@ -58,7 +58,7 @@ public class LoginServiceImpl implements LoginService {
         String checkEmail = loginRepository.checkEmail(loginDTO.getEmail());
         String checkPW = loginDTO.getPassword();
         if(checkPassword(checkEmail, checkPW)) {
-            return (long) loginRepository.findIdByEmail(loginDTO.getEmail());
+            return loginRepository.findIdByEmail(loginDTO.getEmail());
         }
         throw new RuntimeException("No Password found for email: " + loginDTO.getEmail());
     }
@@ -85,13 +85,12 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String getToken(String email, Long memberId) {
-        String token = Jwts.builder()
+        return Jwts.builder()
                 .setSubject(email)
                 .claim("memberId", memberId)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)
                 .compact();
-        return token;
     }
 
     @Override

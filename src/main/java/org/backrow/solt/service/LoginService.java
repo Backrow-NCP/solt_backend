@@ -4,7 +4,6 @@ import org.backrow.solt.dto.login.LoginDTO;
 import org.backrow.solt.dto.login.RegisterDTO;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
 public interface LoginService {
 
