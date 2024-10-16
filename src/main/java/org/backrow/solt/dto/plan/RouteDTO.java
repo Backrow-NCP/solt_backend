@@ -15,8 +15,8 @@ public class RouteDTO {
     private Long routeId;
 //    private LocalDateTime startTime;
 //    private LocalDateTime endTime;
-    private Place startPlaceId;
-    private Place endPlaceId;
+    private Long startPlaceId;
+    private Long endPlaceId;
     private LocalDate date;
     private Integer price;
     private Integer transportationId;
