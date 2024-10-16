@@ -9,7 +9,7 @@ public interface PlanService {
     PageResponseDTO<PlanViewDTO> getPlanList(long id, PageRequestDTO pageRequestDTO);
     PlanViewDTO getPlan(long id);
     long savePlan(PlanInputDTO planInputDTO);
-    boolean modifyPlan(long id, PlanInputDTO planInputDTO);
-    boolean deletePlan(long id);
+    boolean modifyPlan(long planId, PlanInputDTO planInputDTO, long memberId);
+    boolean deletePlan(long planId, long memberId);
     PlanViewDTO recommendPlan(PlanInputDTO planInputDTO);
 }

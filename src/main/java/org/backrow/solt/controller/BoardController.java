@@ -53,7 +53,6 @@ public class BoardController {
             @Valid @RequestBody BoardInputDTO boardInputDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        System.out.println(userDetails);
         Long id = boardService.saveBoard(boardInputDTO, userDetails.getMemberId());
         return ResponseEntity.ok(Map.of("id", id));
     }

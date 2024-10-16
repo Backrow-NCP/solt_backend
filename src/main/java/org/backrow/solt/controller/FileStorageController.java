@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.Map;
 
 @Tag(name = "파일 관리 API", description = "파일 업로드·다운로드, 삭제 기능을 수행하는 API입니다.")
-@RestController("/file")
+@RestController
+@RequestMapping("/file")
 @RequiredArgsConstructor
 public class FileStorageController {
-
     private final FileStorageService fileStorageService;
-    private String bucketName = "solt-objectstorage";
-    private String bucketFolderName = "board/";
+    private final String bucketName = "solt-objectstorage";
+    private final String bucketFolderName = "board/";
 
     @Operation(summary = "파일 업로드", description = "여러 개의 파일을 업로드합니다.")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

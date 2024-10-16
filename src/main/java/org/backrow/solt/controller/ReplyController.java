@@ -39,8 +39,11 @@ public class ReplyController {
     @Operation(summary = "댓글 작성", description = "새로운 댓글을 작성합니다.")
     @PostMapping
     public ResponseEntity<Map<String, Long>> saveReply(
-            @Valid @RequestBody ReplyInputDTO replyInputDTO
+            @Valid @RequestBody ReplyInputDTO replyInputDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        long memberId = userDetails.getMemberId();
+        replyInputDTO.setMemberId(memberId);
         Long id = replyService.saveReply(replyInputDTO);
         return ResponseEntity.ok(Map.of("id", id));
     }

@@ -1,6 +1,7 @@
 package org.backrow.solt.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -8,8 +9,10 @@ import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
+import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.plan.PlanService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -47,16 +50,20 @@ public class PlanController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Boolean>> modifyPlan(
             @PathVariable Long id,
-            @Valid @RequestBody PlanInputDTO planInputDTO
+            @Valid @RequestBody PlanInputDTO planInputDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        return ResponseEntity.ok(
-                Map.of("isSuccess", planService.modifyPlan(id, planInputDTO)));
+        boolean result = planService.modifyPlan(id, planInputDTO, userDetails.getMemberId());
+        return ResponseEntity.ok(Map.of("isSuccess", result));
     }
 
     @Operation(summary = "플랜 삭제", description = "ID를 통해 특정 플랜을 삭제합니다.")
     @DeleteMapping("/{id}")
-    public Map<String, Boolean> deletePlan(@PathVariable Long id) {
-        return Map.of("isSuccess", planService.deletePlan(id));
+    public Map<String, Boolean> deletePlan(
+            @PathVariable Long id,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        return Map.of("isSuccess", planService.deletePlan(id, userDetails.getMemberId()));
     }
 
     @Operation(summary = "추천 플랜 생성", description = "AI를 통해 여행 일정에 맞는 플랜을 추천받습니다.")

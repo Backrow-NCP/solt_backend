@@ -1,12 +1,15 @@
 package org.backrow.solt.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.like.LikeDTO;
+import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.LikeService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,7 +31,11 @@ public class LikeController {
 
     @Operation(summary = "좋아요 등록/취소 토글", description = "게시글 ID와 멤버 ID를 통해 좋아요를 등록/취소합니다.<br>토글 후 좋아요 개수를 반환힙니다.")
     @PostMapping
-    public ResponseEntity<Map<String, Integer>> toggleLike(@Valid @RequestBody LikeDTO likeDTO) {
+    public ResponseEntity<Map<String, Integer>> toggleLike(
+            @Valid @RequestBody LikeDTO likeDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
+    ) {
+        likeDTO.setMemberId(userDetails.getMemberId());
         return ResponseEntity.ok(Map.of("likeCount", likeService.toggleLike(likeDTO)));
     }
 }
