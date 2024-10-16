@@ -4,6 +4,7 @@ import org.backrow.solt.dto.login.LoginDTO;
 import org.backrow.solt.dto.login.RegisterDTO;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 public interface LoginService {
 
@@ -11,7 +12,7 @@ public interface LoginService {
 
     boolean checkPassword(String email, String password);
 
-    int login(LoginDTO loginDTO);
+    long login(LoginDTO loginDTO);
 
     boolean register(RegisterDTO registerDTO);
 
@@ -22,4 +23,6 @@ public interface LoginService {
     String getRefreshToken();
 
     void saveRefreshToken(String email, String refreshToken);
+
+    long getMemberId(String email);
 }

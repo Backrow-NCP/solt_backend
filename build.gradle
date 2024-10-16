@@ -5,13 +5,34 @@ buildscript {
 }
 
 plugins {
+    id 'application'
+    id 'eclipse'
     id 'java'
     id 'org.springframework.boot' version '2.6.15'
     id 'io.spring.dependency-management' version '1.1.6'
+    id "com.github.node-gradle.node" version "3.5.1"
+}
+
+node {
+    version = '17.6.0'
+    npmVersion = '8.5.1'
+    download = true
+}
+
+task appNpmInstall(type: NpmTask) {
+    description = "Installs dependencies from package.json"
+    workingDir = file("${projectDir}/src/main/resources/static");
+    args = ["install"]
 }
 
 group = 'org.backrow'
 version = '0.0.1-SNAPSHOT'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+    sourceCompatibility = '11'
+    targetCompatibility = '11'
+}
 
 java {
     toolchain {
@@ -36,7 +57,8 @@ dependencies {
     testImplementation 'org.springframework.security:spring-security-test'
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
-    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.7.3'
+    testRuntimeOnly 'org.mariadb.jdbc:mariadb-java-client'
     annotationProcessor 'org.projectlombok:lombok'
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
@@ -69,6 +91,9 @@ dependencies {
 
     //Redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+
+    // ObjectStorage이용
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.671'
 }
 
 tasks.named('test') {

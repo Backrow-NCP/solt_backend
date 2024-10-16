@@ -53,9 +53,8 @@ public class Member {
         this.name = name;
     }
 
-    public void addImage(String uuid, String fileName){
+    public void addImage(String fileName){
         profileImage = ProfileImage.builder()
-                .uuid("s_" + uuid)
                 .fileName(fileName)
                 .member(this)
                 .build();

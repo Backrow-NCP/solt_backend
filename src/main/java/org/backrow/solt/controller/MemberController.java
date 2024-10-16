@@ -7,13 +7,14 @@ import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.member.ModifyDTO;
 import org.backrow.solt.dto.file.UploadResultDTO;
-import org.backrow.solt.service.FileService;
+import org.backrow.solt.service.FileStorageService;
 import org.backrow.solt.service.MemberService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,9 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
-    private final FileService fileService;
+    private final FileStorageService fileStorageService;
+    private String bucketName = "solt-objectstorage";
+    private String bucketFolderName = "profile/";
 
     @Operation(summary = "Member정보 가져오기 GET", description = "GET 회원정보")
     @GetMapping
@@ -73,7 +76,7 @@ public class MemberController {
     public ResponseEntity<Map<String,Boolean>> modifyMemberImage(long memberId,@RequestPart("image") MultipartFile image) {
         Map<String, Boolean> response = new HashMap<>();
         try {
-            UploadResultDTO imageDTO = fileService.uploadFile(List.of(image)).get(0);
+            UploadResultDTO imageDTO = fileStorageService.uploadFile(bucketName,bucketFolderName,image);
             memberService.modifyMemberImage(memberId, imageDTO);
             response.put("result", true);
             return ResponseEntity.ok(response);
@@ -88,7 +91,9 @@ public class MemberController {
     public ResponseEntity<Map<String,Boolean>> deleteMemberImage(long memberId) {
         Map<String,Boolean> response = new HashMap<>();
         try {
+            MemberInfoDTO memberInfo = memberService.getMemberInfo(memberId);
             memberService.deleteMemberImage(memberId);
+            fileStorageService.deleteFile(bucketName,bucketFolderName+memberInfo.getFileName());
             response.put("result", true);
             return ResponseEntity.ok(response);
         } catch (Exception e) {

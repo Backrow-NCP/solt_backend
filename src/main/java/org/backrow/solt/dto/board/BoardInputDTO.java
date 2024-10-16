@@ -18,10 +18,11 @@ public class BoardInputDTO {
     @Size(min = 1, max = 5000, message = "본문은 1~5000자 이내의 문자열이어야 합니다.")
     private String content;
 
-    @NotNull
+    @NotNull(message = "작성자 ID는 반드시 존재해야 합니다.")
     private Long memberId;
 
-//    private PlanDTO plan;
+    @NotNull(message = "게시글에는 플랜이 반드시 등록되어야 합니다.")
+    private Long planId;
 
     private Set<BoardImageDTO> boardImages = new HashSet<>();
 }

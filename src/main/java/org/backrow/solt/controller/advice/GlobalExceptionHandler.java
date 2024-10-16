@@ -1,9 +1,11 @@
 package org.backrow.solt.controller.advice;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.webjars.NotFoundException;
 
+import java.time.format.DateTimeParseException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -54,6 +57,18 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
         log.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+    }
+
+    // Json 파싱 실패
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
+        if (ex.getCause() instanceof InvalidFormatException) {
+            InvalidFormatException invalidFormatException = (InvalidFormatException) ex.getCause();
+            if (invalidFormatException.getCause() instanceof DateTimeParseException) {
+                return new ResponseEntity<>("잘못된 날짜 형식입니다. YYYY-MM-DD 형식으로 입력해주세요.", HttpStatus.BAD_REQUEST);
+            }
+        }
+        return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
     }
 
     // 기타 선언하지 않은 모든 예외 처리

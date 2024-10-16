@@ -1,4 +1,4 @@
-package org.backrow.solt.domain;
+package org.backrow.solt.domain.board;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -11,9 +11,8 @@ import javax.persistence.*;
 @Setter
 @ToString(exclude = "board")
 public class BoardImage {
-    @Id
-    private String uuid;
 
+    @Id
     @Column(nullable = false)
     private String fileName;
 

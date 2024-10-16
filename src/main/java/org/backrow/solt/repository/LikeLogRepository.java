@@ -1,7 +1,7 @@
 package org.backrow.solt.repository;
 
 import io.lettuce.core.dynamic.annotation.Param;
-import org.backrow.solt.domain.LikeLog;
+import org.backrow.solt.domain.board.LikeLog;
 import org.backrow.solt.domain.serialize.LikeLogId;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
