@@ -1,7 +1,7 @@
 package org.backrow.solt.domain.board;
 
 import lombok.*;
-import org.backrow.solt.domain.Member;
+import org.backrow.solt.domain.member.Member;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;

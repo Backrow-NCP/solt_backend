@@ -1,7 +1,7 @@
 package org.backrow.solt.domain.plan;
 
 import lombok.*;
-import org.backrow.solt.domain.Member;
+import org.backrow.solt.domain.member.Member;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

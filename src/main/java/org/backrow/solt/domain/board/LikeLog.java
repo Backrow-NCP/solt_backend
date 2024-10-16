@@ -1,8 +1,8 @@
 package org.backrow.solt.domain.board;
 
 import lombok.*;
-import org.backrow.solt.domain.Member;
-import org.backrow.solt.domain.serialize.LikeLogId;
+import org.backrow.solt.domain.member.Member;
+import org.backrow.solt.domain.board.serialize.LikeLogId;
 
 import javax.persistence.*;
 
