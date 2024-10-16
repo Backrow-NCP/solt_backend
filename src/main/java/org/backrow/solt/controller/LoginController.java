@@ -119,7 +119,7 @@ public class LoginController {
 
     @Operation(summary = "회원가입", description = "회원 정보를 입력하여 새로 회원가입을 합니다.")
     @PostMapping("/register")
-    public ResponseEntity<Map<String,Boolean>> register(RegisterDTO registerDTO){
+    public ResponseEntity<Map<String,Boolean>> register(@RequestBody RegisterDTO registerDTO){
         String regex = "^(?=.*[!@#$%^&*()_+=-]).{8,20}$";
         if(registerDTO.getPassword().matches(regex)) {
            try {
