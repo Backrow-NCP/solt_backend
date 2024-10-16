@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -71,9 +72,11 @@ public class PlanServiceImpl implements PlanService {
 
     @Transactional
     @Override
-    public boolean modifyPlan(long id, PlanInputDTO planInputDTO) {
-        Optional<Plan> findPlan = planRepository.findById(id);
-        Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + id));
+    public boolean modifyPlan(long planId, PlanInputDTO planInputDTO, long memberId) {
+        Optional<Plan> findPlan = planRepository.findById(planId);
+        Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + planId));
+        if (!Objects.equals(plan.getMember().getMemberId(), memberId))
+            throw new AccessDeniedException("You do not have permission to modify this plan.");
 
         Set<Place> places = mapToEntitySet(planInputDTO.getPlaces(), Place.class);
         Set<Route> routes = mapToEntitySet(planInputDTO.getRoutes(), Route.class);
@@ -89,12 +92,12 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public boolean deletePlan(long id) {
+    public boolean deletePlan(long planId, long memberId) {
         try {
-            planRepository.deleteById(id);
+            planRepository.deleteByPlanIdAndMember_MemberId(planId, memberId);
             return true;
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Plan not found: " + id);
+            throw new NotFoundException("Plan not found: " + planId);
         }
     }
 
