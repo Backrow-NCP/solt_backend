@@ -48,12 +48,10 @@ public class ClovaApiService {
         // json 형식의 요청 파일 생성
         StringBuilder requestBody = new StringBuilder();
         requestBody.append("{");
-        requestBody.append("\"title\":\"").append(planInputDTO.getTitle()).append("\",");
         requestBody.append("\"location\":\"").append(planInputDTO.getLocation()).append("\",");
         requestBody.append("\"startDate\":\"").append(planInputDTO.getStartDate()).append("\",");
         requestBody.append("\"endDate\":\"").append(planInputDTO.getEndDate()).append("\",");
         requestBody.append("\"themes\":").append(planInputDTO.getThemes()).append(",");
-        requestBody.append("\"memberId\":").append(planInputDTO.getMemberId());
         requestBody.append("}");
 
         return requestBody.toString();
