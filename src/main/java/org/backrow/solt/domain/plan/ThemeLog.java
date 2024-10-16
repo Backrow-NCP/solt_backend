@@ -1,7 +1,7 @@
 package org.backrow.solt.domain.plan;
 
 import lombok.*;
-import org.backrow.solt.domain.serialize.ThemeLogId;
+import org.backrow.solt.domain.plan.serialize.ThemeLogId;
 
 import javax.persistence.*;
 

@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.like.LikeDTO;
 import org.backrow.solt.security.CustomUserDetails;
-import org.backrow.solt.service.LikeService;
+import org.backrow.solt.service.board.LikeService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

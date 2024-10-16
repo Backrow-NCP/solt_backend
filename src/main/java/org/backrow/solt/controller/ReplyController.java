@@ -10,7 +10,7 @@ import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.reply.ReplyInputDTO;
 import org.backrow.solt.security.CustomUserDetails;
-import org.backrow.solt.service.ReplyService;
+import org.backrow.solt.service.board.ReplyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;

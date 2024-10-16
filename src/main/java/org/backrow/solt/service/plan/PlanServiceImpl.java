@@ -1,14 +1,14 @@
 package org.backrow.solt.service.plan;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Member;
+import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
-import org.backrow.solt.repository.ThemeLogRepository;
-import org.backrow.solt.repository.PlanRepository;
+import org.backrow.solt.repository.plan.ThemeLogRepository;
+import org.backrow.solt.repository.plan.PlanRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
