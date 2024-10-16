@@ -1,19 +1,16 @@
 package org.backrow.solt.controller;
 
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/loadbalancer")
 @Log4j2
-public class LoadBalancerController {
+public class StatusController {
 
     @GetMapping
-    public void loadbalancer(){
-        try{
-            log.info("loadbalancer ok");
-        }catch(RuntimeException e){
-            log.error(e);
-        }
+    public ResponseEntity<String> getStatus() {
+        return ResponseEntity.ok("Server is running");
     }
 }
