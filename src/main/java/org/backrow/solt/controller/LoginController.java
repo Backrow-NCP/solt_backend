@@ -121,6 +121,7 @@ public class LoginController {
     @PostMapping("/register")
     public ResponseEntity<Map<String,Boolean>> register(@RequestBody RegisterDTO registerDTO){
         String regex = "^(?=.*[!@#$%^&*()_+=-]).{8,20}$";
+        log.info(registerDTO);
         if(registerDTO.getPassword().matches(regex)) {
            try {
                Map<String, Boolean> response = new HashMap<>();
