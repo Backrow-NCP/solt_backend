@@ -11,6 +11,6 @@ public class StatusController {
 
     @GetMapping
     public ResponseEntity<String> getStatus() {
-        return ResponseEntity.ok("Server is running");
+        return ResponseEntity.ok("Spring Server is running");
     }
 }
