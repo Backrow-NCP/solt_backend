@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/loadbalancer")
 @Log4j2
 public class StatusController {
-
     @GetMapping
     public ResponseEntity<String> getStatus() {
         return ResponseEntity.ok("Spring Server is running");
