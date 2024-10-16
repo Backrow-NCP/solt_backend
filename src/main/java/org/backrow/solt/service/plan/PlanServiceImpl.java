@@ -3,10 +3,14 @@ package org.backrow.solt.service.plan;
 import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Member;
 import org.backrow.solt.domain.plan.*;
+import org.backrow.solt.service.ai.ClovaApiService;
+import org.backrow.solt.domain.plan.api.RoutesResponses;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
+import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
+import org.backrow.solt.dto.plan.RouteDTO;
 import org.backrow.solt.repository.ThemeLogRepository;
 import org.backrow.solt.repository.PlanRepository;
 import org.modelmapper.ModelMapper;
@@ -26,6 +30,7 @@ public class PlanServiceImpl implements PlanService {
     private final PlanRepository planRepository;
     private final ThemeLogRepository themeLogRepository;
     private final ModelMapper modelMapper;
+    private final ClovaApiService clovaApiService;
 
 //    private final PlanAiService planAiService; // Clova AI를 활용한 장소 추천 서비스
 //    private final MapAPIService mapAPIService; // Google Maps API를 활용한 경로 시간 계산 서비스
@@ -100,6 +105,15 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
+
+        // 1.장소 추천 받기 (Clova API 호출)
+        String clovaRequestBody = createClovaRequestBody(planInputDTO);
+        RoutesResponses clovaResponses = clovaApiService.callClovaApi(clovaRequestBody);
+
+        // 2. 각 추천된 장소들에 대해 Google Maps API를 통해 경로 정보 받기
+        List<PlaceDTO> places = clovaResponses.getPlaces();
+        Set<RouteDTO> routes = new HashSet<>();
+
         return null; // 임시 보류
     }
 
