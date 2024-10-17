@@ -1,8 +1,11 @@
 package org.backrow.solt.config;
 
+import org.backrow.solt.domain.board.Board;
+import org.backrow.solt.domain.board.Reply;
 import org.backrow.solt.domain.plan.Route;
 import org.backrow.solt.domain.plan.TransportationType;
 import org.backrow.solt.dto.plan.RouteDTO;
+import org.backrow.solt.dto.reply.ReplyDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,13 @@ public class AppConfig {
                 .setFieldMatchingEnabled(true)
                 .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE)
                 .setMatchingStrategy(MatchingStrategies.STRICT);
+
+        modelMapper.typeMap(Reply.class, ReplyDTO.class)
+                .addMappings(mapper -> mapper.using(ctx -> {
+                    Board board = (Board) ctx.getSource();
+                    if (board == null) return null;
+                    return board.getBoardId();
+                }).map(Reply::getBoard, ReplyDTO::setBoardId));
 
         modelMapper.typeMap(RouteDTO.class, Route.class)
                 .addMappings(mapper -> {
