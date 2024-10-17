@@ -2,7 +2,7 @@ package org.backrow.solt.service.ai;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.backrow.solt.domain.plan.api.RoutesResponses;
+import org.backrow.solt.domain.plan.api.DirectionsResponses;
 import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.springframework.beans.factory.annotation.Value;
@@ -41,7 +41,7 @@ public class ClovaApiService {
     }
 
     // Clova API 요청을 보내는 메소드
-    public RoutesResponses callClovaApi(String requestBody) {
+    public DirectionsResponses callClovaApi(String requestBody) {
         // Clova API에 보낼 헤더 설정
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", clovaApiKey);
@@ -53,7 +53,7 @@ public class ClovaApiService {
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
         // Clova API에 POST 요청을 보내고 응답을 받음
-        ResponseEntity<RoutesResponses> response = restTemplate.postForEntity(clovaApiUrl, entity, RoutesResponses.class);
+        ResponseEntity<DirectionsResponses> response = restTemplate.postForEntity(clovaApiUrl, entity, DirectionsResponses.class);
 
         // 응답 상태 확인 및 예외 처리
         if (response.getStatusCode().is2xxSuccessful()) {
