@@ -20,7 +20,7 @@ public class RouteDTO {
 
     private Integer price;
 
-    private Integer transportationId;
+    private TransportationDTO transportation;
 
     private Integer distance;
 

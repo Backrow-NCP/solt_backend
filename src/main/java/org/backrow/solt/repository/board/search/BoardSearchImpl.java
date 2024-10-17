@@ -1,4 +1,4 @@
-package org.backrow.solt.repository.board;
+package org.backrow.solt.repository.board.search;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -10,10 +10,7 @@ import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.board.BoardImageDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.dto.member.MemberInfoDTO;
-import org.backrow.solt.dto.plan.PlaceDTO;
-import org.backrow.solt.dto.plan.PlanViewDTO;
-import org.backrow.solt.dto.plan.RouteDTO;
-import org.backrow.solt.dto.plan.ThemeDTO;
+import org.backrow.solt.dto.plan.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -300,7 +297,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         .startTime(routeEntity.getStartTime())
                         .endTime(routeEntity.getEndTime())
                         .price(routeEntity.getPrice())
-                        .transportationId(routeEntity.getTransportationType().getId())
+                        .transportation(TransportationDTO.builder()
+                                .id(routeEntity.getTransportationType().getId())
+                                .type(routeEntity.getTransportationType().getType())
+                                .build())
                         .distance(routeEntity.getDistance())
                         .travelTime(routeEntity.getTravelTime())
                         .build())

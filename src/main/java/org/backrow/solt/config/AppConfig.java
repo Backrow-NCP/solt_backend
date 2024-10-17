@@ -5,6 +5,7 @@ import org.backrow.solt.domain.board.Reply;
 import org.backrow.solt.domain.plan.Route;
 import org.backrow.solt.domain.plan.TransportationType;
 import org.backrow.solt.dto.plan.RouteDTO;
+import org.backrow.solt.dto.plan.TransportationDTO;
 import org.backrow.solt.dto.reply.ReplyDTO;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -32,13 +33,13 @@ public class AppConfig {
                 .addMappings(mapper -> {
                     mapper.map(RouteDTO::getRouteId, Route::setRouteId);
                     mapper.using(ctx -> {
-                        Integer transportationId = (Integer) ctx.getSource();
-                        if (transportationId == null) return null;
+                        TransportationDTO transportationDTO = (TransportationDTO) ctx.getSource();
+                        if (transportationDTO == null) return null;
 
                         return TransportationType.builder()
-                                .id(transportationId)
+                                .id(transportationDTO.getId())
                                 .build();
-                    }).map(RouteDTO::getTransportationId, Route::setTransportationType);
+                    }).map(RouteDTO::getTransportation, Route::setTransportationType);
                 });
 
         return modelMapper;
