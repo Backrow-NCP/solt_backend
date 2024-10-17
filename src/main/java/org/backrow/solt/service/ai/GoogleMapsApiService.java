@@ -18,7 +18,7 @@ public class GoogleMapsApiService {
         this.restTemplate = restTemplate;
     }
 
-    public DirectionsResponses getDirections(String origin, String destination) {
+    public DirectionsResponses getDirections(Long origin, Long destination) {
         String url = String.format(
                 "https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&mode=transit&key=%s",
                 origin, destination, apiKey
