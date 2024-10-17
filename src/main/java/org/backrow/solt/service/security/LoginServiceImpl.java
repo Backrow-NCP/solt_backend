@@ -24,8 +24,8 @@ import java.util.UUID;
 @Log4j2
 public class LoginServiceImpl implements LoginService {
 
-    // 1000ms 단위라서 *1000해줘야 한다
-    static final long EXPIRATION_TIME = 60*60*24*100;
+    // 60초 * 60분
+    static final long EXPIRATION_TIME = 60*60;
     static final String PREFIX = "Bearer ";
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
@@ -56,11 +56,14 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public long login(LoginDTO loginDTO) {
         String checkEmail = loginRepository.checkEmail(loginDTO.getEmail());
-        String checkPW = loginDTO.getPassword();
-        if(checkPassword(checkEmail, checkPW)) {
-            return loginRepository.findIdByEmail(loginDTO.getEmail());
+        if(checkEmail == "NotExist" || checkEmail.isEmpty()) {
+            String checkPW = loginDTO.getPassword();
+            if (checkPassword(checkEmail, checkPW)) {
+                return loginRepository.findIdByEmail(loginDTO.getEmail());
+            }
+            throw new RuntimeException("No Password found for email: " + loginDTO.getEmail());
         }
-        throw new RuntimeException("No Password found for email: " + loginDTO.getEmail());
+        throw new RuntimeException("Invalid Email");
     }
 
     @Override
@@ -73,7 +76,6 @@ public class LoginServiceImpl implements LoginService {
                 .birthYear(registerDTO.getBirthYear())
                 .gender(registerDTO.getGender())
                 .build();
-
         try {
             loginRepository.save(member);
         } catch(Exception e){
