@@ -37,7 +37,7 @@ public class Reply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_reply_id")
-    private Reply parentReply;
+    private Reply parentReply; // 대댓글이 존재하는 댓글은 어떻게 처리할 지
 
     @CreatedDate
     @Column(name="regdate", updatable=false)
