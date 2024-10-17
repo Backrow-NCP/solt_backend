@@ -61,10 +61,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/email/verification-requests").permitAll()
                 .antMatchers(HttpMethod.DELETE,
                         "/file").permitAll()
+//                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
                 .anyRequest().authenticated().and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(authEntryPoint);
-//                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
+
     }
 
     @Bean
