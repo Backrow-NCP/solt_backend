@@ -11,7 +11,6 @@ import java.sql.Date;
 @NoArgsConstructor
 @ToString
 public class RegisterDTO {
-
     private String email;
 
     private String password;
@@ -22,5 +21,4 @@ public class RegisterDTO {
     private Date birthYear;
 
     private Boolean gender;
-
 }

@@ -10,8 +10,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class RefreshTokenDTO {
-
     private String email;
-
     private String refreshToken;
 }
