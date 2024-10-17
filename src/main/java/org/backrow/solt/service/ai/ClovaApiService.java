@@ -61,7 +61,8 @@ public class ClovaApiService {
 
         // 테마와 장소를 문자열로 변환
         String themeList = themeSet.stream()
-                .map(ThemeDTO::getName)
+                .map(ThemeDTO::getThemeId) // 여기서 ID 사용, 나중에 이름 추가 필요
+                .map(String::valueOf) // Long -> String 변환
                 .collect(Collectors.joining(", "));
 
         String placeList = places.stream()
@@ -71,7 +72,6 @@ public class ClovaApiService {
         // 사용자 입력 형식의 문자열 생성
         String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - [%s]",
                 location, startDate, endDate, themeList, placeList);
-
 
         // Request Body
         String requestBody =
