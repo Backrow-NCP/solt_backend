@@ -16,7 +16,7 @@ import java.util.Map;
 
 @Tag(name = "파일 관리 API", description = "파일 업로드·다운로드, 삭제 기능을 수행하는 API입니다.")
 @RestController
-@RequestMapping("/file")
+@RequestMapping("/files")
 @RequiredArgsConstructor
 public class FileStorageController {
     private final FileStorageService fileStorageService;
