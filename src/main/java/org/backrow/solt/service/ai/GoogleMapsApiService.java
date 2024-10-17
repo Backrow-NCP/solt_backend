@@ -1,22 +1,16 @@
 package org.backrow.solt.service.ai;
 
-import org.backrow.solt.domain.plan.Place;
-import org.backrow.solt.domain.plan.Route;
-import org.backrow.solt.domain.plan.TransportationType;
-import org.backrow.solt.domain.plan.api.RoutesResponses;
+import org.backrow.solt.domain.plan.api.DirectionsResponses;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-
-import java.time.LocalDate;
 
 @Service
 public class GoogleMapsApiService {
 
     @Value("${google.maps.api.key}")
-    private String googleMapsApiKey;
+    private String apiKey;
 
     private final RestTemplate restTemplate;
 
@@ -24,29 +18,18 @@ public class GoogleMapsApiService {
         this.restTemplate = restTemplate;
     }
 
-    public Route createRouteEntity(RoutesResponses routesResponses, Place startPlace, Place endPlace, TransportationType transportationType, LocalDate routeDate) {
-        if (routesResponses != null && !routesResponses.getRoutes().isEmpty()) {
-            RoutesResponses.Route firstRoute = routesResponses.getRoutes().get(0);
-            if (!firstRoute.getLegs().isEmpty()) {
-                RoutesResponses.Route.Leg firstLeg = firstRoute.getLegs().get(0);
+    public DirectionsResponses getDirections(String origin, String destination) {
+        String url = String.format(
+                "https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&mode=transit&key=%s",
+                origin, destination, apiKey
+        );
 
-                // Extracting necessary information
-                int travelTime = (firstLeg.getDuration().getValue())/60; // 이동 시간 (분 단위)
-                int distance = (firstLeg.getDistance().getValue())/1000 + (firstLeg.getDistance().getValue())%1000; // 이동 거리 (미터 단위)
+        ResponseEntity<DirectionsResponses> response = restTemplate.getForEntity(url, DirectionsResponses.class);
 
-                // Create and return the Route entity
-                return Route.builder()
-                        .startPlaceId(startPlace) // Start place entity
-                        .endPlaceId(endPlace) // End place entity
-                        .date(routeDate) // Route date
-                        .price(0) // Default price, you might want to extract this if available
-                        .transportationType(transportationType) // Transportation type entity
-                        .distance(distance) // Distance
-                        .travelTime(travelTime) // Travel time
-                        .build();
-            }
+        if (response.getStatusCode().is2xxSuccessful()) {
+            return response.getBody();
+        } else {
+            throw new RuntimeException("Failed to get directions from Google Maps API");
         }
-        throw new RuntimeException("No valid routes found to create Route.");
     }
-
 }
