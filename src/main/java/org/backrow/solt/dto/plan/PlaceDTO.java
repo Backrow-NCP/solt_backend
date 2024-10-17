@@ -18,6 +18,8 @@ public class PlaceDTO {
 
     private Integer price;
 
+    private String description;
+
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;
 
