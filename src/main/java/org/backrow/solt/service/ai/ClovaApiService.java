@@ -2,6 +2,9 @@ package org.backrow.solt.service.ai;
 
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.plan.api.DirectionsResponses;
+import org.backrow.solt.dto.plan.PlaceDTO;
+import org.backrow.solt.dto.plan.PlanInputDTO;
+import org.backrow.solt.dto.plan.ThemeDTO;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -9,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 @Log4j2
@@ -37,7 +43,35 @@ public class ClovaApiService {
     }
 
     // Clova API 요청을 보내는 메소드
-    public DirectionsResponses callClovaApi() {
+    public DirectionsResponses callClovaApi(PlanInputDTO planInputDTO) {
+
+        // 필요한 PlanInputDTO 필드 값 추출
+        String location = planInputDTO.getLocation(); // 지역
+        String startDate = planInputDTO.getStartDate().toString(); // 시작 날짜
+        String endDate = planInputDTO.getEndDate().toString(); // 종료 날짜
+
+        // 테마 ID를 ThemeDTO로 변환
+        Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
+                .map(themeId -> ThemeDTO.builder()
+                        .themeId(themeId)  // Long 값을 ThemeDTO로 변환
+                        .build())
+                .collect(Collectors.toSet());
+
+        Set<PlaceDTO> places = planInputDTO.getPlaces(); // 꼭 가야하는 장소
+
+        // 테마와 장소를 문자열로 변환
+        String themeList = themeSet.stream()
+                .map(ThemeDTO::getName)
+                .collect(Collectors.joining(", "));
+
+        String placeList = places.stream()
+                .map(PlaceDTO::getPlaceName)
+                .collect(Collectors.joining(", "));
+
+        // 사용자 입력 형식의 문자열 생성
+        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - [%s]",
+                location, startDate, endDate, themeList, placeList);
+
 
         // Request Body
         String requestBody =
@@ -59,8 +93,7 @@ public class ClovaApiService {
                         "    },\n" +
                         "    {\n" +
                         "      \"role\": \"user\",\n" +
-                        "      \"content\": \"[서울], [2024-10-01], [2024-10-03], [여유롭게 즐겨요, 맛집에 관심있어요, 가성비가 중요해요]\\n" +
-                        "      [꼭 가야하는 장소] - [세종문화회관], [서울월드컵경기장], [반포한강공원]\"\n" +
+                        "      \"content\": \"" + userContent + "\"\n" +
                         "    }\n" +
                         "  ],\n" +
                         "  \"topP\": 0.8,\n" +
