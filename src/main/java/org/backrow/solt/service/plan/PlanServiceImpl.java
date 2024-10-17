@@ -22,7 +22,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -116,20 +115,22 @@ public class PlanServiceImpl implements PlanService {
         log.info(clovaRequestBody);
 
         // Clova API를 호출하여 추천 장소 정보 가져오기
-        DirectionsResponses clovaResponse = clovaApiService.callClovaApi(clovaRequestBody);
+        DirectionsResponses clovaResponse = clovaApiService.callClovaApi();
         log.info(clovaResponse);
 
         // Clova API 응답에서 추천 장소를 추출
         List<PlaceDTO> recommendedPlaces = new ArrayList<>();
-        log.info(recommendedPlaces);
         if (clovaResponse != null && clovaResponse.getPlaces() != null) {
             recommendedPlaces = clovaResponse.getPlaces();
         }
-        log.info(recommendedPlaces);
+        log.info("Recommended Places: " + recommendedPlaces);
 
         // 입력된 places와 routes 데이터를 먼저 가져옴
         Set<PlaceDTO> places = planInputDTO.getPlaces();
         List<PlaceDTO> placeList = new ArrayList<>(places);
+
+        // Clova API로 받은 추천 장소를 기존 장소 리스트에 병합
+        placeList.addAll(recommendedPlaces);
 
         // Set<Long>을 Set<ThemeDTO>로 변환하는 로직 추가
         Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
