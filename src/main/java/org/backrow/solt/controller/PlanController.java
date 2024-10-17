@@ -55,7 +55,7 @@ public class PlanController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Boolean>> modifyPlan(
             @PathVariable Long id,
-            @Valid @RequestBody PlanInputDTO planInputDTO,
+            @RequestBody PlanInputDTO planInputDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         boolean result = planService.modifyPlan(id, planInputDTO, userDetails.getMemberId());
