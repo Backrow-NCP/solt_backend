@@ -106,6 +106,19 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
+
+        // Clova API에 요청할 바디 생성
+        String clovaRequestBody = ClovaApiService.createClovaRequestBody(planInputDTO);
+
+        // Clova API를 호출하여 추천 장소 정보 가져오기
+        DirectionsResponses clovaResponse = clovaApiService.callClovaApi(clovaRequestBody);
+
+        // Clova API 응답에서 추천 장소를 추출
+        List<PlaceDTO> recommendedPlaces = new ArrayList<>();
+        if (clovaResponse != null && clovaResponse.getPlaces() != null) {
+            recommendedPlaces = clovaResponse.getPlaces();
+        }
+
         // 입력된 places와 routes 데이터를 먼저 가져옴
         Set<PlaceDTO> places = planInputDTO.getPlaces();
         List<PlaceDTO> placeList = new ArrayList<>(places);
