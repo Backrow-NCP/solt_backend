@@ -13,12 +13,13 @@ import java.sql.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberInfoDTO {
-
     private long memberId;
+
     private String name;
 
     @JsonFormat(pattern = "yyyy-mm-dd")
     private Date birthYear;
+
     private boolean gender;
     
     private String fileName;

@@ -10,7 +10,7 @@ import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.reply.ReplyInputDTO;
 import org.backrow.solt.security.CustomUserDetails;
-import org.backrow.solt.service.ReplyService;
+import org.backrow.solt.service.board.ReplyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Tag(name = "댓글 API", description = "댓글에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
 @RestController
-@RequestMapping("/reply")
+@RequestMapping("/replies")
 @RequiredArgsConstructor
 @Log4j2
 public class ReplyController {
@@ -39,8 +39,11 @@ public class ReplyController {
     @Operation(summary = "댓글 작성", description = "새로운 댓글을 작성합니다.")
     @PostMapping
     public ResponseEntity<Map<String, Long>> saveReply(
-            @Valid @RequestBody ReplyInputDTO replyInputDTO
+            @Valid @RequestBody ReplyInputDTO replyInputDTO,
+            @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
+        long memberId = userDetails.getMemberId();
+        replyInputDTO.setMemberId(memberId);
         Long id = replyService.saveReply(replyInputDTO);
         return ResponseEntity.ok(Map.of("id", id));
     }

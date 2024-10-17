@@ -1,7 +1,7 @@
 package org.backrow.solt.domain.board;
 
 import lombok.*;
-import org.backrow.solt.domain.Member;
+import org.backrow.solt.domain.member.Member;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,7 +37,7 @@ public class Reply {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_reply_id")
-    private Reply parentReply;
+    private Reply parentReply; // 대댓글이 존재하는 댓글은 어떻게 처리할 지
 
     @CreatedDate
     @Column(name="regdate", updatable=false)

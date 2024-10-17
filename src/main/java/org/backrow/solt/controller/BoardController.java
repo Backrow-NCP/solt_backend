@@ -11,7 +11,7 @@ import org.backrow.solt.dto.page.PageResponseDTO;
 import org.backrow.solt.dto.board.BoardInputDTO;
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.backrow.solt.security.CustomUserDetails;
-import org.backrow.solt.service.BoardService;
+import org.backrow.solt.service.board.BoardService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ import java.util.Map;
 
 @Tag(name = "게시판 API", description = "게시글에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
 @RestController
-@RequestMapping("/board")
+@RequestMapping("/boards")
 @RequiredArgsConstructor
 @Log4j2
 public class BoardController {
@@ -53,7 +53,6 @@ public class BoardController {
             @Valid @RequestBody BoardInputDTO boardInputDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        System.out.println(userDetails);
         Long id = boardService.saveBoard(boardInputDTO, userDetails.getMemberId());
         return ResponseEntity.ok(Map.of("id", id));
     }

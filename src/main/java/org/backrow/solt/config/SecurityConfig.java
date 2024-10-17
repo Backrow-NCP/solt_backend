@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -23,13 +22,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
-import static org.springframework.http.HttpMethod.POST;
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
-
     private final UserDetailsService userDetailsService;
     private final AuthenticationFilter authenticationFilter;
     private final AuthEntryPoint authEntryPoint;
@@ -51,12 +47,25 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-//                .antMatchers("/", "/login","/login/token","/board/list","/swagger-ui/**","/swagger-ui/index.html#").permitAll()
-                .anyRequest().permitAll();
-//         테스트용 모든 요청 허가
+//                .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
+//                        "/plan/recom",
+//                        "/like/*",
+//                        "/login/password", "/login/check",
+//                        "/reply/list/*",
+//                        "/board/*", "/board/list", "/board/list/*",
+//                        "/email/verifications",
+//                        "/loadbalancer").permitAll()
+//                .antMatchers(HttpMethod.POST,
+//                        "/file",
+//                        "/login", "/login/token", "/login/register",
+//                        "/email/verification-requests").permitAll()
+//                .antMatchers(HttpMethod.DELETE,
+//                        "/file").permitAll()
 //                .anyRequest().authenticated().and()
 //                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
 //                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
+                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
+
     }
 
     @Bean

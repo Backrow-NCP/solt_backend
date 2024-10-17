@@ -1,11 +1,9 @@
 package org.backrow.solt.dto.plan;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
-import org.backrow.solt.domain.plan.Place;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Data
 @Builder
@@ -13,14 +11,20 @@ import java.util.Date;
 @AllArgsConstructor
 public class RouteDTO {
     private Long routeId;
-//    private LocalDateTime startTime;
-//    private LocalDateTime endTime;
-    private Long startPlaceId;
-    private Long endPlaceId;
-    private LocalDate date;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime startTime;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private LocalDateTime endTime;
+
     private Integer price;
-    private Integer transportationId;
+
+    private TransportationDTO transportation;
+
     private Integer distance;
+
     private Integer travelTime;
+
     private Boolean checker; // AI 판단 여부
 }

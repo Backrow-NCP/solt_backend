@@ -4,7 +4,7 @@ import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.security.CustomUserDetails;
-import org.backrow.solt.service.LoginService;
+import org.backrow.solt.service.security.LoginService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -17,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
 
 @Component
 @RequiredArgsConstructor
@@ -28,27 +29,26 @@ public class AuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         String jwt = request.getHeader(HttpHeaders.AUTHORIZATION);
-        if(jwt != null) {
+
+        if (jwt != null) {
             try{
                 String email = loginService.getAuthUser(request);
-                log.info(email);
-                long memberId = loginService.getMemberId(email);
-                log.info(memberId);
+                Long memberId = loginService.getMemberId(request);
+
                 CustomUserDetails userDetails = new CustomUserDetails.CustomUserDetailsBuilder()
-                            .memberId(memberId)
-                            .build();
+                        .username(email)
+                        .password("")
+                        .memberId(memberId)
+                        .authorities(Collections.emptyList())
+                        .build();
 
                 Authentication auth = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(auth);
-
-    //            기존의 이메일만 저장하는 방식
-    //            Authentication auth =
-    //                    new UsernamePasswordAuthenticationToken(email,
-    //                            null, java.util.Collections.emptyList());
-    //            SecurityContextHolder.getContext().setAuthentication(auth);
-
             } catch (ExpiredJwtException e){
+                log.error(e.getMessage());
                 response.setHeader(HttpHeaders.EXPIRES,"AccessToken");
+            } catch (Exception e) {
+                log.error("Token parsing error", e);
             }
         }
         filterChain.doFilter(request, response);
