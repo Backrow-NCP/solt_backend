@@ -18,9 +18,6 @@ public class Answer {
     @JoinColumn(name="question_id")
     private Question question;
 
-//    @OneToMany(mappedBy="answer")
-//    private List<AnswerType> answerTypes;
-
     @ManyToOne
     @JoinColumn(name="type_id")
     private AnswerType answerType;

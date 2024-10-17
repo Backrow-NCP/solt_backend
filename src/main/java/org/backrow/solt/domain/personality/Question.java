@@ -1,9 +1,12 @@
 package org.backrow.solt.domain.personality;
 
 import lombok.*;
+import org.backrow.solt.domain.board.BoardImage;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -25,6 +28,6 @@ public class Question {
     private String image;
 
     @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    private Set<Answer> answers = new HashSet<>();
 
 }

@@ -13,6 +13,6 @@ public class AnswerDTO {
     private int answerId;
     private String content;
     private int score;
-    private AnswerTypeDTO answerTypes;
+    private AnswerTypeDTO answerType;
 
 }

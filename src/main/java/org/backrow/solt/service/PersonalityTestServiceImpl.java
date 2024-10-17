@@ -24,7 +24,7 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
     @Override
     public PersonalityTestDTO getPersonalityTestById(int id) {
         PersonalityTest personalityTest = personalityTestRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("테스트가 없어요" + id));
+                .orElseThrow(()-> new RuntimeException("Test not found..." + id));
         return modelMapper.map(personalityTest, PersonalityTestDTO.class);
     }
 
@@ -54,19 +54,44 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
 
 
     private String createKeyFromScoreDTO(List<ScoreDTO> dtoList) {
-        StringBuilder keyBuilder = new StringBuilder();
+        // type과 score를 맵핑할 수 있도록 Map 생성
+        Map<String, Integer> scoreMap = new HashMap<>();
 
         for (ScoreDTO scoreDTO : dtoList) {
-            String type = scoreDTO.getType();
-            int score = scoreDTO.getScore();
+            scoreMap.put(scoreDTO.getType(), scoreDTO.getScore());
+        }
 
+        // 모든 필요한 type에 대해 키 생성
+        StringBuilder keyBuilder = new StringBuilder();
+        String[] types = {"i", "s", "t", "j"};
+
+        for (String type : types) {
+            Integer score = scoreMap.getOrDefault(type, 0);  // type이 없는 경우 기본값 0 사용
             String scoreSign = score >= 0 ? "P" : "N";
-
             keyBuilder.append(type).append(scoreSign).append("-");
         }
+
         // 마지막 "-" 제거
         return keyBuilder.toString().replaceAll("-$", "");
     }
+
+
+//    private String createKeyFromScoreDTO(List<ScoreDTO> dtoList) {
+//
+//        StringBuilder keyBuilder = new StringBuilder();
+//
+//
+//        for (ScoreDTO scoreDTO : dtoList) {
+//            String type = scoreDTO.getType();
+//            int score = scoreDTO.getScore();
+//
+//            String scoreSign = score >= 0 ? "P" : "N";
+//
+//            keyBuilder.append(type).append(scoreSign).append("-");
+//        }
+//        // 마지막 "-" 제거
+//        return keyBuilder.toString().replaceAll("-$", "");
+//    }
 
 
     // Key를 기반으로 resultId 매핑
