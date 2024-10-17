@@ -105,6 +105,7 @@ public class BoardServiceImpl implements BoardService {
         return true;
     }
 
+    @Transactional
     @Override
     public boolean deleteBoard(Long boardId, Long memberId) {
         try {
