@@ -4,13 +4,10 @@ import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Member;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.service.ai.ClovaApiService;
-import org.backrow.solt.domain.plan.api.RoutesResponses;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
-import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.PlanViewDTO;
-import org.backrow.solt.dto.plan.RouteDTO;
 import org.backrow.solt.repository.ThemeLogRepository;
 import org.backrow.solt.repository.PlanRepository;
 import org.modelmapper.ModelMapper;
@@ -104,19 +101,50 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
-
-        /*
-        // 1.장소 추천 받기 (Clova API 호출)
-        String clovaRequestBody = createClovaRequestBody(planInputDTO);
-        RoutesResponses clovaResponses = clovaApiService.callClovaApi(clovaRequestBody);
-
-        // 2. 각 추천된 장소들에 대해 Google Maps API를 통해 경로 정보 받기
-        List<PlaceDTO> places = clovaResponses.getPlaces();
-        Set<RouteDTO> routes = new HashSet<>();
-         */
-
-        return null; // 임시 보류
+//        // 1. Clova API 호출로 장소 추천 받기
+//        String clovaRequestBody = ClovaApiService.createClovaRequestBody(planInputDTO);
+//        ClovaResponse clovaResponse = clovaApiService.callClovaApi(clovaRequestBody);
+//
+//        // 2. 각 추천된 장소들에 대해 Google Maps API를 통해 경로 정보 받기
+//        List<Place> places = clovaResponse.getPlaces(); // ClovaResponse에서 장소 리스트 가져오기
+//        Set<RouteDTO> routes = new HashSet<>();
+//
+//        for (int i = 0; i < places.size() - 1; i++) {
+//            Place startPlace = places.get(i);
+//            Place endPlace = places.get(i + 1);
+//
+//            // Google Maps API를 통해 두 장소 간 경로 정보 조회
+//            RoutesResponses googleResponse = googleResponse.getRoutes(startPlace.getAddr(), endPlace.getAddr());
+//
+//            RouteDTO routeDTO = RouteDTO.builder()
+//                    .startPlaceId(startPlace.getPlaceId())
+//                    .endPlaceId(endPlace.getPlaceId())
+//                    .date(planInputDTO.getStartDate().plusDays(i)) // 날짜는 시작일을 기준으로 하루씩 더함
+//                    .distance(googleResponse.getRoutes().get(0).getLegs().get(0).getDistance().getValue() / 1000.0 + " km") // km 단위로 변환
+//                    .travelTime(googleResponse.getRoutes().get(0).getLegs().get(0).getDuration().getValue() / 60 + " min") // 분 단위로 변환
+//                    .price(0) // 가격 정보가 없는 경우 기본 0으로 설정
+//                    .transportationId(0) // 실제 transportationId를 가져오는 방법에 맞게 수정 필요
+//                    .build();
+//
+//            routes.add(routeDTO);
+//        }
+//
+//        // 3. 통합된 PlanOutputDTO를 생성하여 JSON 파일로 반환
+//        PlanViewDTO outputDTO = PlanViewDTO.builder()
+//                .title(planInputDTO.getTitle())
+//                .member(new MemberInfoDTO(planInputDTO.getMemberId(), "이름", Date.valueOf("2024-01-01"), true, "파일이름")) // MemberInfoDTO 생성에 맞게 수정 필요
+//                .places(new HashSet<>(places))
+//                .routes(routes)
+//                .location(planInputDTO.getLocation())
+//                .startDate(planInputDTO.getStartDate())
+//                .endDate(planInputDTO.getEndDate())
+//                .themes(planInputDTO.getThemes())
+//                .build();
+//
+//        return outputDTO;
+        return null;
     }
+
 
     /** PlanInputDTO를 Plan 엔티티로 변환합니다. **/
     private Plan convertToEntity(PlanInputDTO planInputDTO) {
