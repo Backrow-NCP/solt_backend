@@ -47,24 +47,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
-                        "/plan/recom",
-                        "/like/*",
-                        "/login/password", "/login/check",
-                        "/reply/list/*",
-                        "/board/*", "/board/list", "/board/list/*",
-                        "/email/verifications",
-                        "/loadbalancer").permitAll()
-                .antMatchers(HttpMethod.POST,
-                        "/file",
-                        "/login", "/login/token", "/login/register",
-                        "/email/verification-requests").permitAll()
-                .antMatchers(HttpMethod.DELETE,
-                        "/file").permitAll()
-//                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
-                .anyRequest().authenticated().and()
-                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
+//                .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
+//                        "/plan/recom",
+//                        "/like/*",
+//                        "/login/password", "/login/check",
+//                        "/reply/list/*",
+//                        "/board/*", "/board/list", "/board/list/*",
+//                        "/email/verifications",
+//                        "/loadbalancer").permitAll()
+//                .antMatchers(HttpMethod.POST,
+//                        "/file",
+//                        "/login", "/login/token", "/login/register",
+//                        "/email/verification-requests").permitAll()
+//                .antMatchers(HttpMethod.DELETE,
+//                        "/file").permitAll()
+//                .anyRequest().authenticated().and()
+//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+//                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
+                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
 
     }
 
