@@ -1,11 +1,16 @@
 package org.backrow.solt.service.ai;
 
+import org.backrow.solt.domain.plan.Place;
+import org.backrow.solt.domain.plan.Route;
+import org.backrow.solt.domain.plan.TransportationType;
 import org.backrow.solt.domain.plan.api.RoutesResponses;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.time.LocalDate;
 
 @Service
 public class GoogleMapsApiService {
@@ -19,19 +24,29 @@ public class GoogleMapsApiService {
         this.restTemplate = restTemplate;
     }
 
-    public RoutesResponses getRoutes(String origin, String destination) {
-        // API 호출 URL 생성
-        String url = String.format("https://maps.googleapis.com/maps/api/directions/json?origin=%s&destination=%s&key=%s",
-                origin, destination, googleMapsApiKey);
+    public Route createRouteEntity(RoutesResponses routesResponses, Place startPlace, Place endPlace, TransportationType transportationType, LocalDate routeDate) {
+        if (routesResponses != null && !routesResponses.getRoutes().isEmpty()) {
+            RoutesResponses.Route firstRoute = routesResponses.getRoutes().get(0);
+            if (!firstRoute.getLegs().isEmpty()) {
+                RoutesResponses.Route.Leg firstLeg = firstRoute.getLegs().get(0);
 
-        // API 요청 및 응답 받기
-        ResponseEntity<RoutesResponses> response = restTemplate.getForEntity(url, RoutesResponses.class);
+                // Extracting necessary information
+                int travelTime = (firstLeg.getDuration().getValue())/60; // 이동 시간 (분 단위)
+                int distance = (firstLeg.getDistance().getValue())/1000 + (firstLeg.getDistance().getValue())%1000; // 이동 거리 (미터 단위)
 
-        // 응답 상태 코드 확인
-        if (response.getStatusCode() == HttpStatus.OK) {
-            return response.getBody();
-        } else {
-            throw new RuntimeException("Error getting routes from Google Maps: " + response.getStatusCode());
+                // Create and return the Route entity
+                return Route.builder()
+                        .startPlaceId(startPlace) // Start place entity
+                        .endPlaceId(endPlace) // End place entity
+                        .date(routeDate) // Route date
+                        .price(0) // Default price, you might want to extract this if available
+                        .transportationType(transportationType) // Transportation type entity
+                        .distance(distance) // Distance
+                        .travelTime(travelTime) // Travel time
+                        .build();
+            }
         }
+        throw new RuntimeException("No valid routes found to create Route.");
     }
+
 }
