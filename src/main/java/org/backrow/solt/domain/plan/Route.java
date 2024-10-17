@@ -3,9 +3,7 @@ package org.backrow.solt.domain.plan;
 import lombok.*;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Getter
@@ -23,24 +21,11 @@ public class Route {
     @JoinColumn(name = "plan_id", nullable = false)
     private Plan plan;
 
-    /*
     @Column(nullable = false)
     private LocalDateTime startTime;
 
     @Column(nullable = false)
     private LocalDateTime endTime;
-     */
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "start_place_id", nullable = false)
-    private Place startPlaceId;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "end_place_id", nullable = false)
-    private Place endPlaceId;
-
-    @Column(nullable = false)
-    private LocalDate date;
 
     @Column(nullable = false)
     @Builder.Default
