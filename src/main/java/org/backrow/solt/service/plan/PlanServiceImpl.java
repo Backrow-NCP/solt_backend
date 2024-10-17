@@ -3,13 +3,15 @@ package org.backrow.solt.service.plan;
 import lombok.RequiredArgsConstructor;
 import org.backrow.solt.domain.Member;
 import org.backrow.solt.domain.plan.*;
+import org.backrow.solt.domain.plan.api.DirectionsResponses;
+import org.backrow.solt.dto.member.MemberInfoDTO;
+import org.backrow.solt.dto.plan.*;
 import org.backrow.solt.service.ai.ClovaApiService;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
-import org.backrow.solt.dto.plan.PlanInputDTO;
-import org.backrow.solt.dto.plan.PlanViewDTO;
 import org.backrow.solt.repository.ThemeLogRepository;
 import org.backrow.solt.repository.PlanRepository;
+import org.backrow.solt.service.ai.GoogleMapsApiService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -28,6 +32,7 @@ public class PlanServiceImpl implements PlanService {
     private final ThemeLogRepository themeLogRepository;
     private final ModelMapper modelMapper;
     private final ClovaApiService clovaApiService;
+    private final GoogleMapsApiService googleMapsApiService;
 
 //    private final PlanAiService planAiService; // Clova AI를 활용한 장소 추천 서비스
 //    private final MapAPIService mapAPIService; // Google Maps API를 활용한 경로 시간 계산 서비스
@@ -101,49 +106,115 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
-//        // 1. Clova API 호출로 장소 추천 받기
-//        String clovaRequestBody = ClovaApiService.createClovaRequestBody(planInputDTO);
-//        ClovaResponse clovaResponse = clovaApiService.callClovaApi(clovaRequestBody);
-//
-//        // 2. 각 추천된 장소들에 대해 Google Maps API를 통해 경로 정보 받기
-//        List<Place> places = clovaResponse.getPlaces(); // ClovaResponse에서 장소 리스트 가져오기
-//        Set<RouteDTO> routes = new HashSet<>();
-//
-//        for (int i = 0; i < places.size() - 1; i++) {
-//            Place startPlace = places.get(i);
-//            Place endPlace = places.get(i + 1);
-//
-//            // Google Maps API를 통해 두 장소 간 경로 정보 조회
-//            RoutesResponses googleResponse = googleResponse.getRoutes(startPlace.getAddr(), endPlace.getAddr());
-//
-//            RouteDTO routeDTO = RouteDTO.builder()
-//                    .startPlaceId(startPlace.getPlaceId())
-//                    .endPlaceId(endPlace.getPlaceId())
-//                    .date(planInputDTO.getStartDate().plusDays(i)) // 날짜는 시작일을 기준으로 하루씩 더함
-//                    .distance(googleResponse.getRoutes().get(0).getLegs().get(0).getDistance().getValue() / 1000.0 + " km") // km 단위로 변환
-//                    .travelTime(googleResponse.getRoutes().get(0).getLegs().get(0).getDuration().getValue() / 60 + " min") // 분 단위로 변환
-//                    .price(0) // 가격 정보가 없는 경우 기본 0으로 설정
-//                    .transportationId(0) // 실제 transportationId를 가져오는 방법에 맞게 수정 필요
-//                    .build();
-//
-//            routes.add(routeDTO);
-//        }
-//
-//        // 3. 통합된 PlanOutputDTO를 생성하여 JSON 파일로 반환
-//        PlanViewDTO outputDTO = PlanViewDTO.builder()
-//                .title(planInputDTO.getTitle())
-//                .member(new MemberInfoDTO(planInputDTO.getMemberId(), "이름", Date.valueOf("2024-01-01"), true, "파일이름")) // MemberInfoDTO 생성에 맞게 수정 필요
-//                .places(new HashSet<>(places))
-//                .routes(routes)
-//                .location(planInputDTO.getLocation())
-//                .startDate(planInputDTO.getStartDate())
-//                .endDate(planInputDTO.getEndDate())
-//                .themes(planInputDTO.getThemes())
-//                .build();
-//
-//        return outputDTO;
-        return null;
+        // 입력된 places와 routes 데이터를 먼저 가져옴
+        Set<PlaceDTO> places = planInputDTO.getPlaces();
+        List<PlaceDTO> placeList = new ArrayList<>(places);
+
+        // Set<Long>을 Set<ThemeDTO>로 변환하는 로직 추가
+        Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
+                .map(themeId -> ThemeDTO.builder()
+                        .themeId(themeId)
+                        .build())
+                .collect(Collectors.toSet());
+
+        // PlanViewDTO 생성 시 기본 값 설정
+        PlanViewDTO planViewDTO = PlanViewDTO.builder()
+                .title(planInputDTO.getTitle())
+                .member(MemberInfoDTO.builder().build())
+                .places(new HashSet<>(places))
+                .themes(themeSet)
+                .location(planInputDTO.getLocation())
+                .startDate(planInputDTO.getStartDate())
+                .endDate(planInputDTO.getEndDate())
+                .regDate(LocalDateTime.now())
+                .modDate(LocalDateTime.now())
+                .build();
+
+        // 숙소와 공항 구분하기
+        PlaceDTO airport = null;
+        List<PlaceDTO> accommodations = new ArrayList<>();
+        List<PlaceDTO> normalPlaces = new ArrayList<>();
+
+        for (PlaceDTO place : placeList) {
+            if (place.getPlaceName().contains("공항")) { // 공항 여부를 placeName으로 구분
+                airport = place;  // 공항은 따로 저장
+            } else if (place.getPlaceName().contains("숙소")) { // 숙소 여부를 placeName으로 구분
+                accommodations.add(place);  // 숙소 저장
+            } else {
+                normalPlaces.add(place);  // 일반 장소는 따로 저장
+            }
+        }
+
+        // 날짜별로 정렬된 장소 목록 만들기
+        Map<LocalDate, List<PlaceDTO>> placesByDate = normalPlaces.stream()
+                .collect(Collectors.groupingBy(PlaceDTO::getDate));
+
+        List<RouteDTO> calculatedRoutes = new ArrayList<>();
+
+        // 날짜별로 장소 순회
+        for (LocalDate date : placesByDate.keySet()) {
+            List<PlaceDTO> dailyPlaces = placesByDate.get(date);
+
+            // 숙소는 그날 마지막 장소로 추가
+            if (!accommodations.isEmpty()) {
+                PlaceDTO accommodation = accommodations.get(0);  // 해당 날짜의 숙소
+                dailyPlaces.add(accommodation);  // 리스트에 숙소를 마지막에 추가
+            }
+
+            // 장소 간 경로 계산
+            for (int i = 0; i < dailyPlaces.size() - 1; i++) {
+                PlaceDTO startPlace = dailyPlaces.get(i);
+                PlaceDTO endPlace = dailyPlaces.get(i + 1);
+
+                // 출발지와 도착지의 placeName을 Google Maps API에 전달
+                DirectionsResponses directions = googleMapsApiService.getDirections(
+                        startPlace.getPlaceName(),
+                        endPlace.getPlaceName()
+                );
+
+                // API 응답에서 필요한 경로 정보 추출 후 RouteDTO 생성
+                RouteDTO route = RouteDTO.builder()
+                        .startPlaceId(startPlace.getPlaceId())
+                        .endPlaceId(endPlace.getPlaceId())
+                        .date(startPlace.getDate())  // Place의 날짜를 경로 날짜로 사용
+                        .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
+                        .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue()) // 이동 시간
+                        .price(0)  // 가격은 0으로 초기화
+                        .build();
+
+                calculatedRoutes.add(route);  // 계산된 경로 추가
+            }
+        }
+
+        // 모든 일정이 끝나고 공항으로 가는 경로 추가
+        if (airport != null && !normalPlaces.isEmpty()) {
+            PlaceDTO lastPlace = placeList.get(placeList.size() - 1);  // 마지막 장소
+
+            // 마지막 장소에서 공항까지 경로 계산
+            DirectionsResponses directions = googleMapsApiService.getDirections(
+                    lastPlace.getPlaceName(),
+                    airport.getPlaceName()
+            );
+
+            RouteDTO airportRoute = RouteDTO.builder()
+                    .startPlaceId(lastPlace.getPlaceId())
+                    .endPlaceId(airport.getPlaceId())
+                    .date(lastPlace.getDate())  // 마지막 날짜를 경로 날짜로 사용
+                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
+                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())  // 이동 시간
+                    .price(0)  // 가격은 0으로 초기화
+                    .build();
+
+            calculatedRoutes.add(airportRoute);  // 공항 경로 추가
+        }
+
+        // 계산된 경로를 LinkedHashSet으로 변환해 PlanViewDTO에 설정
+        planViewDTO.setRoutes(new LinkedHashSet<>(calculatedRoutes));
+
+        // 정렬된 Place 정보는 이미 Set 형태로 들어가 있으므로 따로 추가 필요 없음
+        return planViewDTO;
     }
+
 
 
     /** PlanInputDTO를 Plan 엔티티로 변환합니다. **/
