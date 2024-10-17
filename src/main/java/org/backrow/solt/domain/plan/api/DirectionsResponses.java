@@ -1,6 +1,8 @@
 package org.backrow.solt.domain.plan.api;
 
 import lombok.Data;
+import org.backrow.solt.dto.plan.PlaceDTO;
+
 import java.util.List;
 
 @Data
@@ -8,6 +10,7 @@ public class DirectionsResponses {
 
     private String status;
     private List<Route> routes;
+    private List<PlaceDTO> places;
 
     @Data
     public static class Route {
