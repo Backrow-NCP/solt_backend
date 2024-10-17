@@ -32,18 +32,21 @@ public class Plan {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @Builder.Default
     private Set<Place> places = new HashSet<>();
 
     @OneToMany(mappedBy = "plan",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @Builder.Default
     private Set<Route> routes = new HashSet<>();
 
     @OneToMany(mappedBy = "plan",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @Builder.Default
     private Set<ThemeLog> themes = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
