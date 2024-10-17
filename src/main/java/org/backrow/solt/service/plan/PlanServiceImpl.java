@@ -1,21 +1,23 @@
 package org.backrow.solt.service.plan;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Member;
+import lombok.extern.log4j.Log4j2;
+import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.domain.plan.api.DirectionsResponses;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.plan.*;
+import org.backrow.solt.repository.plan.PlanRepository;
+import org.backrow.solt.repository.plan.ThemeLogRepository;
 import org.backrow.solt.service.ai.ClovaApiService;
 import org.backrow.solt.dto.page.PageRequestDTO;
 import org.backrow.solt.dto.page.PageResponseDTO;
-import org.backrow.solt.repository.ThemeLogRepository;
-import org.backrow.solt.repository.PlanRepository;
 import org.backrow.solt.service.ai.GoogleMapsApiService;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
@@ -27,15 +29,13 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Log4j2
 public class PlanServiceImpl implements PlanService {
     private final PlanRepository planRepository;
     private final ThemeLogRepository themeLogRepository;
     private final ModelMapper modelMapper;
     private final ClovaApiService clovaApiService;
     private final GoogleMapsApiService googleMapsApiService;
-
-//    private final PlanAiService planAiService; // Clova AI를 활용한 장소 추천 서비스
-//    private final MapAPIService mapAPIService; // Google Maps API를 활용한 경로 시간 계산 서비스
 
     @Override
     public PageResponseDTO<PlanViewDTO> getPlanList(long id, PageRequestDTO pageRequestDTO) { // List 조회 시에는 Plan의 세부 내용은 필요 없지 않을까..?
@@ -65,11 +65,11 @@ public class PlanServiceImpl implements PlanService {
         planRepository.save(plan);
 
         Set<ThemeLog> themeLogs = planInputDTO.getThemes().stream()
-                        .map(themeId -> ThemeLog.builder()
-                                .theme(Theme.builder()
-                                        .themeId(themeId).build())
-                                .plan(plan).build())
-                        .collect(Collectors.toSet());
+                .map(themeId -> ThemeLog.builder()
+                        .theme(Theme.builder()
+                                .themeId(themeId).build())
+                        .plan(plan).build())
+                .collect(Collectors.toSet());
         themeLogRepository.saveAll(themeLogs);
 
         return plan.getPlanId();
@@ -77,9 +77,11 @@ public class PlanServiceImpl implements PlanService {
 
     @Transactional
     @Override
-    public boolean modifyPlan(long id, PlanInputDTO planInputDTO) {
-        Optional<Plan> findPlan = planRepository.findById(id);
-        Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + id));
+    public boolean modifyPlan(long planId, PlanInputDTO planInputDTO, long memberId) {
+        Optional<Plan> findPlan = planRepository.findById(planId);
+        Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + planId));
+        if (!Objects.equals(plan.getMember().getMemberId(), memberId))
+            throw new AccessDeniedException("You do not have permission to modify this plan.");
 
         Set<Place> places = mapToEntitySet(planInputDTO.getPlaces(), Place.class);
         Set<Route> routes = mapToEntitySet(planInputDTO.getRoutes(), Route.class);
@@ -94,30 +96,36 @@ public class PlanServiceImpl implements PlanService {
         return true;
     }
 
+    @Transactional
     @Override
-    public boolean deletePlan(long id) {
+    public boolean deletePlan(long planId, long memberId) {
         try {
-            planRepository.deleteById(id);
+            planRepository.deleteByPlanIdAndMember_MemberId(planId, memberId);
             return true;
         } catch (EmptyResultDataAccessException e) {
-            throw new NotFoundException("Plan not found: " + id);
+            throw new NotFoundException("Plan not found: " + planId);
         }
     }
 
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
+        log.info(planInputDTO);
 
         // Clova API에 요청할 바디 생성
         String clovaRequestBody = ClovaApiService.createClovaRequestBody(planInputDTO);
+        log.info(clovaRequestBody);
 
         // Clova API를 호출하여 추천 장소 정보 가져오기
         DirectionsResponses clovaResponse = clovaApiService.callClovaApi(clovaRequestBody);
+        log.info(clovaResponse);
 
         // Clova API 응답에서 추천 장소를 추출
         List<PlaceDTO> recommendedPlaces = new ArrayList<>();
+        log.info(recommendedPlaces);
         if (clovaResponse != null && clovaResponse.getPlaces() != null) {
             recommendedPlaces = clovaResponse.getPlaces();
         }
+        log.info(recommendedPlaces);
 
         // 입력된 places와 routes 데이터를 먼저 가져옴
         Set<PlaceDTO> places = planInputDTO.getPlaces();
@@ -144,9 +152,9 @@ public class PlanServiceImpl implements PlanService {
                 .build();
 
         // 숙소와 공항 구분하기
-        PlaceDTO airport = null;
         List<PlaceDTO> accommodations = new ArrayList<>();
         List<PlaceDTO> normalPlaces = new ArrayList<>();
+        PlaceDTO airport = null;
 
         for (PlaceDTO place : placeList) {
             if (place.getPlaceName().contains("공항")) { // 공항 여부를 placeName으로 구분
@@ -158,17 +166,20 @@ public class PlanServiceImpl implements PlanService {
             }
         }
 
+        // 각 Place의 startTime을 기준으로 정렬
+        normalPlaces.sort(Comparator.comparing(PlaceDTO::getStartTime));
+
         // 날짜별로 정렬된 장소 목록 만들기
-        Map<LocalDate, List<PlaceDTO>> placesByDate = normalPlaces.stream()
-                .collect(Collectors.groupingBy(PlaceDTO::getDate));
+        Map<LocalDateTime, List<PlaceDTO>> placesByDate = normalPlaces.stream()
+                .collect(Collectors.groupingBy(PlaceDTO::getStartTime));
 
         List<RouteDTO> calculatedRoutes = new ArrayList<>();
 
         // 날짜별로 장소 순회
-        for (LocalDate date : placesByDate.keySet()) {
+        for (LocalDateTime date : placesByDate.keySet()) {
             List<PlaceDTO> dailyPlaces = placesByDate.get(date);
 
-            // 숙소는 그날 마지막 장소로 추가
+            // 숙소는 해당 날짜의 마지막 장소로 추가
             if (!accommodations.isEmpty()) {
                 PlaceDTO accommodation = accommodations.get(0);  // 해당 날짜의 숙소
                 dailyPlaces.add(accommodation);  // 리스트에 숙소를 마지막에 추가
@@ -179,7 +190,7 @@ public class PlanServiceImpl implements PlanService {
                 PlaceDTO startPlace = dailyPlaces.get(i);
                 PlaceDTO endPlace = dailyPlaces.get(i + 1);
 
-                // 출발지와 도착지의 placeName을 Google Maps API에 전달
+                // 출발지와 도착지의 placeId를 Google Maps API에 전달
                 DirectionsResponses directions = googleMapsApiService.getDirections(
                         startPlace.getPlaceName(),
                         endPlace.getPlaceName()
@@ -187,9 +198,8 @@ public class PlanServiceImpl implements PlanService {
 
                 // API 응답에서 필요한 경로 정보 추출 후 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
-                        .startPlaceId(startPlace.getPlaceId())
-                        .endPlaceId(endPlace.getPlaceId())
-                        .date(startPlace.getDate())  // Place의 날짜를 경로 날짜로 사용
+                        .startTime(startPlace.getStartTime())
+                        .endTime(endPlace.getEndTime())
                         .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
                         .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue()) // 이동 시간
                         .price(0)  // 가격은 0으로 초기화
@@ -201,7 +211,7 @@ public class PlanServiceImpl implements PlanService {
 
         // 모든 일정이 끝나고 공항으로 가는 경로 추가
         if (airport != null && !normalPlaces.isEmpty()) {
-            PlaceDTO lastPlace = placeList.get(placeList.size() - 1);  // 마지막 장소
+            PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1);  // 마지막 일반 장소
 
             // 마지막 장소에서 공항까지 경로 계산
             DirectionsResponses directions = googleMapsApiService.getDirections(
@@ -210,9 +220,8 @@ public class PlanServiceImpl implements PlanService {
             );
 
             RouteDTO airportRoute = RouteDTO.builder()
-                    .startPlaceId(lastPlace.getPlaceId())
-                    .endPlaceId(airport.getPlaceId())
-                    .date(lastPlace.getDate())  // 마지막 날짜를 경로 날짜로 사용
+                    .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
+                    .endTime(airport.getStartTime())     // 공항의 시작 시간 사용
                     .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
                     .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())  // 이동 시간
                     .price(0)  // 가격은 0으로 초기화
@@ -227,8 +236,6 @@ public class PlanServiceImpl implements PlanService {
         // 정렬된 Place 정보는 이미 Set 형태로 들어가 있으므로 따로 추가 필요 없음
         return planViewDTO;
     }
-
-
 
     /** PlanInputDTO를 Plan 엔티티로 변환합니다. **/
     private Plan convertToEntity(PlanInputDTO planInputDTO) {
@@ -260,5 +267,4 @@ public class PlanServiceImpl implements PlanService {
                 .peek(route -> route.setPlan(plan))
                 .collect(Collectors.toSet()));
     }
-
 }
