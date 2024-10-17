@@ -22,13 +22,11 @@ public class AppConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
         modelMapper.typeMap(Reply.class, ReplyDTO.class)
-                .addMappings(mapper -> {
-                    mapper.using(ctx -> {
-                        Board board = (Board) ctx.getSource();
-                        if (board == null) return null;
-                        return board.getBoardId();
-                    }).map(Reply::getBoard, ReplyDTO::setBoardId);
-                });
+                .addMappings(mapper -> mapper.using(ctx -> {
+                    Board board = (Board) ctx.getSource();
+                    if (board == null) return null;
+                    return board.getBoardId();
+                }).map(Reply::getBoard, ReplyDTO::setBoardId));
 
         modelMapper.typeMap(RouteDTO.class, Route.class)
                 .addMappings(mapper -> {
