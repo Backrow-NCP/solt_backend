@@ -49,6 +49,7 @@ public class ReplyServiceImpl implements ReplyService {
         return reply.getReplyId();
     }
 
+    @Transactional
     @Override
     public boolean modifyReply(Long replyId, ReplyInputDTO replyInputDTO, Long memberId) {
         Optional<Reply> findReply = replyRepository.findById(replyId);
@@ -62,6 +63,7 @@ public class ReplyServiceImpl implements ReplyService {
         return true;
     }
 
+    @Transactional
     @Override
     public boolean deleteReply(Long replyId, Long memberId) {
         try {

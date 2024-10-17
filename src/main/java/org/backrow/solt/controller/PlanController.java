@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Tag(name = "여행 일정 API", description = "플랜에 대한 작성, 조회, 수정, 삭제 기능을 수행하는 API입니다.")
 @RestController
-@RequestMapping("/plan")
+@RequestMapping("/plans")
 @RequiredArgsConstructor
 @Log4j2
 public class PlanController {
@@ -55,7 +55,7 @@ public class PlanController {
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Boolean>> modifyPlan(
             @PathVariable Long id,
-            @Valid @RequestBody PlanInputDTO planInputDTO,
+            @RequestBody PlanInputDTO planInputDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
         boolean result = planService.modifyPlan(id, planInputDTO, userDetails.getMemberId());
