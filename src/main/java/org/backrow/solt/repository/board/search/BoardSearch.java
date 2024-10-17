@@ -1,4 +1,4 @@
-package org.backrow.solt.repository.board;
+package org.backrow.solt.repository.board.search;
 
 import org.backrow.solt.dto.board.BoardViewDTO;
 import org.springframework.data.domain.Page;

@@ -1,13 +1,10 @@
-package org.backrow.solt.repository.search;
+package org.backrow.solt.repository.plan.search;
 
 import com.querydsl.jpa.JPQLQuery;
 import org.backrow.solt.domain.member.*;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.member.MemberInfoDTO;
-import org.backrow.solt.dto.plan.PlaceDTO;
-import org.backrow.solt.dto.plan.PlanViewDTO;
-import org.backrow.solt.dto.plan.RouteDTO;
-import org.backrow.solt.dto.plan.ThemeDTO;
+import org.backrow.solt.dto.plan.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -104,7 +101,10 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                         .startTime(routeEntity.getStartTime())
                         .endTime(routeEntity.getEndTime())
                         .price(routeEntity.getPrice())
-                        .transportationId(routeEntity.getTransportationType().getId())
+                        .transportation(TransportationDTO.builder()
+                                .id(routeEntity.getTransportationType().getId())
+                                .type(routeEntity.getTransportationType().getType())
+                                .build())
                         .distance(routeEntity.getDistance())
                         .travelTime(routeEntity.getTravelTime())
                         .build())

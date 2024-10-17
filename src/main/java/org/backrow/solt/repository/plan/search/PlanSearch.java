@@ -1,4 +1,4 @@
-package org.backrow.solt.repository.search;
+package org.backrow.solt.repository.plan.search;
 
 import org.backrow.solt.dto.plan.PlanViewDTO;
 import org.springframework.data.domain.Page;
