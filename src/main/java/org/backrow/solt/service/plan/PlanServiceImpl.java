@@ -35,7 +35,6 @@ public class PlanServiceImpl implements PlanService {
 //    private final PlanAiService planAiService; // Clova AI를 활용한 장소 추천 서비스
 //    private final MapAPIService mapAPIService; // Google Maps API를 활용한 경로 시간 계산 서비스
 
-
     @Override
     public PageResponseDTO<PlanViewDTO> getPlanList(long id, PageRequestDTO pageRequestDTO) { // List 조회 시에는 Plan의 세부 내용은 필요 없지 않을까..?
         String[] types = pageRequestDTO.getTypes();
@@ -106,6 +105,7 @@ public class PlanServiceImpl implements PlanService {
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
 
+        /*
         // 1.장소 추천 받기 (Clova API 호출)
         String clovaRequestBody = createClovaRequestBody(planInputDTO);
         RoutesResponses clovaResponses = clovaApiService.callClovaApi(clovaRequestBody);
@@ -113,6 +113,7 @@ public class PlanServiceImpl implements PlanService {
         // 2. 각 추천된 장소들에 대해 Google Maps API를 통해 경로 정보 받기
         List<PlaceDTO> places = clovaResponses.getPlaces();
         Set<RouteDTO> routes = new HashSet<>();
+         */
 
         return null; // 임시 보류
     }
