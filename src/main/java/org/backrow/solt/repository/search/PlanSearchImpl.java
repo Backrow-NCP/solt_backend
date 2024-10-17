@@ -1,7 +1,7 @@
 package org.backrow.solt.repository.search;
 
 import com.querydsl.jpa.JPQLQuery;
-import org.backrow.solt.domain.*;
+import org.backrow.solt.domain.member.*;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.plan.PlaceDTO;

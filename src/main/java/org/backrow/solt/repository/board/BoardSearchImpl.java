@@ -4,7 +4,7 @@ import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPQLQuery;
-import org.backrow.solt.domain.QMember;
+import org.backrow.solt.domain.member.*;
 import org.backrow.solt.domain.board.*;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.dto.board.BoardImageDTO;
