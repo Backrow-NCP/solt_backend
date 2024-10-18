@@ -1,5 +1,7 @@
 package org.backrow.solt.service.plan;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.member.Member;
@@ -109,15 +111,20 @@ public class PlanServiceImpl implements PlanService {
 
     @Override
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
-        log.info(planInputDTO);
+        log.info("Received PlanInputDTO: " + planInputDTO);
 
         // Clova API 호출하여 추천 장소 정보 가져오기
-        List<PlacesResponses> clovaResponse = clovaApiService.callClovaApi(planInputDTO);
-        log.info("Clova API response: " + clovaResponse);
+        List<PlacesResponses> clovaResponse = new ArrayList<>();
+        try {
+            clovaResponse = clovaApiService.callClovaApi(planInputDTO);  // 이미 List<PlacesResponses>를 반환
+            log.info("Clova API response: " + clovaResponse);
+        } catch (Exception e) {
+            log.error("Error calling Clova API", e);
+        }
 
-        // Clova API 응답에서 추천 장소를 추출
+        // Clova API 응답에서 추천 장소 추출
         List<PlaceDTO> recommendedPlaces = new ArrayList<>();
-        if (clovaResponse != null) {
+        if (!clovaResponse.isEmpty()) {
             recommendedPlaces = clovaResponse.stream()
                     .map(response -> PlaceDTO.builder()
                             .placeId(response.getPlaceId())
@@ -130,10 +137,10 @@ public class PlanServiceImpl implements PlanService {
                             .checker(response.isChecker())
                             .build())
                     .collect(Collectors.toList());
+            log.info("Recommended Places: " + recommendedPlaces);
         }
-        log.info("Recommended Places: " + recommendedPlaces);
 
-        // 입력된 places 데이터를 먼저 가져옴
+        // 입력된 places 데이터를 가져와서 리스트로 변환
         Set<PlaceDTO> places = planInputDTO.getPlaces();
         List<PlaceDTO> placeList = new ArrayList<>(places);
 
@@ -150,20 +157,25 @@ public class PlanServiceImpl implements PlanService {
         // PlanViewDTO 생성 시 기본 값 설정
         PlanViewDTO planViewDTO = PlanViewDTO.builder()
                 .title(planInputDTO.getTitle())
-                .member(MemberInfoDTO.builder().build())
-                .places(new HashSet<>(places))
-                .themes(themeSet)
+                .member(MemberInfoDTO.builder().build()) // 실제 Member 정보를 설정해야 함
+                .places(new HashSet<>(placeList)) // 병합된 장소 리스트를 Set으로 변환하여 전달
+                .themes(themeSet) // 변환된 테마 정보
                 .location(planInputDTO.getLocation())
                 .startDate(planInputDTO.getStartDate())
                 .endDate(planInputDTO.getEndDate())
-                .regDate(LocalDateTime.now())
-                .modDate(LocalDateTime.now())
+                .regDate(LocalDateTime.now()) // 현재 시간으로 설정
+                .modDate(LocalDateTime.now()) // 현재 시간으로 설정
                 .build();
+
+        log.info("Generated PlanViewDTO: " + planViewDTO);
 
         // 숙소와 공항 구분하기
         List<PlaceDTO> accommodations = new ArrayList<>();
         List<PlaceDTO> normalPlaces = new ArrayList<>();
         PlaceDTO airport = null;
+
+        log.info("accommodations:" + accommodations);
+        log.info("normalPlaces:" + normalPlaces);
 
         for (PlaceDTO place : placeList) {
             if (place.getPlaceName().contains("공항")) { // 공항 여부를 placeName으로 구분
@@ -241,6 +253,7 @@ public class PlanServiceImpl implements PlanService {
 
         // 계산된 경로를 LinkedHashSet으로 변환해 PlanViewDTO에 설정
         planViewDTO.setRoutes(new LinkedHashSet<>(calculatedRoutes));
+        log.info("calculatedRoutes: " + calculatedRoutes);
 
         // 정렬된 Place 정보는 이미 Set 형태로 들어가 있으므로 따로 추가 필요 없음
         return planViewDTO;
