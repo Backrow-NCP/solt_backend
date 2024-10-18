@@ -176,8 +176,11 @@ public class ClovaApiService {
                 placeResponse.setPlaceName(placeNode.path("placeName").asText());
                 placeResponse.setAddr(placeNode.path("addr").asText());
                 placeResponse.setPrice(placeNode.path("price").asInt());
-                placeResponse.setStartTime(LocalDateTime.parse(placeNode.path("startTime").asText()));
-                placeResponse.setEndTime(LocalDateTime.parse(placeNode.path("endTime").asText()));
+
+                // 공백 제거 후 LocalDateTime 파싱
+                placeResponse.setStartTime(LocalDateTime.parse(placeNode.path("startTime").asText().trim()));
+                placeResponse.setEndTime(LocalDateTime.parse(placeNode.path("endTime").asText().trim()));
+
                 placeResponse.setDescription(placeNode.path("description").asText());
                 placeResponse.setChecker(placeNode.path("checker").asBoolean());
 
