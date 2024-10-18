@@ -37,4 +37,4 @@ out/
 .vscode/
 
 ### API KEYS CONCEALMENT ###
-.env
+src/main/resources/.env
