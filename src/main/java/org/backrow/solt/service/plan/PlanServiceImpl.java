@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.plan.*;
+import org.backrow.solt.domain.plan.api.ClovaApiResponse;
 import org.backrow.solt.domain.plan.api.DirectionsResponses;
 import org.backrow.solt.domain.plan.api.PlacesResponses;
 import org.backrow.solt.dto.member.MemberInfoDTO;
@@ -113,39 +114,32 @@ public class PlanServiceImpl implements PlanService {
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
         log.info("Received PlanInputDTO: " + planInputDTO);
 
-        // Clova API 호출하여 추천 장소 정보 가져오기
-        List<PlacesResponses> clovaResponse = new ArrayList<>();
-        try {
-            clovaResponse = clovaApiService.callClovaApi(planInputDTO);  // 이미 List<PlacesResponses>를 반환
-            log.info("Clova API response: " + clovaResponse);
-        } catch (Exception e) {
-            log.error("Error calling Clova API", e);
-        }
+// Clova API 호출하여 추천 장소 정보 가져오기
+        List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO);
+        log.info("Clova API response: " + clovaPlaces);
 
-        // Clova API 응답에서 추천 장소 추출
-        List<PlaceDTO> recommendedPlaces = new ArrayList<>();
-        if (!clovaResponse.isEmpty()) {
-            recommendedPlaces = clovaResponse.stream()
-                    .map(response -> PlaceDTO.builder()
-                            .placeId(response.getPlaceId())
-                            .placeName(response.getPlaceName())
-                            .addr(response.getAddr())
-                            .price(response.getPrice())
-                            .startTime(response.getStartTime())
-                            .endTime(response.getEndTime())
-                            .description(response.getDescription())
-                            .checker(response.isChecker())
-                            .build())
-                    .collect(Collectors.toList());
-            log.info("Recommended Places: " + recommendedPlaces);
-        }
+// 응답에서 추천 장소 추출 및 변환
+        List<PlaceDTO> recommendedPlaces = clovaPlaces.stream()
+                .map(response -> PlaceDTO.builder()
+                        .placeId(response.getPlaceId())
+                        .placeName(response.getPlaceName())
+                        .addr(response.getAddr())
+                        .price(response.getPrice())
+                        .startTime(response.getStartTime())
+                        .endTime(response.getEndTime())
+                        .description(response.getDescription())
+                        .checker(response.isChecker())
+                        .build())
+                .collect(Collectors.toList());
+
+        log.info("Recommended Places: " + recommendedPlaces);
 
         // 입력된 places 데이터를 가져와서 리스트로 변환
-        Set<PlaceDTO> places = planInputDTO.getPlaces();
-        List<PlaceDTO> placeList = new ArrayList<>(places);
+        List<PlaceDTO> placeList = new ArrayList<>(planInputDTO.getPlaces());
 
-        // Clova API로 받은 추천 장소를 기존 장소 리스트에 병합
-        placeList.addAll(recommendedPlaces);
+        // 중복된 장소를 제거한 상태로 병합
+        Set<PlaceDTO> mergedPlaces = new HashSet<>(placeList);
+        mergedPlaces.addAll(recommendedPlaces); // 중복된 장소 제거
 
         // Set<Long>을 Set<ThemeDTO>로 변환하는 로직 추가
         Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
@@ -157,14 +151,16 @@ public class PlanServiceImpl implements PlanService {
         // PlanViewDTO 생성 시 기본 값 설정
         PlanViewDTO planViewDTO = PlanViewDTO.builder()
                 .title(planInputDTO.getTitle())
-                .member(MemberInfoDTO.builder().build()) // 실제 Member 정보를 설정해야 함
-                .places(new HashSet<>(placeList)) // 병합된 장소 리스트를 Set으로 변환하여 전달
+                .member(MemberInfoDTO.builder()
+                        .memberId(planInputDTO.getMemberId()) // 실제 Member 정보를 설정
+                        .build())
+                .places(mergedPlaces) // 병합된 장소 리스트를 Set으로 변환하여 전달
                 .themes(themeSet) // 변환된 테마 정보
                 .location(planInputDTO.getLocation())
                 .startDate(planInputDTO.getStartDate())
                 .endDate(planInputDTO.getEndDate())
-                .regDate(LocalDateTime.now()) // 현재 시간으로 설정
-                .modDate(LocalDateTime.now()) // 현재 시간으로 설정
+                .regDate(LocalDateTime.now())
+                .modDate(LocalDateTime.now())
                 .build();
 
         log.info("Generated PlanViewDTO: " + planViewDTO);
