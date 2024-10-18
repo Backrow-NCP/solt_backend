@@ -34,6 +34,7 @@ public class ClovaApiResponse {
     @ToString
     public static class Result {
         private Message message;
+        private Integer inputLength;
 
         @Data
         @NoArgsConstructor
