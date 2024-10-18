@@ -115,7 +115,7 @@ public class PlanServiceImpl implements PlanService {
         log.info("Received PlanInputDTO: " + planInputDTO);
 
         // Clova API 호출하여 추천 장소 정보 가져오기
-        List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO);
+        List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO); // 수정된 부분
         log.info("Clova API response: " + clovaPlaces);
 
         // 응답에서 추천 장소 추출 및 변환
@@ -164,6 +164,7 @@ public class PlanServiceImpl implements PlanService {
                 .build();
 
         log.info("Generated PlanViewDTO: " + planViewDTO);
+
 
         // 숙소와 공항 구분하기
         List<PlaceDTO> accommodations = new ArrayList<>();
