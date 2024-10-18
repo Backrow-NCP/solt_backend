@@ -35,9 +35,6 @@ public class ClovaApiService {
     @Value("${CLOVA_APIGW_KEY}")
     private String clovaApiGatewayKey;
 
-    @Value("${CLOVA_API_URL}")
-    private String clovaApiUrl;
-
     @Value("${CLOVA_REQUEST_ID}")
     private String clovaRequestId;
 
