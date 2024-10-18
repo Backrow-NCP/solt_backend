@@ -26,5 +26,6 @@ public class PlaceDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
 
+    @Builder.Default
     private boolean checker = false; // AI 판단 여부
 }
