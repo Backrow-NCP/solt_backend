@@ -18,6 +18,6 @@ public class PlacesResponses {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private String description;
-    private Boolean checker;
+    private boolean checker;
 
 }
