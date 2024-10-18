@@ -7,6 +7,7 @@ import org.backrow.solt.dto.file.UploadResultDTO;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.member.ModifyDTO;
 import org.backrow.solt.repository.member.MemberRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -16,12 +17,13 @@ import java.util.Optional;
 @Log4j2
 public class MemberServiceImpl implements MemberService {
     private final MemberRepository memberRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public MemberInfoDTO getMemberInfo(long memberId) {
         Optional<Member> result = memberRepository.findById(memberId);
         Member member = result.orElseThrow();
-        return entityToDto(member);
+        return (MemberInfoDTO)modelMapper.map(member, MemberInfoDTO.class);
     }
 
     @Override
@@ -44,7 +46,7 @@ public class MemberServiceImpl implements MemberService {
     public void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO) {
         Optional<Member> result = memberRepository.findById(memberId);
         Member member = result.orElseThrow();
-        member.addImage(uploadResultDTO.getFileName());
+        member = modelMapper.map(uploadResultDTO, Member.class);
         memberRepository.save(member);
     }
 

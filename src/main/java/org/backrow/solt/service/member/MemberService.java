@@ -16,19 +16,4 @@ public interface MemberService {
     void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO);
 
     void deleteMemberImage(long memberId);
-
-    default  MemberInfoDTO entityToDto(Member member) {
-        MemberInfoDTO memberInfoDTO = MemberInfoDTO.builder()
-                .memberId(member.getMemberId())
-                .name(member.getName())
-                .birthYear(member.getBirthYear())
-                .gender(member.getGender())
-                .build();
-
-        if(member.getProfileImage() != null) {
-            String fileName = member.getProfileImage().getFileName();
-            memberInfoDTO.setFileName(fileName);
-        }
-        return memberInfoDTO;
-    }
 }

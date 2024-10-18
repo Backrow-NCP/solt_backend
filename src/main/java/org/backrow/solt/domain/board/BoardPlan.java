@@ -31,12 +31,14 @@ public class BoardPlan {
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @Builder.Default
     private Set<BoardPlace> places = new HashSet<>();
 
     @OneToMany(mappedBy = "boardPlan",
             fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             orphanRemoval = true)
+    @Builder.Default
     private Set<BoardRoute> routes = new HashSet<>();
 
     @Column(nullable = false)
