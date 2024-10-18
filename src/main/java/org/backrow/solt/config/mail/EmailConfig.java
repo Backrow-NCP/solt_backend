@@ -1,4 +1,4 @@
-package org.backrow.solt.config;
+package org.backrow.solt.config.mail;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
