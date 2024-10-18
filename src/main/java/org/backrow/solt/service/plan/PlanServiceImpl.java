@@ -5,6 +5,7 @@ import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.domain.plan.api.DirectionsResponses;
+import org.backrow.solt.domain.plan.api.PlacesResponses;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.plan.*;
 import org.backrow.solt.repository.plan.PlanRepository;
@@ -110,22 +111,29 @@ public class PlanServiceImpl implements PlanService {
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
         log.info(planInputDTO);
 
-        // Clova API에 요청할 바디 생성
-        String clovaRequestBody = ClovaApiService.createClovaRequestBody(planInputDTO);
-        log.info(clovaRequestBody);
-
-        // Clova API를 호출하여 추천 장소 정보 가져오기
-        DirectionsResponses clovaResponse = clovaApiService.callClovaApi();
-        log.info(clovaResponse);
+        // Clova API 호출하여 추천 장소 정보 가져오기
+        List<PlacesResponses> clovaResponse = clovaApiService.callClovaApi(planInputDTO);
+        log.info("Clova API response: " + clovaResponse);
 
         // Clova API 응답에서 추천 장소를 추출
         List<PlaceDTO> recommendedPlaces = new ArrayList<>();
-        if (clovaResponse != null && clovaResponse.getPlaces() != null) {
-            recommendedPlaces = clovaResponse.getPlaces();
+        if (clovaResponse != null) {
+            recommendedPlaces = clovaResponse.stream()
+                    .map(response -> PlaceDTO.builder()
+                            .placeId(response.getPlaceId())
+                            .placeName(response.getPlaceName())
+                            .addr(response.getAddr())
+                            .price(response.getPrice())
+                            .startTime(response.getStartTime())
+                            .endTime(response.getEndTime())
+                            .description(response.getDescription())
+                            .checker(response.isChecker())
+                            .build())
+                    .collect(Collectors.toList());
         }
         log.info("Recommended Places: " + recommendedPlaces);
 
-        // 입력된 places와 routes 데이터를 먼저 가져옴
+        // 입력된 places 데이터를 먼저 가져옴
         Set<PlaceDTO> places = planInputDTO.getPlaces();
         List<PlaceDTO> placeList = new ArrayList<>(places);
 
