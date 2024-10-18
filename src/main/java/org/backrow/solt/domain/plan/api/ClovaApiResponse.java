@@ -12,10 +12,8 @@ import java.util.List;
 @Builder
 @ToString
 public class ClovaApiResponse {
-    private String role;
     private Status status;
     private Result result;
-    private List<PlacesResponses> places;
 
     @Data
     @NoArgsConstructor
@@ -37,6 +35,9 @@ public class ClovaApiResponse {
         private Message message;
         private Integer inputLength;
         private Integer outputLength;
+        private String stopReason; // 추가: stopReason
+        private Integer seed; // 추가: seed
+        private List<AiFilter> aiFilter; // 추가: aiFilter 목록
 
         @Data
         @NoArgsConstructor
@@ -47,5 +48,17 @@ public class ClovaApiResponse {
             private String role;
             private String content;
         }
+    }
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class AiFilter {
+        private String groupName;
+        private String name;
+        private String score;
+        private String result;
     }
 }
