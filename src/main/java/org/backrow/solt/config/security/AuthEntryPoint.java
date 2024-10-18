@@ -1,4 +1,4 @@
-package org.backrow.solt.except;
+package org.backrow.solt.config.security;
 
 import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;

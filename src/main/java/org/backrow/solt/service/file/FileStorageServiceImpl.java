@@ -11,7 +11,7 @@ import com.amazonaws.services.s3.model.CannedAccessControlList;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.config.NaverConfig;
+import org.backrow.solt.config.mail.NaverConfig;
 import org.backrow.solt.dto.file.UploadResultDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
