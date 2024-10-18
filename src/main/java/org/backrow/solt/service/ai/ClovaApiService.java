@@ -17,6 +17,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -178,14 +179,23 @@ public class ClovaApiService {
                 placeResponse.setPrice(placeNode.path("price").asInt());
 
                 // 공백 제거 후 LocalDateTime 파싱
-                placeResponse.setStartTime(LocalDateTime.parse(placeNode.path("startTime").asText().trim()));
-                placeResponse.setEndTime(LocalDateTime.parse(placeNode.path("endTime").asText().trim()));
+                String startTimeString = placeNode.path("startTime").asText().trim();
+                String endTimeString = placeNode.path("endTime").asText().trim();
+
+                try {
+                    placeResponse.setStartTime(LocalDateTime.parse(startTimeString));
+                    placeResponse.setEndTime(LocalDateTime.parse(endTimeString));
+                } catch (DateTimeParseException e) {
+                    log.error("Error parsing LocalDateTime for startTime: {} or endTime: {}", startTimeString, endTimeString);
+                    throw new RuntimeException("Failed to parse LocalDateTime", e);
+                }
 
                 placeResponse.setDescription(placeNode.path("description").asText());
                 placeResponse.setChecker(placeNode.path("checker").asBoolean());
 
                 placeResponses.add(placeResponse);
             }
+
 
         } catch (Exception e) {
             log.error("Error parsing places: {}", e.getMessage());
