@@ -32,9 +32,11 @@ public class ClovaApiResponse {
     @AllArgsConstructor
     @Builder
     @ToString
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Result {
         private Message message;
         private Integer inputLength;
+        private Integer outputLength;
 
         @Data
         @NoArgsConstructor
