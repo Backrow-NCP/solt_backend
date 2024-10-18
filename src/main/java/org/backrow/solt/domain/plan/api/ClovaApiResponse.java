@@ -10,8 +10,19 @@ import java.util.List;
 @Builder
 @ToString
 public class ClovaApiResponse {
+    private Status status;
     private Result result;
-    private List<PlacesResponses> places; // PlacesResponses 리스트
+    private List<PlacesResponses> places;
+
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    @ToString
+    public static class Status {
+        private String code;
+        private String message;
+    }
 
     @Data
     @NoArgsConstructor
