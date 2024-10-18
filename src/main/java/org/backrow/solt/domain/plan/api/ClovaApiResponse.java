@@ -1,11 +1,12 @@
 package org.backrow.solt.domain.plan.api;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 
 import java.util.List;
 
-@JsonIgnoreProperties(ignoreUnknown = true) // 알 수 없는 필드 무시
+@JsonIgnoreProperties(ignoreUnknown = true)
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -14,6 +15,9 @@ import java.util.List;
 public class ClovaApiResponse {
     private Status status;
     private Result result;
+
+    @JsonProperty("places")
+    private List<PlacesResponses> places;
 
     @Data
     @NoArgsConstructor
@@ -35,9 +39,9 @@ public class ClovaApiResponse {
         private Message message;
         private Integer inputLength;
         private Integer outputLength;
-        private String stopReason; // 추가: stopReason
-        private Integer seed; // 추가: seed
-        private List<AiFilter> aiFilter; // 추가: aiFilter 목록
+        private String stopReason;
+        private Integer seed;
+        private List<AiFilter> aiFilter;
 
         @Data
         @NoArgsConstructor
@@ -61,4 +65,5 @@ public class ClovaApiResponse {
         private String score;
         private String result;
     }
+
 }
