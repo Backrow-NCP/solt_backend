@@ -1,8 +1,7 @@
-package org.backrow.solt.config;
+package org.backrow.solt.config.security;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.except.AuthEntryPoint;
-import org.backrow.solt.filter.AuthenticationFilter;
+import org.backrow.solt.security.AuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -47,35 +46,36 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
-//                .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
-//                        "/plan/recom",
-//                        "/like/*",
-//                        "/login/password", "/login/check",
-//                        "/reply/list/*",
-//                        "/board/*", "/board/list", "/board/list/*",
-//                        "/email/verifications",
-//                        "/loadbalancer").permitAll()
-//                .antMatchers(HttpMethod.POST,
-//                        "/file",
-//                        "/login", "/login/token", "/login/register",
-//                        "/email/verification-requests").permitAll()
-//                .antMatchers(HttpMethod.DELETE,
-//                        "/file").permitAll()
-//                .anyRequest().authenticated().and()
-//                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
-//                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
-                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
-
+                .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
+                        "/plan/recom",
+                        "/like/*",
+                        "/login/password", "/login/check",
+                        "/reply/list/*",
+                        "/board/*", "/board/list", "/board/list/*",
+                        "/email/verifications",
+                        "/loadbalancer").permitAll()
+                .antMatchers(HttpMethod.POST,
+                        "/file",
+                        "/login", "/login/token", "/login/register",
+                        "/email/verification-requests").permitAll()
+                .antMatchers(HttpMethod.DELETE,
+                        "/file").permitAll()
+                .anyRequest().authenticated().and()
+                .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling().authenticationEntryPoint(authEntryPoint);
+//                .anyRequest().permitAll(); // 모든 요청 허가 (테스트 전용)
     }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(Arrays.asList("*"));
+        config.setAllowedOrigins(Arrays.asList("http://222.107.156.49:80", "http://localhost:3000"));
+//        config.setAllowedOrigins(Arrays.asList("*"));
         config.setAllowedMethods(Arrays.asList("*"));
         config.setAllowedHeaders(Arrays.asList("*"));
-        config.setAllowCredentials(false);
+        config.setAllowCredentials(true);
+//       config.setAllowCredentials(false);
         config.applyPermitDefaultValues();
 
         source.registerCorsConfiguration("/**", config);

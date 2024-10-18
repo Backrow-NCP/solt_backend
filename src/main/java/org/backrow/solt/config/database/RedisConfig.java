@@ -1,4 +1,4 @@
-package org.backrow.solt.config;
+package org.backrow.solt.config.database;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;

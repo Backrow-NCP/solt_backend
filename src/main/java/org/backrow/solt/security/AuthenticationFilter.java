@@ -1,9 +1,8 @@
-package org.backrow.solt.filter;
+package org.backrow.solt.security;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.security.LoginService;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

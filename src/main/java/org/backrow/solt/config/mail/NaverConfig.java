@@ -1,4 +1,4 @@
-package org.backrow.solt.config;
+package org.backrow.solt.config.mail;
 
 import lombok.Getter;
 import lombok.Setter;
