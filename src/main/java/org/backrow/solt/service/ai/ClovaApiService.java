@@ -90,7 +90,7 @@ public class ClovaApiService {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                    clovaApiUrl,
+                    "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003",
                     HttpMethod.POST,
                     entity,
                     String.class
