@@ -144,9 +144,6 @@ public class ClovaApiService {
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", "NTA0MjU2MWZlZTcxNDJiYwBYJNO67mQdsAlDTunBopY34AAw2fGnua3t3a4kFgPm");
-        headers.set("X-NCP-APIGW-API-KEY", "j96OgrLz3aBC78T9HgjgsQvcg5EhYxgWOT0Ot4RK");
-        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", "5589e9f2-ef1a-42b8-8b2b-39c6968e83ea");
         headers.set("Content-Type", "application/json");
         return headers;
     }
