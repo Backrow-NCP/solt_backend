@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -27,9 +28,8 @@ import java.util.stream.Collectors;
 @Log4j2
 public class ClovaApiService {
 
-    /*
     // 외부에서 주입되는 API 키 값
-    @Value("${clova.api.key}")
+    @Value("${clova.apigw.api.key}")
     private String clovaApiKey;
 
     @Value("${clova.apigw.api.key}")
@@ -40,7 +40,6 @@ public class ClovaApiService {
 
     @Value("${clova.request.id}")
     private String clovaRequestId;
-     */
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -91,7 +90,7 @@ public class ClovaApiService {
 
         try {
             ResponseEntity<String> response = restTemplate.exchange(
-                    "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003",
+                    clovaApiUrl,
                     HttpMethod.POST,
                     entity,
                     String.class
@@ -144,6 +143,9 @@ public class ClovaApiService {
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", clovaApiKey);
+        headers.set("X-NCP-APIGW-API-KEY", clovaApiGatewayKey);
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", clovaRequestId);
         headers.set("Content-Type", "application/json");
         return headers;
     }
