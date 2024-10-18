@@ -29,16 +29,16 @@ import java.util.stream.Collectors;
 public class ClovaApiService {
 
     // 외부에서 주입되는 API 키 값
-    @Value("${clova.api.key}")
+    @Value("${CLOVA_API_KEY}")
     private String clovaApiKey;
 
-    @Value("${clova.apigw.key}")
+    @Value("${CLOVA_APIGW_KEY}")
     private String clovaApiGatewayKey;
 
-    @Value("${clova.api.url}")
+    @Value("${CLOVA_API_URL}")
     private String clovaApiUrl;
 
-    @Value("${clova.request.id}")
+    @Value("${CLOVA_REQUEST_ID}")
     private String clovaRequestId;
 
     private final RestTemplate restTemplate;
