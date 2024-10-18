@@ -56,7 +56,7 @@ public class LoginServiceImpl implements LoginService {
     @Override
     public long login(LoginDTO loginDTO) {
         String checkEmail = loginRepository.checkEmail(loginDTO.getEmail());
-        if(checkEmail == "NotExist" || checkEmail.isEmpty()) {
+        if(!checkEmail.equals("NotExist") && !checkEmail.isEmpty()) {
             String checkPW = loginDTO.getPassword();
             if (checkPassword(checkEmail, checkPW)) {
                 return loginRepository.findIdByEmail(loginDTO.getEmail());
