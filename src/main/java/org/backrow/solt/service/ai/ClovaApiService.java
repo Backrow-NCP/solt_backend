@@ -3,6 +3,7 @@ package org.backrow.solt.service.ai;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
+import org.backrow.solt.domain.plan.api.ClovaApiResponse;
 import org.backrow.solt.domain.plan.api.PlacesResponses;
 import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
@@ -75,7 +76,7 @@ public class ClovaApiService {
                 .collect(Collectors.joining(", "));
 
         // 사용자 입력 형식의 문자열 생성
-        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - [%s]",
+        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - [%s], [숙소]",
                 location, startDate, endDate, themeList, placeList);
 
         // Request Body
@@ -98,7 +99,7 @@ public class ClovaApiService {
                         "    },\n" +
                         "    {\n" +
                         "      \"role\": \"user\",\n" +
-                        "      \"content\": \"" + userContent + "\"\n" +
+                        "      \"content\": \"" + " [서울], [2024-10-01],[2024-10-03], [여유롭게 즐겨요, 맛집에 관심있어요, 가성비가 중요해요] \\n [꼭 가야하는 장소] - [세종문화회관], [서울월드컵경기장], [반포한강공원] " + "\"\n" +
                         "    }\n" +
                         "  ],\n" +
                         "  \"topP\": 0.8,\n" +
@@ -132,7 +133,7 @@ public class ClovaApiService {
             log.info("Response from Clova API: {}", response.getBody());
 
             // 응답을 PlaceResponse로 매핑하여 반환
-            return convertToPlaceResponses(response.getBody());
+            return (List<PlacesResponses>) convertToClovaApiResponse(response.getBody());
 
         } catch (HttpClientErrorException e) {
             log.error("Error during Clova API call: {}", e.getMessage());
@@ -143,38 +144,58 @@ public class ClovaApiService {
         }
     }
 
-    // 응답 문자열을 List<PlaceResponse> 객체로 변환하는 메소드
-    private List<PlacesResponses> convertToPlaceResponses(String responseBody) {
+    // 응답 문자열을 ClovaApiResponse 객체로 변환하는 메소드
+    public static ClovaApiResponse convertToClovaApiResponse(String responseBody) {
         ObjectMapper objectMapper = new ObjectMapper();
-        List<PlacesResponses> placeResponses = new ArrayList<>(); // 응답 객체 생성
+
+        try {
+            // JSON 문자열을 ClovaApiResponse로 변환
+            ClovaApiResponse clovaApiResponse = objectMapper.readValue(responseBody, ClovaApiResponse.class);
+
+            // content에서 places 추출
+            String content = clovaApiResponse.getResult().getMessage().getContent();
+            List<PlacesResponses> placeResponses = parseContent(content);
+
+            // 추출한 places 리스트를 ClovaApiResponse에 설정
+            clovaApiResponse.setPlaces(placeResponses);
+
+            return clovaApiResponse;
+
+        } catch (Exception e) {
+            log.error("Failed to parse response body: {}", e.getMessage());
+            throw new RuntimeException("Failed to parse ClovaApiResponse", e);
+        }
+    }
+
+    // 응답 문자열을 파싱하여 PlaceResponse 리스트로 변환하는 메소드
+    private static List<PlacesResponses> parseContent(String content) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        List<PlacesResponses> placeResponses = new ArrayList<>();
 
         try {
             // JSON 문자열을 JsonNode로 변환
-            JsonNode rootNode = objectMapper.readTree(responseBody);
+            JsonNode rootNode = objectMapper.readTree(content);
 
             // places 배열 파싱
             JsonNode placesNode = rootNode.path("places");
             for (JsonNode placeNode : placesNode) {
-                // PlaceResponse 객체 생성 및 데이터 설정
-                PlacesResponses PlacesResponses = new PlacesResponses();
-                PlacesResponses.setPlaceId(placeNode.path("placeId").asLong());
-                PlacesResponses.setPlaceName(placeNode.path("placeName").asText());
-                PlacesResponses.setAddr(placeNode.path("addr").asText());
-                PlacesResponses.setPrice(placeNode.path("price").asInt());
-                PlacesResponses.setStartTime(LocalDateTime.parse(placeNode.path("startTime").asText()));
-                PlacesResponses.setEndTime(LocalDateTime.parse(placeNode.path("endTime").asText()));
-                PlacesResponses.setDescription(placeNode.path("description").asText());
-                PlacesResponses.setChecker(placeNode.path("checker").asBoolean());
+                PlacesResponses placeResponse = new PlacesResponses();
+                placeResponse.setPlaceId(placeNode.path("placeId").asLong());
+                placeResponse.setPlaceName(placeNode.path("placeName").asText());
+                placeResponse.setAddr(placeNode.path("addr").asText());
+                placeResponse.setPrice(placeNode.path("price").asInt());
+                placeResponse.setStartTime(LocalDateTime.parse(placeNode.path("startTime").asText()));
+                placeResponse.setEndTime(LocalDateTime.parse(placeNode.path("endTime").asText()));
+                placeResponse.setDescription(placeNode.path("description").asText());
+                placeResponse.setChecker(placeNode.path("checker").asBoolean());
 
-                // List에 추가
-                placeResponses.add(PlacesResponses);
+                placeResponses.add(placeResponse);
             }
-
         } catch (Exception e) {
-            log.error("Failed to parse response body: {}", e.getMessage());
+            log.error("Failed to parse content: {}", e.getMessage());
             throw new RuntimeException("Failed to parse PlaceResponses", e);
         }
 
-        return placeResponses; // 최종적으로 PlaceResponse 리스트 반환
+        return placeResponses;
     }
 }
