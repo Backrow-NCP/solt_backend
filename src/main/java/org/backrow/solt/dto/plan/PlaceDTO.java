@@ -26,5 +26,5 @@ public class PlaceDTO {
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
 
-    private boolean checker; // AI 판단 여부
+    private boolean checker = false; // AI 판단 여부
 }
