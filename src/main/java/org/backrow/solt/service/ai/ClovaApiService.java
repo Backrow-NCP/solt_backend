@@ -3,9 +3,7 @@ package org.backrow.solt.service.ai;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
-import org.backrow.solt.domain.plan.Route;
-import org.backrow.solt.domain.plan.TransportationType;
-import org.backrow.solt.domain.plan.api.DirectionsResponses;
+import org.backrow.solt.domain.plan.api.PlacesResponses;
 import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.ThemeDTO;
@@ -17,8 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -49,7 +48,7 @@ public class ClovaApiService {
     }
 
     // Clova API 요청을 보내는 메소드
-    public DirectionsResponses callClovaApi(PlanInputDTO planInputDTO) {
+    public List<PlacesResponses> callClovaApi(PlanInputDTO planInputDTO) {
 
         // 필요한 PlanInputDTO 필드 값 추출
         String location = planInputDTO.getLocation(); // 지역
@@ -132,9 +131,8 @@ public class ClovaApiService {
 
             log.info("Response from Clova API: {}", response.getBody());
 
-            // 응답을 DTO로 매핑하여 반환
-            // (String을 DirectionsResponses로 변환하는 로직 필요)
-            return convertToDirectionsResponses(response.getBody());
+            // 응답을 PlaceResponse로 매핑하여 반환
+            return convertToPlaceResponses(response.getBody());
 
         } catch (HttpClientErrorException e) {
             log.error("Error during Clova API call: {}", e.getMessage());
@@ -145,51 +143,38 @@ public class ClovaApiService {
         }
     }
 
-    // 응답 문자열을 DirectionsResponses 객체로 변환하는 메소드
-    private DirectionsResponses convertToDirectionsResponses(String responseBody) {
+    // 응답 문자열을 List<PlaceResponse> 객체로 변환하는 메소드
+    private List<PlacesResponses> convertToPlaceResponses(String responseBody) {
         ObjectMapper objectMapper = new ObjectMapper();
-        DirectionsResponses directionsResponses = new DirectionsResponses(); // 응답 객체 생성
+        List<PlacesResponses> placeResponses = new ArrayList<>(); // 응답 객체 생성
 
         try {
             // JSON 문자열을 JsonNode로 변환
             JsonNode rootNode = objectMapper.readTree(responseBody);
 
-            // 상태 코드 확인
-            String status = rootNode.path("status").asText();
-            directionsResponses.setStatus(status);
+            // places 배열 파싱
+            JsonNode placesNode = rootNode.path("places");
+            for (JsonNode placeNode : placesNode) {
+                // PlaceResponse 객체 생성 및 데이터 설정
+                PlacesResponses PlacesResponses = new PlacesResponses();
+                PlacesResponses.setPlaceId(placeNode.path("placeId").asLong());
+                PlacesResponses.setPlaceName(placeNode.path("placeName").asText());
+                PlacesResponses.setAddr(placeNode.path("addr").asText());
+                PlacesResponses.setPrice(placeNode.path("price").asInt());
+                PlacesResponses.setStartTime(LocalDateTime.parse(placeNode.path("startTime").asText()));
+                PlacesResponses.setEndTime(LocalDateTime.parse(placeNode.path("endTime").asText()));
+                PlacesResponses.setDescription(placeNode.path("description").asText());
+                PlacesResponses.setChecker(placeNode.path("checker").asBoolean());
 
-            // routes 배열 파싱
-            JsonNode routesNode = rootNode.path("routes");
-            for (JsonNode routeNode : routesNode) {
-                // Route 객체 생성 및 데이터 설정
-                Route route = new Route();
-                route.setRouteId(routeNode.path("routeId").asLong());
-                route.setPrice(routeNode.path("price").asInt());
-
-                // TransportationType 객체 생성
-                String transportationTypeString = routeNode.path("transportationType").asText();
-                TransportationType transportationType = new TransportationType();
-                transportationType.setType(transportationTypeString); // type 속성에 문자열 설정
-
-                route.setTransportationType(transportationType); // TransportationType 객체 설정
-
-                route.setDistance(routeNode.path("distance").asInt());
-                route.setTravelTime(routeNode.path("travelTime").asInt());
-                route.setStartTime(LocalDateTime.parse(routeNode.path("startTime").asText()));
-                route.setEndTime(LocalDateTime.parse(routeNode.path("endTime").asText()));
-
-                // routes에 추가
-                directionsResponses.getRoutes().add(route);
+                // List에 추가
+                placeResponses.add(PlacesResponses);
             }
-
-            // 추가적인 필드도 필요한 경우 매핑
-            // 예: directionsResponses.setOtherField(rootNode.path("otherField").asText());
 
         } catch (Exception e) {
             log.error("Failed to parse response body: {}", e.getMessage());
-            throw new RuntimeException("Failed to parse DirectionsResponses", e);
+            throw new RuntimeException("Failed to parse PlaceResponses", e);
         }
 
-        return directionsResponses; // 최종적으로 DirectionsResponses 객체 반환
+        return placeResponses; // 최종적으로 PlaceResponse 리스트 반환
     }
 }
