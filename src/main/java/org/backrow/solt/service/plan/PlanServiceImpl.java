@@ -114,11 +114,11 @@ public class PlanServiceImpl implements PlanService {
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
         log.info("Received PlanInputDTO: " + planInputDTO);
 
-// Clova API 호출하여 추천 장소 정보 가져오기
+        // Clova API 호출하여 추천 장소 정보 가져오기
         List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO);
         log.info("Clova API response: " + clovaPlaces);
 
-// 응답에서 추천 장소 추출 및 변환
+        // 응답에서 추천 장소 추출 및 변환
         List<PlaceDTO> recommendedPlaces = clovaPlaces.stream()
                 .map(response -> PlaceDTO.builder()
                         .placeId(response.getPlaceId())
