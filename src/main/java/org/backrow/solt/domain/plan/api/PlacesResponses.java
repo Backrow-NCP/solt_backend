@@ -1,15 +1,19 @@
-package org.backrow.solt.dto.plan;
+package org.backrow.solt.domain.plan.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Data
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class PlaceDTO {
+@Builder
+@ToString
+@JsonIgnoreProperties(ignoreUnknown = true) // 알 수 없는 필드 무시
+public class PlacesResponses {
+
     private Long placeId;
 
     private String placeName;
@@ -18,14 +22,14 @@ public class PlaceDTO {
 
     private Integer price;
 
-    private String description;
-
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime startTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     private LocalDateTime endTime;
 
-    @Builder.Default
-    private boolean checker = false; // AI 판단 여부
+    private String description;
+
+    private boolean checker;
+
 }

@@ -71,7 +71,7 @@ public class PlanController {
         return Map.of("isSuccess", planService.deletePlan(id, userDetails.getMemberId()));
     }
 
-    @Operation(summary = "추천 플랜 생성", description = "AI를 통해 여행 일정에 맞는 플랜을 추천받습니다.")
+    @Operation(summary = "AI 플랜 생성", description = "AI를 통해 여행 일정에 맞는 플랜을 추천받습니다.")
     @PostMapping("/recom")
     public ResponseEntity<PlanViewDTO> recommendPlan(@RequestBody PlanInputDTO planInputDTO) {
         return ResponseEntity.ok(planService.recommendPlan(planInputDTO));
