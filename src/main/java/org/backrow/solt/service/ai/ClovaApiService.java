@@ -29,10 +29,10 @@ import java.util.stream.Collectors;
 public class ClovaApiService {
 
     // 외부에서 주입되는 API 키 값
-    @Value("${clova.apigw.api.key}")
+    @Value("${clova.api.key}")
     private String clovaApiKey;
 
-    @Value("${clova.apigw.api.key}")
+    @Value("${clova.apigw.key}")
     private String clovaApiGatewayKey;
 
     @Value("${clova.api.url}")
