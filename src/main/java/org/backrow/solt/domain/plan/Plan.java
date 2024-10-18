@@ -74,8 +74,8 @@ public class Plan {
         if (title != null) this.title = title;
 
         if (places != null && !places.isEmpty()) {
-            this.places.removeIf(existingPlace -> !places.contains(existingPlace));
-
+//            this.places.removeIf(existingPlace -> !places.contains(existingPlace));
+            this.places.clear();
             for (Place newPlace : places) {
                 if (!this.places.contains(newPlace)) {
                     newPlace.setPlan(this);
@@ -85,8 +85,8 @@ public class Plan {
         }
 
         if (routes != null && !routes.isEmpty()) {
-            this.routes.removeIf(existingRoute -> !routes.contains(existingRoute));
-
+//            this.routes.removeIf(existingRoute -> !routes.contains(existingRoute));
+            this.routes.clear();
             for (Route newRoute : routes) {
                 if (!this.routes.contains(newRoute)) {
                     newRoute.setPlan(this);
