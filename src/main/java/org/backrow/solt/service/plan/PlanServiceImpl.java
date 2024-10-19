@@ -26,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.webjars.NotFoundException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -114,6 +115,7 @@ public class PlanServiceImpl implements PlanService {
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
         log.info("Received PlanInputDTO: " + planInputDTO);
 
+        // 장소 추천
         // Clova API 호출하여 추천 장소 정보 가져오기
         List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO); // 수정된 부분
         log.info("Clova API response: " + clovaPlaces);
@@ -209,13 +211,21 @@ public class PlanServiceImpl implements PlanService {
                 PlaceDTO startPlace = dailyPlaces.get(i);
                 PlaceDTO endPlace = dailyPlaces.get(i + 1);
 
-                // 출발지와 도착지의 placeId를 Google Maps API에 전달
+                // 출발지와 도착지 정보 로그
+                log.info("Calculating route between: " + startPlace.getPlaceName() + " (" + startPlace.getAddr() + ") -> "
+                        + endPlace.getPlaceName() + " (" + endPlace.getAddr() + ")");
+
+                // Google Maps API를 호출하여 경로 계산
                 DirectionsResponses directions = googleMapsApiService.getDirections(
                         startPlace.getAddr(), // 출발지 주소 사용
                         endPlace.getAddr()    // 도착지 주소 사용
                 );
 
-                // API 응답에서 필요한 경로 정보 추출 후 RouteDTO 생성
+                // Google Maps API 응답 로그
+                log.info("Google Maps API response for route from " + startPlace.getPlaceName() + " to " + endPlace.getPlaceName() + ": "
+                        + directions);
+
+                // 경로 정보로 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
                         .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
                         .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
@@ -225,6 +235,9 @@ public class PlanServiceImpl implements PlanService {
                         .build();
 
                 calculatedRoutes.add(route);  // 계산된 경로 추가
+
+                // 경로 계산 결과 로그
+                log.info("Calculated route: " + route);
             }
         }
 
@@ -232,11 +245,16 @@ public class PlanServiceImpl implements PlanService {
         if (airport != null && !normalPlaces.isEmpty()) {
             PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1); // 마지막 일반 장소
 
-            // 마지막 장소에서 공항까지 경로 계산
+            log.info("Calculating route from last place to airport: " + lastPlace.getPlaceName() + " -> " + airport.getPlaceName());
+
             DirectionsResponses directions = googleMapsApiService.getDirections(
                     lastPlace.getAddr(),
                     airport.getAddr()
             );
+
+            // Google Maps API 응답 로그
+            log.info("Google Maps API response for route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): "
+                    + directions);
 
             RouteDTO airportRoute = RouteDTO.builder()
                     .startTime(lastPlace.getEndTime()) // 마지막 장소의 종료 시간 사용
@@ -247,13 +265,16 @@ public class PlanServiceImpl implements PlanService {
                     .build();
 
             calculatedRoutes.add(airportRoute);  // 공항 경로 추가
+
+            // 공항 경로 계산 결과 로그
+            log.info("Calculated airport route: " + airportRoute);
         }
 
-        // 계산된 경로를 LinkedHashSet으로 변환해 PlanViewDTO에 설정
+        // 계산된 경로를 PlanViewDTO에 설정
         planViewDTO.setRoutes(new LinkedHashSet<>(calculatedRoutes));
-        log.info("calculatedRoutes: " + calculatedRoutes);
 
-        // 정렬된 Place 정보는 이미 Set 형태로 들어가 있으므로 따로 추가 필요 없음
+        log.info("Final calculated routes: " + calculatedRoutes);
+
         return planViewDTO;
     }
 
