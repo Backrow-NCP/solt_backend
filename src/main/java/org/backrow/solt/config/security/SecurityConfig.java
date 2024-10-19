@@ -47,19 +47,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
-                        "/plan/recom",
+                        "/plans/recom",
                         "/like/*",
                         "/login/password", "/login/check",
-                        "/reply/list/*",
-                        "/board/*", "/board/list", "/board/list/*",
+                        "/replies/list/*",
+                        "/boards/*", "/boards/list", "/boards/list/*",
                         "/email/verifications",
                         "/loadbalancer").permitAll()
                 .antMatchers(HttpMethod.POST,
-                        "/file",
+                        "/files",
                         "/login", "/login/token", "/login/register",
                         "/email/verification-requests").permitAll()
                 .antMatchers(HttpMethod.DELETE,
-                        "/file").permitAll()
+                        "/files").permitAll()
                 .anyRequest().authenticated().and()
                 .addFilterBefore(authenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling().authenticationEntryPoint(authEntryPoint);

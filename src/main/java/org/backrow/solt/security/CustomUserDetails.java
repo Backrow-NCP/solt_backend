@@ -19,6 +19,11 @@ public class CustomUserDetails extends User {
         return memberId;
     }
 
+    // 사용자 이름을 반환하는 메서드 (사실상 getUsername()과 동일)
+    public String getName() {
+        return getUsername();  // getUsername() 메서드를 호출하여 username을 반환
+    }
+
     public static class CustomUserDetailsBuilder {
         private long memberId;
         private String username;
