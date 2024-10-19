@@ -227,11 +227,17 @@ public class PlanServiceImpl implements PlanService {
 
                 // 경로 정보로 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
+                        .routeId(0L) // 경로 ID는 0으로 초기 설정
                         .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
                         .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
                         .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
                         .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())
                         .price(0)  // 가격은 0으로 초기화
+                        .transportation(TransportationDTO.builder()  // 기본적으로 이동 수단 정보 설정
+                                .id(0)
+                                .type("string")  // 이동 수단 타입은 "string"으로 임시 설정
+                                .build())
+                        .checker(true)  // AI가 수정할 수 없는 정보로 설정
                         .build();
 
                 calculatedRoutes.add(route);  // 계산된 경로 추가
