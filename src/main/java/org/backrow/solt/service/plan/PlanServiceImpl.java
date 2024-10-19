@@ -211,16 +211,16 @@ public class PlanServiceImpl implements PlanService {
 
                 // 출발지와 도착지의 placeId를 Google Maps API에 전달
                 DirectionsResponses directions = googleMapsApiService.getDirections(
-                        startPlace.getPlaceName(),
-                        endPlace.getPlaceName()
+                        startPlace.getAddr(), // 출발지 주소 사용
+                        endPlace.getAddr()    // 도착지 주소 사용
                 );
 
                 // API 응답에서 필요한 경로 정보 추출 후 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
-                        .startTime(startPlace.getStartTime())
-                        .endTime(endPlace.getEndTime())
-                        .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
-                        .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue()) // 이동 시간
+                        .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
+                        .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
+                        .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
+                        .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())
                         .price(0)  // 가격은 0으로 초기화
                         .build();
 
@@ -228,21 +228,21 @@ public class PlanServiceImpl implements PlanService {
             }
         }
 
-        // 모든 일정이 끝나고 공항으로 가는 경로 추가
+        // 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
         if (airport != null && !normalPlaces.isEmpty()) {
-            PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1);  // 마지막 일반 장소
+            PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1); // 마지막 일반 장소
 
             // 마지막 장소에서 공항까지 경로 계산
             DirectionsResponses directions = googleMapsApiService.getDirections(
-                    lastPlace.getPlaceName(),
-                    airport.getPlaceName()
+                    lastPlace.getAddr(),
+                    airport.getAddr()
             );
 
             RouteDTO airportRoute = RouteDTO.builder()
-                    .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
-                    .endTime(airport.getStartTime())     // 공항의 시작 시간 사용
-                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
-                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())  // 이동 시간
+                    .startTime(lastPlace.getEndTime()) // 마지막 장소의 종료 시간 사용
+                    .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
+                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
+                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())
                     .price(0)  // 가격은 0으로 초기화
                     .build();
 
