@@ -30,6 +30,8 @@ public class PlacesResponses {
 
     private String description;
 
+    private String category;
+
     private boolean checker;
 
 }
