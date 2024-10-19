@@ -262,12 +262,19 @@ public class PlanServiceImpl implements PlanService {
             log.info("Google Maps API response for route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): "
                     + directions);
 
+            // 공항 경로를 위한 RouteDTO 생성
             RouteDTO airportRoute = RouteDTO.builder()
-                    .startTime(lastPlace.getEndTime()) // 마지막 장소의 종료 시간 사용
+                    .routeId(0L) // 경로 ID는 0으로 초기 설정
+                    .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
                     .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
-                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
-                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())
+                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
+                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())  // 이동 시간
                     .price(0)  // 가격은 0으로 초기화
+                    .transportation(TransportationDTO.builder()  // 기본적으로 이동 수단 정보 설정
+                            .id(0)
+                            .type("string")  // 이동 수단 타입은 "string"으로 임시 설정
+                            .build())
+                    .checker(true)  // AI가 수정할 수 없는 정보로 설정
                     .build();
 
             calculatedRoutes.add(airportRoute);  // 공항 경로 추가
