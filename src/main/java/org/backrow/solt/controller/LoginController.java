@@ -49,8 +49,12 @@ public class LoginController {
             String refreshToken = loginService.getRefreshToken();
             loginService.saveRefreshToken(auth.getName(), refreshToken);
 
+            // 사용자 이름 가져오기 (CustomUserDetails 또는 다른 서비스에서)
+            String userName = ((CustomUserDetails) auth.getPrincipal()).getName();  // 사용자 이름
+
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("memberId", memberId);
+            responseBody.put("name", userName);  // 사용자 이름 추가
             responseBody.put("refreshToken", refreshToken);
 
             return ResponseEntity.ok()

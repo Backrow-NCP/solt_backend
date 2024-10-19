@@ -29,7 +29,7 @@ public class LoginServiceImpl implements LoginService {
     static final String PREFIX = "Bearer ";
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
-    private final LoginRepository loginRepository;
+    private final LoginRepository loginRepository;a
     private final TokenService tokenService;
 
     @Override
