@@ -29,16 +29,17 @@ public class UserDetailedServiceImpl implements UserDetailsService {
         Member member = loginRepository.findByEmail(email);
         Optional<LoginDTO> loginDTO = Optional.ofNullable(modelMapper.map(member, LoginDTO.class));
 
-        if (!loginDTO.isPresent()) {
+        if (loginDTO.isEmpty()) {
             throw new UsernameNotFoundException(email);
         } else {
             LoginDTO login = loginDTO.get();
             return new CustomUserDetails.CustomUserDetailsBuilder()
-                .memberId(member.getMemberId())
-                .username(login.getEmail())
-                .password(login.getPassword())
-                .authorities(Collections.singleton(new SimpleGrantedAuthority("USER")))
-                .build();
+                    .memberId(member.getMemberId())
+                    .username(login.getEmail())
+                    .password(login.getPassword())
+                    .name(member.getName())
+                    .authorities(Collections.singleton(new SimpleGrantedAuthority("USER")))
+                    .build();
         }
     }
 }

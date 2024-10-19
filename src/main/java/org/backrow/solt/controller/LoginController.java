@@ -45,16 +45,14 @@ public class LoginController {
 
             Authentication auth = authenticationManager.authenticate(creds);
 
-            String jwts = loginService.getToken(auth.getName(), ((CustomUserDetails) auth.getPrincipal()).getMemberId());
+            String name = ((CustomUserDetails) auth.getPrincipal()).getName();
+            String jwts = loginService.getToken(auth.getName(), memberId, name);
             String refreshToken = loginService.getRefreshToken();
             loginService.saveRefreshToken(auth.getName(), refreshToken);
 
-            // 사용자 이름 가져오기 (CustomUserDetails 또는 다른 서비스에서)
-            String userName = ((CustomUserDetails) auth.getPrincipal()).getName();  // 사용자 이름
-
             Map<String, Object> responseBody = new HashMap<>();
             responseBody.put("memberId", memberId);
-            responseBody.put("name", userName);  // 사용자 이름 추가
+            responseBody.put("name", name);
             responseBody.put("refreshToken", refreshToken);
 
             return ResponseEntity.ok()
@@ -76,7 +74,8 @@ public class LoginController {
 
             CustomUserDetails user = (CustomUserDetails) userDetailsService.loadUserByUsername(email);
 
-            String newAccessToken = loginService.getToken(email, user.getMemberId());
+            log.info(user);
+            String newAccessToken = loginService.getToken(email, user.getMemberId(), user.getName());
 
             responseBody.put("result","TRUE");
 
