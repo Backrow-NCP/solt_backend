@@ -189,23 +189,19 @@ public class PlanServiceImpl implements PlanService {
                 .collect(Collectors.toList());
         log.info("NormalPlaces : " + normalPlaces);
 
-        // 각 Place의 startTime을 기준으로 정렬
-        normalPlaces.sort(Comparator.comparing(PlaceDTO::getStartTime));
-
-        // 날짜별로 정렬된 장소 목록 만들기
-        Map<LocalDateTime, List<PlaceDTO>> placesByDate = normalPlaces.stream()
-                .collect(Collectors.groupingBy(PlaceDTO::getStartTime));
+        // 날짜별로 장소 그룹화
+        Map<LocalDate, List<PlaceDTO>> placesByDate = normalPlaces.stream()
+                .collect(Collectors.groupingBy(place -> place.getStartTime().toLocalDate()));
 
         List<RouteDTO> calculatedRoutes = new ArrayList<>();
 
         // 날짜별로 장소 순회
-        for (LocalDateTime date : placesByDate.keySet()) {
-            List<PlaceDTO> dailyPlaces = placesByDate.get(date);
+        for (Map.Entry<LocalDate, List<PlaceDTO>> entry : placesByDate.entrySet()) {
+            List<PlaceDTO> dailyPlaces = entry.getValue();
 
-            // 숙소는 해당 날짜의 마지막 장소로 추가
-            if (!accommodations.isEmpty()) {
-                PlaceDTO accommodation = accommodations.get(0);  // 해당 날짜의 숙소
-                dailyPlaces.add(accommodation);  // 리스트에 숙소를 마지막에 추가
+            // 숙소가 있는 경우 해당 날짜의 마지막에 숙소 추가
+            if (accommodation != null) {
+                dailyPlaces.add(accommodation);  // 숙소를 마지막에 추가
             }
 
             // 장소 간 경로 계산
