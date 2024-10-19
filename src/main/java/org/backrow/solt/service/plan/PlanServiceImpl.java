@@ -130,6 +130,7 @@ public class PlanServiceImpl implements PlanService {
                         .startTime(response.getStartTime())
                         .endTime(response.getEndTime())
                         .description(response.getDescription())
+                        .category(response.getCategory())
                         .checker(response.isChecker())
                         .build())
                 .collect(Collectors.toList());
