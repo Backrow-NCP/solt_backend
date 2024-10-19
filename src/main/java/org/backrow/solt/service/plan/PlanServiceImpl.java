@@ -170,23 +170,24 @@ public class PlanServiceImpl implements PlanService {
         List<PlaceDTO> sortedPlaces = new ArrayList<>(planViewDTO.getPlaces());
         sortedPlaces.sort(Comparator.comparing(PlaceDTO::getStartTime));
 
-        // 숙소와 공항 구분하기
-        List<PlaceDTO> accommodations = new ArrayList<>();
-        List<PlaceDTO> normalPlaces = new ArrayList<>();
-        PlaceDTO airport = null;
+        // 숙소 및 공항 필터링
+        PlaceDTO accommodation = sortedPlaces.stream()
+                .filter(place -> place.getPlaceName().contains("숙소"))
+                .findFirst()
+                .orElse(null);
+        log.info("Accomdation : " + accommodation);
 
-        log.info("accommodations:" + accommodations);
-        log.info("normalPlaces:" + normalPlaces);
+        PlaceDTO airport = sortedPlaces.stream()
+                .filter(place -> place.getPlaceName().contains("공항"))
+                .findFirst()
+                .orElse(null);
+        log.info("Airport : " + airport);
 
-        for (PlaceDTO place : placeList) {
-            if (place.getPlaceName().contains("공항")) { // 공항 여부를 placeName으로 구분
-                airport = place;  // 공항은 따로 저장
-            } else if (place.getPlaceName().contains("숙소")) { // 숙소 여부를 placeName으로 구분
-                accommodations.add(place);  // 숙소 저장
-            } else {
-                normalPlaces.add(place);  // 일반 장소는 따로 저장
-            }
-        }
+        // 일반 장소는 숙소나 공항이 아닌 것들로 필터링
+        List<PlaceDTO> normalPlaces = sortedPlaces.stream()
+                .filter(place -> !place.getPlaceName().contains("숙소") && !place.getPlaceName().contains("공항"))
+                .collect(Collectors.toList());
+        log.info("NormalPlaces : " + normalPlaces);
 
         // 각 Place의 startTime을 기준으로 정렬
         normalPlaces.sort(Comparator.comparing(PlaceDTO::getStartTime));
