@@ -1,7 +1,6 @@
-FROM openjdk:11-jre-slim
+FROM openjdk:11-jre-alpine
 
-RUN yum install -y jq && \
-    yum clean all
+RUN apk add --no-cache jq
 
 ARG JAR_FILE=build/libs/solt-0.0.1-SNAPSHOT.jar
 
