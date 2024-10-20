@@ -15,7 +15,7 @@ public interface LoginService {
 
     boolean register(RegisterDTO registerDTO);
 
-    String getToken(String email, Long memberId);
+    String getToken(String email, Long memberId, String name);
 
     String getAuthUser(HttpServletRequest request);
 
