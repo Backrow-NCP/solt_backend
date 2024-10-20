@@ -1,6 +1,9 @@
-FROM openjdk:11-jre-alpine
+FROM openjdk:11-jre-slim
 
-RUN apk add --no-cache jq
+RUN apt-get update && \
+    apt-get install -y jq && \
+    apt-get clean && \
+    rm -rf /var/lib/apt/lists/*
 
 ARG JAR_FILE=build/libs/solt-0.0.1-SNAPSHOT.jar
 
