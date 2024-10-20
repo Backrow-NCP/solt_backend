@@ -97,9 +97,6 @@ dependencies {
 
     // Google Map API
     implementation 'com.google.maps:google-maps-services:2.2.0'
-
-    //API Key 은닉
-    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 }
 
 tasks.named('test') {
