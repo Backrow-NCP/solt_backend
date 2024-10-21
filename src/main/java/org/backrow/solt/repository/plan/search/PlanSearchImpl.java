@@ -23,7 +23,7 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
 
     @Override
     @Transactional
-    public Page<PlanViewDTO> searchPlanView(String[] types, String keyword, Pageable pageable) {
+    public Page<PlanViewDTO> searchPlanViewWithMemberId(String[] types, String keyword, Pageable pageable, Long memberId) {
         QPlan plan = QPlan.plan;
         QPlace place = QPlace.place;
         QRoute route = QRoute.route;
@@ -37,6 +37,7 @@ public class PlanSearchImpl extends QuerydslRepositorySupport implements PlanSea
                 .leftJoin(plan.member, member).fetchJoin()
                 .leftJoin(plan.themes, themeLog).fetchJoin()
                 .leftJoin(themeLog.theme, theme).fetchJoin()
+                .where(member.memberId.eq(memberId))
                 .distinct();
 
         if (keyword != null) {

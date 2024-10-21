@@ -1,12 +1,9 @@
 package org.backrow.solt.service.plan;
 
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.plan.*;
-import org.backrow.solt.domain.plan.api.ClovaApiResponse;
 import org.backrow.solt.domain.plan.api.DirectionsResponses;
 import org.backrow.solt.domain.plan.api.PlacesResponses;
 import org.backrow.solt.dto.member.MemberInfoDTO;
@@ -47,7 +44,7 @@ public class PlanServiceImpl implements PlanService {
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable();
 
-        Page<PlanViewDTO> planPage = planRepository.searchPlanView(types, keyword, pageable);
+        Page<PlanViewDTO> planPage = planRepository.searchPlanViewWithMemberId(types, keyword, pageable, id);
 
         return new PageResponseDTO<>(pageRequestDTO, planPage.getContent(), (int) planPage.getTotalElements());
     }
