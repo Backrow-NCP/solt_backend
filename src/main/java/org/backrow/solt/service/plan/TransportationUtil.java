@@ -6,65 +6,61 @@ import java.util.List;
 
 public class TransportationUtil {
 
-    // 이동 수단 ID를 가장 긴 거리를 기준으로 가져오는 메소드
+    // 이동 수단 ID를 대중교통을 한 번이라도 탔는지에 따라 가져오는 메소드
     public static Integer getTransportationId(List<DirectionsResponses.Route.Step> steps) {
         if (steps.isEmpty()) {
             return 1; // 기본값: 도보 ID
         }
 
-        // 가장 긴 거리를 찾기 위한 변수
-        DirectionsResponses.Route.Step longestStep = steps.get(0);
+        // 대중교통을 탄 적이 있는지 확인
+        boolean hasTransit = false;
 
-        // 가장 긴 거리를 찾는 로직
         for (DirectionsResponses.Route.Step step : steps) {
-            if (step.getDistance().getValue() > longestStep.getDistance().getValue()) {
-                longestStep = step;
+            String mode = step.getTravelMode();
+            if ("TRANSIT".equalsIgnoreCase(mode)) {
+                hasTransit = true;
+                break; // 대중교통을 탔다면 더 이상 확인할 필요 없음
             }
         }
 
-        // 가장 긴 거리를 간 이동 수단에 따라 ID 반환
-        String mode = longestStep.getTravelMode();
-        if ("TRANSIT".equalsIgnoreCase(mode)) {
-            return 2; // 대중교통 ID
-        } else if ("WALKING".equalsIgnoreCase(mode)) {
-            return 1; // 도보 ID
-        }
-
-        // 기본값: 도보 ID
-        return 1;
+        // 대중교통을 한 번이라도 탔다면 대중교통 ID, 아니면 도보 ID 반환
+        return hasTransit ? 2 : 1;
     }
 
-    // 이동 수단 타입을 가장 긴 거리를 기준으로 가져오는 메소드
+    // 이동 수단 타입을 대중교통을 한 번이라도 탔는지에 따라 가져오는 메소드
     public static String getTransportationType(List<DirectionsResponses.Route.Step> steps) {
         if (steps.isEmpty()) {
             return "도보"; // 기본값: 도보
         }
 
-        // 가장 긴 거리를 찾기 위한 변수
-        DirectionsResponses.Route.Step longestStep = steps.get(0);
+        // 대중교통을 탄 적이 있는지 확인
+        boolean hasTransit = false;
 
-        // 가장 긴 거리를 찾는 로직
         for (DirectionsResponses.Route.Step step : steps) {
-            if (step.getDistance().getValue() > longestStep.getDistance().getValue()) {
-                longestStep = step;
+            String mode = step.getTravelMode();
+            if ("TRANSIT".equalsIgnoreCase(mode)) {
+                hasTransit = true;
+                break; // 대중교통을 탔다면 더 이상 확인할 필요 없음
             }
         }
 
-        // 가장 긴 거리를 간 이동 수단에 따라 타입 반환
-        String mode = longestStep.getTravelMode();
-        if ("TRANSIT".equalsIgnoreCase(mode)) {
-            DirectionsResponses.Route.Step.TransitDetails transitDetails = longestStep.getTransitDetails();
-            if (transitDetails != null) {
-                String lineName = transitDetails.getLine().getName();
-                String vehicleType = transitDetails.getLine().getVehicle().getName();
-                return String.format("대중교통 (%s, %s)", lineName, vehicleType);
+        // 대중교통을 한 번이라도 탔다면 대중교통, 아니면 도보 반환
+        if (hasTransit) {
+            // 가장 처음 만나는 대중교통의 세부 정보를 반환
+            for (DirectionsResponses.Route.Step step : steps) {
+                if ("TRANSIT".equalsIgnoreCase(step.getTravelMode())) {
+                    DirectionsResponses.Route.Step.TransitDetails transitDetails = step.getTransitDetails();
+                    if (transitDetails != null) {
+                        String lineName = transitDetails.getLine().getName();
+                        String vehicleType = transitDetails.getLine().getVehicle().getName();
+                        return String.format("대중교통 (%s, %s)", lineName, vehicleType);
+                    }
+                    return "대중교통"; // 대중교통이지만 추가 정보가 없는 경우
+                }
             }
-            return "대중교통"; // 대중교통이지만 추가 정보가 없는 경우
-        } else if ("WALKING".equalsIgnoreCase(mode)) {
-            return "도보"; // 도보인 경우
         }
 
-        // 기본값: 도보
+        // 대중교통을 타지 않았다면 도보 반환
         return "도보";
     }
 }
