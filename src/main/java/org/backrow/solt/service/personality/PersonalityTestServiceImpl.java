@@ -1,12 +1,12 @@
-package org.backrow.solt.service;
+package org.backrow.solt.service.personality;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.domain.personality.PersonalityTest;
 import org.backrow.solt.domain.personality.Result;
 import org.backrow.solt.dto.personality.*;
-import org.backrow.solt.repository.PersonalityTestResultRepository;
-import org.backrow.solt.repository.PersonalityTestRepository;
+import org.backrow.solt.repository.personality.PersonalityTestResultRepository;
+import org.backrow.solt.repository.personality.PersonalityTestRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +22,6 @@ public class PersonalityTestServiceImpl implements PersonalityTestService {
     private final PersonalityTestResultRepository personalityTestResultRepository;
 
     private final Map<String, Integer> resultKeyMap = initializeResultKeyMap();
-
 
     @Override
     public PersonalityTestDTO getPersonalityTestById(int id) {

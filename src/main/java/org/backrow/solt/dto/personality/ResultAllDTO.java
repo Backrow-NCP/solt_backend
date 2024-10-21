@@ -5,7 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
 @Data
 @Builder
 @AllArgsConstructor
@@ -15,5 +14,4 @@ public class ResultAllDTO {
     private String result;
     private String seasoning;
     private String image;
-
 }

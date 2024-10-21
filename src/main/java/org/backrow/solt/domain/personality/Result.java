@@ -22,8 +22,11 @@ public class Result {
     private PersonalityTest personalityTest;
 
     private String result;
+
     private String seasoning;
+
     private String explainSeasoning;
+
     private String summary;
 
     @Column(length = 2048)
@@ -33,6 +36,7 @@ public class Result {
     private String recommendation;
 
     private int matchSeasoning;
+
     private int misMatchSeasoning;
 
     @Column(length = 2048)

@@ -2,7 +2,6 @@ package org.backrow.solt.domain.personality;
 
 import lombok.*;
 
-
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,5 +27,4 @@ public class Question {
 
     @OneToMany(mappedBy = "question")
     private Set<Answer> answers = new HashSet<>();
-
 }
