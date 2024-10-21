@@ -1,9 +1,14 @@
 FROM openjdk:11-jre-slim
 
-#RUN apt-get update && \
- #   apt-get install -y jq && \
-  #  apt-get clean && \
-   # rm -rf /var/lib/apt/lists/*
+ARG CLOVA_API_KEY
+ARG GOOGLE_MAPS_API_KEY
+ARG CLOVA_APIGW_KEY
+ARG CLOVA_REQUEST_ID
+
+ENV CLOVA_API_KEY=${CLOVA_API_KEY}
+ENV GOOGLE_MAPS_API_KEY=${GOOGLE_MAPS_API_KEY}
+ENV CLOVA_APIGW_KEY=${CLOVA_APIGW_KEY}
+ENV CLOVA_REQUEST_ID=${CLOVA_REQUEST_ID}
 
 ARG JAR_FILE=build/libs/solt-0.0.1-SNAPSHOT.jar
 
