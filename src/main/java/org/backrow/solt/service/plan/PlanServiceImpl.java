@@ -168,6 +168,7 @@ public class PlanServiceImpl implements PlanService {
         // 경로 추천
         // PlanViewDTO의 places를 리스트로 변환 후 startTime 기준으로 정렬
         List<PlaceDTO> sortedPlaces = new ArrayList<>(planViewDTO.getPlaces());
+        sortedPlaces.removeIf(place -> place.getStartTime() == null); // startTime이 null인 객체 제거
         sortedPlaces.sort(Comparator.comparing(PlaceDTO::getStartTime));
 
         // 숙소 및 공항 필터링
