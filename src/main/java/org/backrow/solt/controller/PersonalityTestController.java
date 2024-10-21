@@ -28,6 +28,7 @@ public class PersonalityTestController {
 
     @Operation(summary = "유형검사 결과 계산 및 조회", description = "합산 점수 정보를 통해 유형검사 결과 정보를 가져옵니다.")
     @PostMapping("/result")
+    @Transactional
     public ResultDTO getResult(@RequestBody List<ScoreDTO> dtoList) {
         return personalityTestService.getResult(dtoList);
     }
