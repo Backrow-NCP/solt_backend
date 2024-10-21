@@ -121,7 +121,6 @@ public class PlanServiceImpl implements PlanService {
         // 응답에서 추천 장소 추출 및 변환
         List<PlaceDTO> recommendedPlaces = clovaPlaces.stream()
                 .map(response -> PlaceDTO.builder()
-                        .placeId(response.getPlaceId())
                         .placeName(response.getPlaceName())
                         .addr(response.getAddr())
                         .price(response.getPrice())
@@ -228,7 +227,6 @@ public class PlanServiceImpl implements PlanService {
 
                 // 경로 정보로 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
-                        .routeId(0L) // 경로 ID는 0으로 초기 설정
                         .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
                         .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
                         .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
