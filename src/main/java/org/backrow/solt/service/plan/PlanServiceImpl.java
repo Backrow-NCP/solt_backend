@@ -234,13 +234,16 @@ public class PlanServiceImpl implements PlanService {
                         .type(TransportationUtil.getTransportationType(leg.getSteps())) // 이동 수단 타입 가져오기
                         .build();
 
+                // 가격 설정: 대중교통이면 3000원, 도보이면 0원
+                int price = "대중교통".equals(transportation.getType()) ? 3000 : 0;
+
                 // 경로 정보로 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
                         .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
                         .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
-                        .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
-                        .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())
-                        .price(0)  // 가격은 0으로 초기화
+                        .distance(leg.getDistance().getValue())
+                        .travelTime(leg.getDuration().getValue())
+                        .price(price)  // 이동 수단에 따른 가격 설정
                         .transportation(transportation)
                         .checker(true)  // AI가 수정할 수 없는 정보로 설정
                         .build();
@@ -252,7 +255,7 @@ public class PlanServiceImpl implements PlanService {
             }
         }
 
-        // 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
+// 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
         if (airport != null && !normalPlaces.isEmpty()) {
             PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1); // 마지막 일반 장소
 
@@ -276,14 +279,17 @@ public class PlanServiceImpl implements PlanService {
                     .type(TransportationUtil.getTransportationType(leg.getSteps())) // 이동 수단 타입 가져오기
                     .build();
 
+            // 가격 설정: 대중교통이면 3000원, 도보이면 0원
+            int airportPrice = "대중교통".equals(airportTransportation.getType()) ? 3000 : 0;
+
             // 공항 경로를 위한 RouteDTO 생성
             RouteDTO airportRoute = RouteDTO.builder()
                     .routeId(0L) // 경로 ID는 0으로 초기 설정
                     .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
                     .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
-                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
-                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())  // 이동 시간
-                    .price(0)  // 가격은 0으로 초기화
+                    .distance(leg.getDistance().getValue())  // 거리 정보
+                    .travelTime(leg.getDuration().getValue())  // 이동 시간
+                    .price(airportPrice)  // 이동 수단에 따른 가격 설정
                     .transportation(airportTransportation)
                     .checker(true)  // AI가 수정할 수 없는 정보로 설정
                     .build();
