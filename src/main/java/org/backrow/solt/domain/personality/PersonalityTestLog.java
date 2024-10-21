@@ -1,7 +1,7 @@
 package org.backrow.solt.domain.personality;
 
 import lombok.*;
-import org.backrow.solt.domain.Member;
+import org.backrow.solt.domain.member.Member;
 import org.springframework.data.annotation.CreatedDate;
 
 import javax.persistence.*;
@@ -15,7 +15,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @ToString
 public class PersonalityTestLog {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long logId;

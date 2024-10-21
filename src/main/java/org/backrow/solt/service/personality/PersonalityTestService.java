@@ -1,4 +1,4 @@
-package org.backrow.solt.service;
+package org.backrow.solt.service.personality;
 
 import org.backrow.solt.dto.personality.*;
 
@@ -9,5 +9,4 @@ public interface PersonalityTestService {
     ResultDTO getResult(List<ScoreDTO> dtoList);
     List<ResultAllDTO> getAllResults();
     ResultDTO getResultById(int id);
-
 }

@@ -24,10 +24,6 @@ public class ResultDTO {
 //    private int matchSeasoning;
 //    private int misMatchSeasoning;
     private String image;
-
     private PersonalityMatchDTO MatchPersonality;
     private PersonalityMatchDTO misMatchPersonality;
-
-
-
 }

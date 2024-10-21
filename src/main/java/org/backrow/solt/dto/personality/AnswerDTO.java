@@ -14,5 +14,4 @@ public class AnswerDTO {
     private String content;
     private int score;
     private AnswerTypeDTO answerType;
-
 }

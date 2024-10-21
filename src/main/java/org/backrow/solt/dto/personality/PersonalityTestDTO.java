@@ -13,5 +13,4 @@ public class PersonalityTestDTO {
     private int personalityTestId;
     private String name;
     private List<QuestionDTO> questions;
-
 }

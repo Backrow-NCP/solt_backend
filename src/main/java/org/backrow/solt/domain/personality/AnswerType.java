@@ -23,5 +23,4 @@ public class AnswerType {
 
     @OneToMany(mappedBy = "answerType")
     private List<Answer> answers;
-
 }

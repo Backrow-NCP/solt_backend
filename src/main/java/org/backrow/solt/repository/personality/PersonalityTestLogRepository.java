@@ -1,4 +1,4 @@
-package org.backrow.solt.repository;
+package org.backrow.solt.repository.personality;
 
 import org.backrow.solt.domain.personality.PersonalityTestLog;
 import org.springframework.data.jpa.repository.JpaRepository;

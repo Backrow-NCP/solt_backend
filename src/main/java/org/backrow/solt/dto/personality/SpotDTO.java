@@ -12,9 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SpotDTO {
     private String country;
-
     private String spotName;
-
     private String image;
-
 }

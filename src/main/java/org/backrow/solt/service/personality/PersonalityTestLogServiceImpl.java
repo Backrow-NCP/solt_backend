@@ -1,13 +1,13 @@
-package org.backrow.solt.service;
+package org.backrow.solt.service.personality;
 
 import lombok.RequiredArgsConstructor;
-import org.backrow.solt.domain.Member;
+import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.personality.PersonalityTest;
 import org.backrow.solt.domain.personality.PersonalityTestLog;
 import org.backrow.solt.domain.personality.Result;
 import org.backrow.solt.dto.personality.PersonalityTestLogInputDTO;
 import org.backrow.solt.dto.personality.PersonalityTestLogViewDTO;
-import org.backrow.solt.repository.PersonalityTestLogRepository;
+import org.backrow.solt.repository.personality.PersonalityTestLogRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
@@ -22,8 +22,6 @@ import java.util.stream.Collectors;
 public class PersonalityTestLogServiceImpl implements PersonalityTestLogService {
     private final PersonalityTestLogRepository personalityTestLogRepository;
     private final ModelMapper modelMapper;
-
-
 
     @Override
     public void saveLog(PersonalityTestLogInputDTO personalityTestLogInputDTO) {

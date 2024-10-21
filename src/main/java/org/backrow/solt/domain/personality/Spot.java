@@ -11,7 +11,6 @@ import javax.persistence.*;
 @NoArgsConstructor
 @ToString
 public class Spot {
-
     @Id
     private int spotId;
 
