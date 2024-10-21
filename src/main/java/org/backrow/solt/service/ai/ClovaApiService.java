@@ -18,6 +18,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -129,7 +130,7 @@ public class ClovaApiService {
                 "    },\n" +
                 "    {\n" +
                 "      \"role\": \"user\",\n" +
-                "      \"content\": \"" + "[서울], [2024-10-01], [2024-10-03], [여유롭게 즐겨요], [맛집에 관심있어요], [가성비가 중요해요]\\n[꼭 가야하는 장소] - [세종문화회관], [서울월드컵경기장], [반포한강공원], [숙소]\" \n" +
+                "      \"content\": \"" + userContent + "\"\n" +
                 "    }\n" +
                 "  ],\n" +
                 "  \"topP\": 0.8,\n" +
@@ -179,15 +180,15 @@ public class ClovaApiService {
                 placeResponse.setAddr(placeNode.path("addr").asText());
                 placeResponse.setPrice(placeNode.path("price").asInt());
 
-                // 공백 제거 후 LocalDateTime 파싱
+                // 공백 제거 후 ZonedDateTime 파싱
                 String startTimeString = placeNode.path("startTime").asText().trim();
                 String endTimeString = placeNode.path("endTime").asText().trim();
 
                 try {
-                    placeResponse.setStartTime(LocalDateTime.parse(startTimeString));
-                    placeResponse.setEndTime(LocalDateTime.parse(endTimeString));
+                    placeResponse.setStartTime(ZonedDateTime.parse(startTimeString).toLocalDateTime());
+                    placeResponse.setEndTime(ZonedDateTime.parse(endTimeString).toLocalDateTime());
                 } catch (DateTimeParseException e) {
-                    log.error("Error parsing LocalDateTime for startTime: {} or endTime: {}", startTimeString, endTimeString);
+                    log.error("Error parsing ZonedDateTime for startTime: {} or endTime: {}", startTimeString, endTimeString);
                     throw new RuntimeException("Failed to parse LocalDateTime", e);
                 }
 
