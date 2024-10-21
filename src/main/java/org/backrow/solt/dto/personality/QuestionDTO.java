@@ -2,7 +2,6 @@ package org.backrow.solt.dto.personality;
 
 import lombok.*;
 
-import java.util.List;
 import java.util.Set;
 
 @Data
