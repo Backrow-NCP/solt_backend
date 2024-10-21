@@ -64,4 +64,8 @@ public class Member {
     public void deleteProfileImage() {
         this.fileName = null;
     }
+
+    public void setProfileImage(String fileName) {
+        this.fileName = fileName;
+    }
 }
