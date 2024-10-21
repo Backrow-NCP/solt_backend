@@ -19,9 +19,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -96,6 +94,10 @@ public class ClovaApiService {
             // API 응답으로 PlaceDTO 업데이트
             updatePlacesWithApiResponse(places, apiResponses);
 
+            // 세부정보가 없는 장소 필터링
+            places.removeIf(place -> place.getStartTime() == null || place.getEndTime() == null
+                    || place.getAddr() == null || place.getDescription() == null || place.getCategory() == null);
+
             return apiResponses;
 
         } catch (HttpClientErrorException e) {
@@ -108,19 +110,40 @@ public class ClovaApiService {
     }
 
     private void updatePlacesWithApiResponse(Set<PlaceDTO> places, List<PlacesResponses> apiResponses) {
+        Map<String, PlacesResponses> filledPlacesMap = new HashMap<>();
+
+        // 세부정보가 채워진 PlacesResponses 찾기
         for (PlacesResponses apiResponse : apiResponses) {
-            for (PlaceDTO place : places) {
-                // placeName이 같은 경우에만 업데이트
-                if (place.getPlaceName().equals(apiResponse.getPlaceName())) {
-                    if (place.getStartTime() == null) {
-                        place.setStartTime(apiResponse.getStartTime());
-                        place.setEndTime(apiResponse.getEndTime());
-                        place.setAddr(apiResponse.getAddr());
-                        place.setDescription(apiResponse.getDescription());
-                    }
-                }
+            String placeName = apiResponse.getPlaceName();
+            if (isResponseFilled(apiResponse)) {
+                filledPlacesMap.putIfAbsent(placeName, apiResponse);
             }
         }
+
+        // PlaceDTO 업데이트 및 중복 제거
+        for (PlaceDTO place : places) {
+            PlacesResponses apiResponse = filledPlacesMap.get(place.getPlaceName());
+            if (apiResponse != null && (place.getStartTime() == null || place.getEndTime() == null)) {
+                place.setStartTime(apiResponse.getStartTime());
+                place.setEndTime(apiResponse.getEndTime());
+                place.setAddr(apiResponse.getAddr());
+                place.setDescription(apiResponse.getDescription());
+                place.setCategory(apiResponse.getCategory());
+            }
+        }
+
+        // 세부정보가 없는 장소 필터링
+        places.removeIf(place -> place.getStartTime() == null || place.getEndTime() == null
+                || place.getAddr() == null || place.getDescription() == null || place.getCategory() == null);
+    }
+
+    private boolean isResponseFilled(PlacesResponses apiResponse) {
+        // 필요한 세부정보가 모두 채워졌는지 확인하는 로직
+        return apiResponse.getStartTime() != null
+                && apiResponse.getEndTime() != null
+                && apiResponse.getAddr() != null && !apiResponse.getAddr().isEmpty()
+                && apiResponse.getDescription() != null && !apiResponse.getDescription().isEmpty()
+                && apiResponse.getPrice() > 0;
     }
 
     private String createRequestBody(String userContent) {
@@ -207,7 +230,7 @@ public class ClovaApiService {
                 }
 
                 placeResponse.setDescription(placeNode.path("description").asText());
-                placeResponse.setDescription(placeNode.path("category").asText());
+                placeResponse.setCategory(placeNode.path("category").asText()); // 수정: category 설정
                 placeResponse.setChecker(placeNode.path("checker").asBoolean());
 
                 placeResponses.add(placeResponse);
