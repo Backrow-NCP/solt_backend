@@ -129,7 +129,7 @@ public class ClovaApiService {
                 "    },\n" +
                 "    {\n" +
                 "      \"role\": \"user\",\n" +
-                "      \"content\": \"" + userContent + "\"\n" +
+                "      \"content\": \"" + "[서울], [2024-10-01], [2024-10-03], [여유롭게 즐겨요], [맛집에 관심있어요], [가성비가 중요해요]\\n[꼭 가야하는 장소] - [세종문화회관], [서울월드컵경기장], [반포한강공원], [숙소]\" \n" +
                 "    }\n" +
                 "  ],\n" +
                 "  \"topP\": 0.8,\n" +
@@ -142,7 +142,6 @@ public class ClovaApiService {
                 "  \"seed\": 3000\n" +
                 "}";
     }
-
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
