@@ -44,9 +44,12 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO) {
+        log.info(memberId + "//" + uploadResultDTO);
         Optional<Member> result = memberRepository.findById(memberId);
+        log.info(result);
         Member member = result.orElseThrow();
-        member = modelMapper.map(uploadResultDTO, Member.class);
+        log.info(member.toString());
+        member.setProfileImage(uploadResultDTO.getFileName());
         memberRepository.save(member);
     }
 
