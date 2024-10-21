@@ -63,19 +63,23 @@ public class ClovaApiService {
 
         Set<PlaceDTO> places = planInputDTO.getPlaces();
 
-        // 테마와 장소를 문자열로 변환
-        String themeList = themeSet.stream()
+        // 테마와 장소를 문자열로 변환 (테마는 비어있을 경우 "테마 없음"으로 처리)
+        String themeList = themeSet.isEmpty()
+                ? "테마 없음"
+                : themeSet.stream()
                 .map(ThemeDTO::getThemeId)
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
 
+        // 장소 리스트는 placeName만 사용하여 변환
         String placeList = places.stream()
-                .map(place -> String.format("[%s]", place.getPlaceName()))
+                .map(PlaceDTO::getPlaceName) // placeName만 가져옴
                 .collect(Collectors.joining(", "));
 
-        // 사용자 입력 형식의 문자열 생성
+        // userContent를 생성 (테마는 미리 처리한 themeList 사용)
         String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - %s, [숙소]",
                 location, startDate, endDate, themeList, placeList);
+
 
         // Request Body
         String requestBody = createRequestBody(userContent);
