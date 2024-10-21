@@ -3,6 +3,7 @@ package org.backrow.solt.dto.personality;
 import lombok.*;
 
 import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -13,5 +14,5 @@ public class QuestionDTO {
     private int questionId;
     private String content;
     private String image;
-    private List<AnswerDTO> answers;
+    private Set<AnswerDTO> answers;
 }

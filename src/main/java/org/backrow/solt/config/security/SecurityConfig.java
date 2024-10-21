@@ -52,11 +52,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/replies/list/*",
                         "/boards/*", "/boards/list", "/boards/list/*",
                         "/email/verifications",
+                        "/personalityTest/getTest/*", "/personalityTest/result/*",  "/personalityTest/getAllResults",
                         "/loadbalancer").permitAll()
                 .antMatchers(HttpMethod.POST,
                         "/plans/recom",
                         "/files",
                         "/login", "/login/token", "/login/register",
+                         "/personalityTest/result",
                         "/email/verification-requests").permitAll()
                 .antMatchers(HttpMethod.DELETE,
                         "/files").permitAll()
