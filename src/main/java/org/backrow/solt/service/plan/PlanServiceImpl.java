@@ -230,8 +230,8 @@ public class PlanServiceImpl implements PlanService {
 
                 // 이동 수단 정보 추출
                 TransportationDTO transportation = TransportationDTO.builder()
-                        .id(TransportationUtil.getTransportationId(leg.getSteps())) // 이동 수단 ID 가져오기
-                        .type(TransportationUtil.getTransportationType(leg.getSteps())) // 이동 수단 타입 가져오기
+                        .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
+                        .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
                         .build();
 
                 // 가격 설정: 대중교통이면 3000원, 도보이면 0원
@@ -255,7 +255,7 @@ public class PlanServiceImpl implements PlanService {
             }
         }
 
-// 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
+        // 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
         if (airport != null && !normalPlaces.isEmpty()) {
             PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1); // 마지막 일반 장소
 
@@ -275,8 +275,8 @@ public class PlanServiceImpl implements PlanService {
 
             // 이동 수단 정보 추출
             TransportationDTO airportTransportation = TransportationDTO.builder()
-                    .id(TransportationUtil.getTransportationId(leg.getSteps())) // 이동 수단 ID 가져오기
-                    .type(TransportationUtil.getTransportationType(leg.getSteps())) // 이동 수단 타입 가져오기
+                    .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
+                    .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
                     .build();
 
             // 가격 설정: 대중교통이면 3000원, 도보이면 0원
