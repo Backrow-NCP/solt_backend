@@ -11,7 +11,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RouteDTO {
-    private Long routeId;
+    @Builder.Default
+    private Long routeId = null;
 
     @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
     @Schema(type = "string", pattern = "yyyy-MM-dd'T'HH:mm:ss", example = "2024-10-21T05:42:37")
