@@ -37,6 +37,7 @@ public class PlanServiceImpl implements PlanService {
     private final ModelMapper modelMapper;
     private final ClovaApiService clovaApiService;
     private final GoogleMapsApiService googleMapsApiService;
+    private final ThemeStore themeStore;
 
     @Override
     public PageResponseDTO<PlanViewDTO> getPlanList(long id, PageRequestDTO pageRequestDTO) { // List 조회 시에는 Plan의 세부 내용은 필요 없지 않을까..?
@@ -141,11 +142,12 @@ public class PlanServiceImpl implements PlanService {
         Set<PlaceDTO> mergedPlaces = new HashSet<>(placeList);
         mergedPlaces.addAll(recommendedPlaces); // 중복된 장소 제거
 
-        // Set<Long>을 Set<ThemeDTO>로 변환하는 로직 추가
+        // 테마 이름을 가져오기 위한 로직
         Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
-                .map(themeId -> ThemeDTO.builder()
-                        .themeId(themeId)
-                        .build())
+                .map(themeId -> {
+                    ThemeDTO themeDTO = themeStore.getThemeById(themeId);
+                    return themeDTO != null ? themeDTO : ThemeDTO.builder().themeId(themeId).name("알 수 없는 테마").build(); // 예외 처리
+                })
                 .collect(Collectors.toSet());
 
         // PlanViewDTO 생성 시 기본 값 설정
