@@ -18,7 +18,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.stream.Collectors;
 @Log4j2
 public class ClovaApiService {
 
-    // 외부에서 주입되는 API 키 값
     @Value("${CLOVA_API_KEY}")
     private String clovaApiKey;
 
@@ -42,14 +40,11 @@ public class ClovaApiService {
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    // 생성자 주입 방식 사용
     public ClovaApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
     }
 
-    // Clova API 요청을 보내는 메소드
     public List<PlacesResponses> callClovaApi(PlanInputDTO planInputDTO) {
-        // 필요한 PlanInputDTO 필드 값 추출
         String location = planInputDTO.getLocation();
         String startDate = planInputDTO.getStartDate().toString();
         String endDate = planInputDTO.getEndDate().toString();
@@ -63,7 +58,7 @@ public class ClovaApiService {
 
         Set<PlaceDTO> places = planInputDTO.getPlaces();
 
-        // 테마와 장소를 문자열로 변환 (테마는 비어있을 경우 "테마 없음"으로 처리)
+        // 테마와 장소를 문자열로 변환
         String themeList = themeSet.isEmpty()
                 ? "테마 없음"
                 : themeSet.stream()
@@ -71,15 +66,12 @@ public class ClovaApiService {
                 .map(String::valueOf)
                 .collect(Collectors.joining(", "));
 
-        // 장소 리스트는 placeName만 사용하여 변환
         String placeList = places.stream()
                 .map(PlaceDTO::getPlaceName) // placeName만 가져옴
                 .collect(Collectors.joining(", "));
 
-        // userContent를 생성 (테마는 미리 처리한 themeList 사용)
         String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - %s, [숙소]",
                 location, startDate, endDate, themeList, placeList);
-
 
         // Request Body
         String requestBody = createRequestBody(userContent);
@@ -99,7 +91,12 @@ public class ClovaApiService {
             );
 
             log.info("Response from Clova API: {}", response.getBody());
-            return parseClovaApiResponse(response.getBody());
+            List<PlacesResponses> apiResponses = parseClovaApiResponse(response.getBody());
+
+            // API 응답으로 PlaceDTO 업데이트
+            updatePlacesWithApiResponse(places, apiResponses);
+
+            return apiResponses;
 
         } catch (HttpClientErrorException e) {
             log.error("Error during Clova API call: {}", e.getMessage());
@@ -107,6 +104,22 @@ public class ClovaApiService {
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
             throw new RuntimeException("Unexpected error during Clova API call", e);
+        }
+    }
+
+    private void updatePlacesWithApiResponse(Set<PlaceDTO> places, List<PlacesResponses> apiResponses) {
+        for (PlacesResponses apiResponse : apiResponses) {
+            for (PlaceDTO place : places) {
+                // placeName이 같은 경우에만 업데이트
+                if (place.getPlaceName().equals(apiResponse.getPlaceName())) {
+                    if (place.getStartTime() == null) {
+                        place.setStartTime(apiResponse.getStartTime());
+                        place.setEndTime(apiResponse.getEndTime());
+                        place.setAddr(apiResponse.getAddr());
+                        place.setDescription(apiResponse.getDescription());
+                    }
+                }
+            }
         }
     }
 
@@ -157,7 +170,6 @@ public class ClovaApiService {
         return headers;
     }
 
-    // 응답 문자열을 ClovaApiResponse 객체로 변환하는 메소드
     private List<PlacesResponses> parseClovaApiResponse(String responseBody) {
         try {
             ClovaApiResponse clovaApiResponse = objectMapper.readValue(responseBody, ClovaApiResponse.class);
@@ -169,7 +181,6 @@ public class ClovaApiService {
         }
     }
 
-    // content에서 places를 추출하는 메소드
     private List<PlacesResponses> parsePlaces(String content) {
         List<PlacesResponses> placeResponses = new ArrayList<>();
 
@@ -184,7 +195,6 @@ public class ClovaApiService {
                 placeResponse.setAddr(placeNode.path("addr").asText());
                 placeResponse.setPrice(placeNode.path("price").asInt());
 
-                // 공백 제거 후 ZonedDateTime 파싱
                 String startTimeString = placeNode.path("startTime").asText().trim();
                 String endTimeString = placeNode.path("endTime").asText().trim();
 
@@ -192,7 +202,7 @@ public class ClovaApiService {
                     placeResponse.setStartTime(LocalDateTime.parse(startTimeString));
                     placeResponse.setEndTime(LocalDateTime.parse(endTimeString));
                 } catch (DateTimeParseException e) {
-                    log.error("Error parsing ZonedDateTime for startTime: {} or endTime: {}", startTimeString, endTimeString);
+                    log.error("Error parsing LocalDateTime for startTime: {} or endTime: {}", startTimeString, endTimeString);
                     throw new RuntimeException("Failed to parse LocalDateTime", e);
                 }
 
@@ -202,8 +212,6 @@ public class ClovaApiService {
 
                 placeResponses.add(placeResponse);
             }
-
-
         } catch (Exception e) {
             log.error("Error parsing places: {}", e.getMessage());
         }
