@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.personality.*;
 import org.backrow.solt.service.personality.PersonalityTestService;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +21,7 @@ public class PersonalityTestController {
 
     @Operation(summary = "유형검사 정보 조회", description = "유형검사 ID를 통해 질문, 답변 정보를 가져옵니다.")
     @GetMapping("/getTest/{id}")
+    @Transactional
     public PersonalityTestDTO getPersonalityTestById(@PathVariable int id) {
         return personalityTestService.getPersonalityTestById(id);
     }
@@ -38,6 +40,7 @@ public class PersonalityTestController {
 
     @Operation(summary = "유형검사 결과 상세조회", description = "ID를 통해 특정 유형검사 결과를 상세조회합니다.")
     @GetMapping("/result/{id}")
+    @Transactional
     public ResultDTO getResultById(@PathVariable int id) {
         return personalityTestService.getResultById(id);
     }

@@ -17,10 +17,6 @@ public class AnswerType {
 
     private String name ;
 
-//    @ManyToOne
-//    @JoinColumn(name="answer_id")
-//    private Answer answer;
-
     @OneToMany(mappedBy = "answerType")
     private List<Answer> answers;
 }

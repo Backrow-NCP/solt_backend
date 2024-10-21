@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,7 +20,7 @@ public class ResultDTO {
     private String summary;
     private String description;
     private String recommendation;
-    private List<SpotDTO> spots;
+    private Set<SpotDTO> spots;
 //    private int matchSeasoning;
 //    private int misMatchSeasoning;
     private String image;
