@@ -1,31 +1,30 @@
 package org.backrow.solt.security;
 
+import lombok.Getter;
+import lombok.ToString;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.Collection;
 
+@Getter
+@ToString
 public class CustomUserDetails extends User {
-    private final long memberId;
+    private final Long memberId;
+    private final String name;
 
-    public CustomUserDetails(long memberId, String username, String password, boolean enabled,
+    public CustomUserDetails(Long memberId, String name,
+                             String username, String password, boolean enabled,
                              boolean accountNonExpired, boolean credentialsNonExpired,
                              boolean accountNonLocked, Collection<? extends GrantedAuthority> authorities) {
         super(username, password, enabled, accountNonExpired, credentialsNonExpired, accountNonLocked, authorities);
         this.memberId = memberId;
-    }
-
-    public long getMemberId() {
-        return memberId;
-    }
-
-    // 사용자 이름을 반환하는 메서드 (사실상 getUsername()과 동일)
-    public String getName() {
-        return getUsername();  // getUsername() 메서드를 호출하여 username을 반환
+        this.name = name;
     }
 
     public static class CustomUserDetailsBuilder {
-        private long memberId;
+        private Long memberId;
+        private String name;
         private String username;
         private String password;
         private boolean enabled = true;
@@ -36,6 +35,11 @@ public class CustomUserDetails extends User {
 
         public CustomUserDetailsBuilder memberId(long memberId) {
             this.memberId = memberId;
+            return this;
+        }
+
+        public CustomUserDetailsBuilder name(String name) {
+            this.name = name;
             return this;
         }
 
@@ -75,7 +79,7 @@ public class CustomUserDetails extends User {
         }
 
         public CustomUserDetails build() {
-            return new CustomUserDetails(memberId, username, password, enabled, accountNonExpired,
+            return new CustomUserDetails(memberId, name, username, password, enabled, accountNonExpired,
                     credentialsNonExpired, accountNonLocked, authorities);
         }
     }

@@ -18,7 +18,7 @@ public class PlanInputDTO {
 
 //    private Boolean confirm;
 
-    @NotNull(message = "멤버 ID는 반드시 존재해야 합니다.")
+//    @NotNull(message = "멤버 ID는 반드시 존재해야 합니다.")
     private Long memberId;
 
     private Set<PlaceDTO> places = new HashSet<>();

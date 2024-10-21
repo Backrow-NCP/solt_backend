@@ -47,7 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
                 .antMatchers(HttpMethod.GET, "/", "/swagger-ui/**", "/v3/api-docs/**",
-                        "/plans/recom",
                         "/like/*",
                         "/login/password", "/login/check",
                         "/replies/list/*",
@@ -55,6 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/email/verifications",
                         "/loadbalancer").permitAll()
                 .antMatchers(HttpMethod.POST,
+                        "/plans/recom",
                         "/files",
                         "/login", "/login/token", "/login/register",
                         "/email/verification-requests").permitAll()
