@@ -185,8 +185,8 @@ public class ClovaApiService {
                 String endTimeString = placeNode.path("endTime").asText().trim();
 
                 try {
-                    placeResponse.setStartTime(ZonedDateTime.parse(startTimeString).toLocalDateTime());
-                    placeResponse.setEndTime(ZonedDateTime.parse(endTimeString).toLocalDateTime());
+                    placeResponse.setStartTime(LocalDateTime.parse(startTimeString));
+                    placeResponse.setEndTime(LocalDateTime.parse(endTimeString));
                 } catch (DateTimeParseException e) {
                     log.error("Error parsing ZonedDateTime for startTime: {} or endTime: {}", startTimeString, endTimeString);
                     throw new RuntimeException("Failed to parse LocalDateTime", e);
