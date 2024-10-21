@@ -69,11 +69,11 @@ public class ClovaApiService {
                 .collect(Collectors.joining(", "));
 
         String placeList = places.stream()
-                .map(PlaceDTO::getPlaceName)
+                .map(place -> String.format("[%s]", place.getPlaceName()))
                 .collect(Collectors.joining(", "));
 
         // 사용자 입력 형식의 문자열 생성
-        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - [%s], [숙소]",
+        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - %s, [숙소]",
                 location, startDate, endDate, themeList, placeList);
 
         // Request Body
@@ -111,16 +111,19 @@ public class ClovaApiService {
                 "    {\n" +
                 "      \"role\": \"system\",\n" +
                 "      \"content\": \"- 지역, 기간, 키워드를 입력하면 여행 일정을 json으로 생성합니다.\\n" +
-                "      - 하루에 최소 3 장소 이상이 포함되어 있어야합니다.\\n" +
+                "      - 하루에 최소 2 장소 이상이 포함되어 있어야합니다.\\n" +
                 "      - 꼭 가야하는 장소는 포함될 수도 있습니다.\\n" +
-                "      - 숙소는 반드시 일정에 포함하여야 하고 각 일자별의 마지막에 반드시 포함되어야한다.\\n" +
-                "      - 마지막 일정에는 근처 공항이 반드시 포함되어 있어야합니다.\\n\\n" +
+                "      - 숙소는 반드시 한 곳이며 일정에 포함하여야 하고 각 일자별의 마지막에 반드시 포함되어야한다.\\n" +
+                "      - 마지막 날짜의 마지막 장소는 근처 공항이 반드시 포함되어 있어야합니다.\\n\\n" +
                 "      - json의 형식은 다음과 같습니다\\n" +
-                "      {\\n  \\\"places\\\": [\\r\\n    {\\r\\n      \\\"placeId\\\": 0,\\r\\n      \\\"placeName\\\": \\\"string\\\",\\r\\n      \\\"addr\\\": \\\"string\\\",\\r\\n      \\\"price\\\": 0,\\r\\n      \\\"startTime\\\": \\\"2024-09-15T13:20:00\\\",\\r\\n      \\\"endTime\\\": \\\"2024-09-15T13:20:00\\\",\\r\\n      \\\"description\\\": \\\"string\\\",\\r\\n      \\\"checker\\\": true\\r\\n    }\\r\\n  ],\\r\\n  \\\"themes\\\": [\\r\\n    0\\r\\n  ],\\r\\n  \\\"location\\\": \\\"string\\\",\\r\\n  \\\"startDate\\\": \\\"2024-10-15\\\",\\r\\n  \\\"endDate\\\": \\\"2024-10-15\\\"\\r\\n}\\n\\n" +
+                "      {\\n  \\\"places\\\": [\\r\\n    {\\r\\n      \\\"placeId\\\": 0,\\r\\n      \\\"placeName\\\": \\\"string\\\",\\r\\n      \\\"addr\\\": \\\"string\\\",\\r\\n      \\\"price\\\": 0,\\r\\n      \\\"startTime\\\": \\\"2024-09-15T13:20:00\\\",\\r\\n      \\\"endTime\\\": \\\"2024-09-15T13:20:00\\\",\\r\\n      \\\"description\\\": \\\"string\\\",\\r\\n      \\\"catetory\\\": \\\"string\\\",\\r\\n      \\\"checker\\\": true\\r\\n    }\\r\\n  ],\\r\\n  \\\"themes\\\": [\\r\\n    0\\r\\n  ],\\r\\n  \\\"location\\\": \\\"string\\\",\\r\\n  \\\"startDate\\\": \\\"2024-10-15\\\",\\r\\n  \\\"endDate\\\": \\\"2024-10-15\\\"\\r\\n}\\n\\n" +
                 "      - places의 date는 날짜 순으로 배열되어야합니다.\\n" +
                 "      - routes의 startPlaceId와 endPlaceId는 같은 날짜에 있는 장소여야합니다.\\n" +
                 "      - description은 20자 이내로 제공되어야 합니다.\\n" +
-                "      - 모든 Id는 순차적으로 0부터 증가해야합니다.\"\n" +
+                "      - category는 각 장소의 특성을 따라야합니다.\\n" +
+                "      - category는 숙박, 음식점, 교통비, 쇼핑, 관광지, 레포츠, 문화시설, 축제가 있습니다.\\n" +
+                "      - addr은 정확한 정보를 반드시 전달해줘야 합니다.\\n" +
+                "      - placeId는 순차적으로 0부터 증가해야합니다.\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "      \"role\": \"user\",\n" +
@@ -187,6 +190,7 @@ public class ClovaApiService {
                 }
 
                 placeResponse.setDescription(placeNode.path("description").asText());
+                placeResponse.setDescription(placeNode.path("category").asText());
                 placeResponse.setChecker(placeNode.path("checker").asBoolean());
 
                 placeResponses.add(placeResponse);
