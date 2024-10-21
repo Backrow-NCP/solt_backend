@@ -8,6 +8,7 @@ import org.backrow.solt.domain.plan.api.PlacesResponses;
 import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.ThemeDTO;
+import org.backrow.solt.service.plan.ThemeStore;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -37,6 +38,7 @@ public class ClovaApiService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    private ThemeStore themeStore;
 
     public ClovaApiService(RestTemplate restTemplate) {
         this.restTemplate = restTemplate;
@@ -49,9 +51,7 @@ public class ClovaApiService {
 
         // 테마 ID를 ThemeDTO로 변환
         Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
-                .map(themeId -> ThemeDTO.builder()
-                        .themeId(themeId)
-                        .build())
+                .map(themeId -> themeStore.getThemeById(themeId))
                 .collect(Collectors.toSet());
 
         Set<PlaceDTO> places = planInputDTO.getPlaces();
@@ -60,8 +60,7 @@ public class ClovaApiService {
         String themeList = themeSet.isEmpty()
                 ? "테마 없음"
                 : themeSet.stream()
-                .map(ThemeDTO::getThemeId)
-                .map(String::valueOf)
+                .map(ThemeDTO::getName) // ThemeDTO의 name을 가져옴
                 .collect(Collectors.joining(", "));
 
         String placeList = places.stream()
