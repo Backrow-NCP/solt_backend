@@ -24,6 +24,12 @@ public class BoardPlace {
     @Column(nullable = false)
     private String placeName;
 
+    @Column
+    private String description;
+
+    @Column
+    private String category;
+
     @Column(nullable = false)
     @Builder.Default
     private int price = 0;
