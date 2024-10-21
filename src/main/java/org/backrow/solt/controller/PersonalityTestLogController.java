@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.personality.*;
 import org.backrow.solt.service.personality.PersonalityTestLogService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -29,6 +30,7 @@ public class PersonalityTestLogController {
 
     @Operation(summary = "유형검사 결과 목록 조회", description = "사용자가 실시한 유형검사 결과 목록을 조회합니다.")
     @GetMapping("/list")
+    @Transactional
     public ResponseEntity<List<PersonalityTestLogViewDTO>> getLogList(Long memberId) {
         return ResponseEntity.ok().body(personalityTestLogService.getLogList(memberId));
     }
