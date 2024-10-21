@@ -16,7 +16,8 @@ public class TransportationUtil {
                 return 1; // 도보 ID
             }
         }
-        return 0; // 알 수 없는 ID
+        // steps가 비어 있을 때 기본값을 도보로 설정
+        return 1; // 기본값: 도보 ID
     }
 
     // 이동 수단 타입을 가져오는 메소드
@@ -31,11 +32,12 @@ public class TransportationUtil {
                     String vehicleType = transitDetails.getLine().getVehicle().getName();
                     return String.format("대중교통 (%s, %s)", lineName, vehicleType);
                 }
-                return "대중교통";
+                return "대중교통"; // 대중교통이지만 추가 정보가 없는 경우
             } else if ("WALKING".equalsIgnoreCase(mode)) {
-                return "도보";
+                return "도보"; // 도보인 경우
             }
         }
-        return "알 수 없음";
+        // steps가 비어 있을 때 기본값을 도보로 설정
+        return "도보"; // 기본값: 도보
     }
 }
