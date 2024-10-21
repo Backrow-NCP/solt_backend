@@ -15,9 +15,11 @@ import java.sql.Date;
 public class MemberInfoDTO {
     private long memberId;
 
+    private String email;
+
     private String name;
 
-    @JsonFormat(pattern = "yyyy-mm-dd")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private Date birthYear;
 
     private boolean gender;
