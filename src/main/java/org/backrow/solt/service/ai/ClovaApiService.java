@@ -77,11 +77,13 @@ public class ClovaApiService {
                 .collect(Collectors.joining(", "));
 
         String placeList = places.stream()
-                .map(PlaceDTO::getPlaceName) // placeName만 가져옴
+                .map(place -> String.format("[%s]", place.getPlaceName()))
                 .collect(Collectors.joining(", "));
 
-        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - %s, [숙소]",
+        String userContent = String.format("[%s], [%s], [%s], [%s]\\n[꼭 가야하는 장소] - [%s], [숙소]",
                 location, startDate, endDate, themeList, placeList);
+
+        log.info("userContent: " + userContent);
 
         // Request Body
         String requestBody = createRequestBody(userContent);
