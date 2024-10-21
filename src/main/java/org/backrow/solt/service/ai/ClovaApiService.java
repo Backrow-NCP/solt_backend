@@ -9,6 +9,7 @@ import org.backrow.solt.dto.plan.PlaceDTO;
 import org.backrow.solt.dto.plan.PlanInputDTO;
 import org.backrow.solt.dto.plan.ThemeDTO;
 import org.backrow.solt.service.plan.ThemeStore;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -38,6 +39,8 @@ public class ClovaApiService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+
+    @Autowired
     private ThemeStore themeStore;
 
     public ClovaApiService(RestTemplate restTemplate) {
@@ -48,10 +51,20 @@ public class ClovaApiService {
         String location = planInputDTO.getLocation();
         String startDate = planInputDTO.getStartDate().toString();
         String endDate = planInputDTO.getEndDate().toString();
+        Set<Long> themeIds = planInputDTO.getThemes() != null ? planInputDTO.getThemes() : Collections.emptySet();
+
 
         // 테마 ID를 ThemeDTO로 변환
-        Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
-                .map(themeId -> themeStore.getThemeById(themeId))
+        Set<ThemeDTO> themeSet = themeIds.stream()
+                .map(themeId -> {
+                    try {
+                        return themeStore.getThemeById(themeId);
+                    } catch (RuntimeException e) {
+                        System.err.println("Error fetching theme with ID: " + themeId + ", " + e.getMessage());
+                        return null; // null 반환
+                    }
+                })
+                .filter(Objects::nonNull) // null 값 필터링
                 .collect(Collectors.toSet());
 
         Set<PlaceDTO> places = planInputDTO.getPlaces();
