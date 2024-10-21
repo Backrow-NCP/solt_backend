@@ -287,6 +287,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         .placeName(placeEntity.getPlaceName())
                         .addr(placeEntity.getAddr())
                         .price(placeEntity.getPrice())
+                        .description(placeEntity.getDescription())
+                        .category(placeEntity.getCategory())
                         .startTime(placeEntity.getStartTime())
                         .endTime(placeEntity.getEndTime())
                         .build())
