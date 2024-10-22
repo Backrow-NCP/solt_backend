@@ -165,14 +165,21 @@ public class ClovaApiService {
                 "  \"messages\": [\n" +
                 "    {\n" +
                 "      \"role\": \"system\",\n" +
-                "      \"content\": \"- 지역, 기간, 키워드를 입력하면 여행 일정을 json으로 생성합니다.\\n" +
-                "      - 꼭 가야하는 장소는 반드시 포함되어야 합니다.\\n" +
-                "      - 마지막 날짜의 마지막 장소는 근처 공항이 반드시 포함되어 있어야합니다.\\n\\n" +
-                "      - json의 형식은 다음과 같습니다\\n" +
-                "      {\\n" +
+                "      \"content\": \"- 지역, 기간, 키워드 입력 시 필수 장소 포함 여행 일정 JSON 생성.\\r\\n" +
+                "      - 마지막 날 마지막 장소는 공항 필수.\\r\\n" +
+                "      - 매일 숙소는 마지막 장소, 하루 최소 3개 장소 필요.\\r\\n" +
+                "      - place는 날짜순 정렬, description은 20자 이내 필수.\\r\\n" +
+                "      - placeId는 0부터 순차 증가.\\r\\n" +
+                "      - category는 숙박, 음식점, 교통비, 쇼핑, 관광지, 레포츠, 문화시설, 축제 중 하나.\\r\\n" +
+                "      - category별 가격: 교통비=3000원, 음식점=15000원, 쇼핑=100000원, 숙박=100000원, 레포츠=30000원, 관광지=20000원.\\r\\n" +
+                "      - `checker=false`는 최소 5곳, 나머지는 `checker=true`.\\r\\n" +
+                "      - Naver Maps API로 정확한 장소명과 주소 제공, '맛집', '명소' 사용 금지.\\r\\n" +
+                "      - addr은 반드시 Naver Maps API로 획득.\\r\\n" +
+                "      - 중복 없는 다양한 category 포함.\\r\\n" +
+                "      - JSON 형식:\\r\\n\\n" +
+                "      {\\r\\n" +
                 "        \\\"places\\\": [\\r\\n" +
                 "          {\\r\\n" +
-                "            \\\"placeId\\\": 0,\\r\\n" +
                 "            \\\"placeName\\\": \\\"string\\\",\\r\\n" +
                 "            \\\"addr\\\": \\\"string\\\",\\r\\n" +
                 "            \\\"price\\\": 0,\\r\\n" +
@@ -183,40 +190,27 @@ public class ClovaApiService {
                 "            \\\"checker\\\": true\\r\\n" +
                 "          }\\r\\n" +
                 "        ],\\r\\n" +
-                "        \\\"themes\\\": [\\r\\n" +
-                "          0\\r\\n" +
-                "        ],\\r\\n" +
+                "        \\\"themes\\\": [1, 2, 3],\\r\\n" +
                 "        \\\"location\\\": \\\"string\\\",\\r\\n" +
                 "        \\\"startDate\\\": \\\"2024-10-15\\\",\\r\\n" +
                 "        \\\"endDate\\\": \\\"2024-10-15\\\"\\r\\n" +
-                "      }\\n\\n" +
-                "      - 숙소는 반드시 한 곳이며 일정에 포함하여야 하고 각 일자별의 마지막에 반드시 포함되어야한다.\\n" +
-                "      - 하루에 최소 3개 이상의 place값이 포함되어 있어야합니다.\\n" +
-                "      - places의 date는 날짜 순으로 배열되어야 합니다.\\n" +
-                "      - description은 20자 이내로 제공되어야 합니다.\\n" +
-                "      - placeId는 순차적으로 0부터 증가해야 합니다.\\n" +
-                "      - category는 각 장소의 특성을 따라야 합니다.\\n" +
-                "      - category는 숙박, 음식점, 교통비, 쇼핑, 관광지, 레포츠, 문화시설, 축제가 있습니다.\\n" +
-                "      - addr은 정확한 정보를 반드시 전달해줘야 합니다.\\n" +
-                "      - checker에서 사용자가 입력한 값은 true이면 그 반대는 false이고 반드시 지켜져야 합니다.\\n" +
-                "      - false의 checker 값을 가지고 있는 place는 반드시 5곳 이상이어야 합니다.\"\n" +
+                "      }\\n\"\n" +
                 "    },\n" +
                 "    {\n" +
                 "      \"role\": \"user\",\n" +
                 "      \"content\": \"" + userContent + "\"\n" +
                 "    }\n" +
                 "  ],\n" +
-                "  \"topP\": 0.8,\n" +
+                "  \"topP\": 0.9,\n" +
                 "  \"topK\": 0,\n" +
-                "  \"maxTokens\": 3523,\n" +
-                "  \"temperature\": 0.74,\n" +
-                "  \"repeatPenalty\": 2.1,\n" +
+                "  \"maxTokens\": 3550,\n" +
+                "  \"temperature\": 0.85,\n" +
+                "  \"repeatPenalty\": 1.9,\n" +
                 "  \"stopBefore\": [],\n" +
                 "  \"includeAiFilters\": true,\n" +
                 "  \"seed\": 3000\n" +
                 "}";
     }
-
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
