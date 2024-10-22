@@ -97,18 +97,10 @@ dependencies {
 
     // Google Map API
     implementation 'com.google.maps:google-maps-services:2.2.0'
-
-    //API Key 은닉
-    implementation 'io.github.cdimascio:dotenv-java:3.0.0'
 }
 
 tasks.named('test') {
     useJUnitPlatform()
-}
-
-querydsl {
-    jpa = true
-    querydslSourcesDir = "$buildDir/generated"
 }
 
 sourceSets {
@@ -117,8 +109,4 @@ sourceSets {
             srcDirs = ["$projectDir/src/main/java", "$projectDir/build/generated"]
         }
     }
-}
-
-tasks.withType(JavaCompile) {
-    options.annotationProcessorGeneratedSourcesDirectory = file("$buildDir/generated")
 }
