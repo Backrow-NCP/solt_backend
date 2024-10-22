@@ -212,9 +212,6 @@ public class ClovaApiService {
                 "}";
     }
 
-
-
-
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
         headers.set("X-NCP-CLOVASTUDIO-API-KEY", clovaApiKey);
