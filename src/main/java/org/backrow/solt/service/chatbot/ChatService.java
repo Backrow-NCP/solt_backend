@@ -45,7 +45,21 @@ public class ChatService {
         String requestBody = createRequestBody(userMessage);
         log.debug("Request body created: {}", requestBody);
 
-        return sendChatRequest(requestBody);
+        ChatResponse response = sendChatRequest(requestBody);
+
+        // 여기서 assistant의 응답 내용을 활용
+        String assistantContent = response.getResult() != null && response.getResult().getMessage() != null
+                ? response.getResult().getMessage().getContent()
+                : null;
+
+        if (assistantContent != null) {
+            log.info("Assistant's response: {}", assistantContent);
+            // 추가적으로 assistantContent를 활용하는 로직을 작성할 수 있습니다.
+        } else {
+            log.warn("No content received from assistant.");
+        }
+
+        return response;
     }
 
     private boolean isInvalidMessage(String message) {
@@ -105,7 +119,6 @@ public class ChatService {
         log.debug("Request body created: {}", requestBody);
         return requestBody;
     }
-
 
     private ChatResponse parseChatResponse(String responseBody) {
         try {
