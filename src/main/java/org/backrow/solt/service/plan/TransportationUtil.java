@@ -6,16 +6,21 @@ import java.util.List;
 
 public class TransportationUtil {
 
-    // 이동 수단 ID를 대중교통을 한 번이라도 탔는지에 따라 가져오는 메소드
-    public static Integer getTransportationId(List<DirectionsResponses.Route.Leg> legs) {
+    // 이동 수단 ID와 타입을 반환하는 메소드
+    public static TransportationResult getTransportationInfo(List<DirectionsResponses.Route.Leg> legs) {
         if (legs.isEmpty()) {
-            return 1; // 기본값: 도보 ID
+            return new TransportationResult(1, "도보", 0, 0); // 기본값: 도보, 거리와 시간은 0
         }
 
         // 대중교통을 탄 적이 있는지 확인
         boolean hasTransit = false;
+        int totalDistance = 0; // 거리 합계 (미터 단위)
+        int totalDuration = 0; // 시간 합계 (초 단위)
 
         for (DirectionsResponses.Route.Leg leg : legs) {
+            totalDistance += leg.getDistance().getValue(); // 각 구간의 거리를 합산
+            totalDuration += leg.getDuration().getValue(); // 각 구간의 시간을 합산
+
             for (DirectionsResponses.Route.Step step : leg.getSteps()) {
                 String mode = step.getTravelMode();
                 if ("TRANSIT".equalsIgnoreCase(mode)) {
@@ -23,56 +28,55 @@ public class TransportationUtil {
                     break; // 대중교통을 탔다면 더 이상 확인할 필요 없음
                 }
             }
-            if (hasTransit) {
-                break;
-            }
         }
 
-        // 대중교통을 한 번이라도 탔다면 대중교통 ID, 아니면 도보 ID 반환
-        return hasTransit ? 2 : 1;
+        // 거리와 시간을 킬로미터와 분으로 변환
+        int distanceInKm = totalDistance / 1000; // 미터를 킬로미터로 변환
+        int travelTimeInMin = totalDuration / 60; // 초를 분으로 변환
+
+        // 이동 수단 ID와 타입 설정
+        int transportationId;
+        String transportationType;
+
+        if (hasTransit || distanceInKm >= 2) {
+            transportationId = 2; // 대중교통 ID
+            transportationType = "대중교통"; // 대중교통 타입
+        } else {
+            transportationId = 1; // 도보 ID
+            transportationType = "도보"; // 도보 타입
+        }
+
+        return new TransportationResult(transportationId, transportationType, distanceInKm, travelTimeInMin);
     }
 
-    // 이동 수단 타입을 대중교통을 한 번이라도 탔는지에 따라 가져오는 메소드
-    public static String getTransportationType(List<DirectionsResponses.Route.Leg> legs) {
-        if (legs.isEmpty()) {
-            return "도보"; // 기본값: 도보
+    // 결과를 담을 클래스
+    public static class TransportationResult {
+        private final Integer transportationId;
+        private final String transportationType;
+        private final Integer distance; // km 단위
+        private final Integer travelTime; // 분 단위
+
+        public TransportationResult(Integer transportationId, String transportationType, Integer distance, Integer travelTime) {
+            this.transportationId = transportationId;
+            this.transportationType = transportationType;
+            this.distance = distance;
+            this.travelTime = travelTime;
         }
 
-        // 대중교통을 탄 적이 있는지 확인
-        boolean hasTransit = false;
-
-        for (DirectionsResponses.Route.Leg leg : legs) {
-            for (DirectionsResponses.Route.Step step : leg.getSteps()) {
-                String mode = step.getTravelMode();
-                if ("TRANSIT".equalsIgnoreCase(mode)) {
-                    hasTransit = true;
-                    break; // 대중교통을 탔다면 더 이상 확인할 필요 없음
-                }
-            }
-            if (hasTransit) {
-                break;
-            }
+        public Integer getTransportationId() {
+            return transportationId;
         }
 
-        // 대중교통을 한 번이라도 탔다면 대중교통, 아니면 도보 반환
-        if (hasTransit) {
-            // 가장 처음 만나는 대중교통의 세부 정보를 반환
-            for (DirectionsResponses.Route.Leg leg : legs) {
-                for (DirectionsResponses.Route.Step step : leg.getSteps()) {
-                    if ("TRANSIT".equalsIgnoreCase(step.getTravelMode())) {
-                        DirectionsResponses.Route.Step.TransitDetails transitDetails = step.getTransitDetails();
-                        if (transitDetails != null) {
-                            String lineName = transitDetails.getLine().getName();
-                            String vehicleType = transitDetails.getLine().getVehicle().getName();
-                            return String.format("대중교통 (%s, %s)", lineName, vehicleType);
-                        }
-                        return "대중교통"; // 대중교통이지만 추가 정보가 없는 경우
-                    }
-                }
-            }
+        public String getTransportationType() {
+            return transportationType;
         }
 
-        // 대중교통을 타지 않았다면 도보 반환
-        return "도보";
+        public Integer getDistance() {
+            return distance;
+        }
+
+        public Integer getTravelTime() {
+            return travelTime;
+        }
     }
 }
