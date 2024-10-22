@@ -1,5 +1,6 @@
 package org.backrow.solt.dto.page;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.*;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -20,6 +21,7 @@ public class PageRequestDTO {
 
     private String keyword;
 
+    @Schema(hidden = true)
     public String[] getTypes(){
         if(type==null || type.isEmpty())
             return null;

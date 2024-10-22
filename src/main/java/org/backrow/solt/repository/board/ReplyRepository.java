@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface ReplyRepository extends JpaRepository<Reply, Long> {
-    @EntityGraph(attributePaths = {"member", "member.profileImage"})
+    @EntityGraph(attributePaths = {"member"})
     Page<Reply> findByBoardBoardId(Long boardId, Pageable pageable);
 
     void deleteByReplyIdAndMember_MemberId(Long replyId, Long memberId);

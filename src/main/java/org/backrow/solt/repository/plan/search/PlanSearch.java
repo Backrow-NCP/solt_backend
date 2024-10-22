@@ -5,6 +5,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface PlanSearch {
-    Page<PlanViewDTO> searchPlanView(String[] types, String keyword, Pageable pageable);
+    Page<PlanViewDTO> searchPlanViewWithMemberId(String[] types, String keyword, Pageable pageable, Long memberId);
     PlanViewDTO searchPlanView(Long planId);
 }

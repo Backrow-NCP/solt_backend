@@ -43,7 +43,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .leftJoin(board.boardImages, boardImage).fetchJoin()
-                .where(boardImage.isNull().or(boardImage.ord.eq(1)))
+                .where(boardImage.isNull().or(boardImage.ord.eq(0)))
                 .groupBy(board);
 
         if (types != null) {
@@ -91,7 +91,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(boardPlan.originPlan, plan).fetchJoin()
                 .leftJoin(plan.themes, themeLog).fetchJoin()
                 .leftJoin(themeLog.theme, theme).fetchJoin()
-                .where(boardImage.isNull().or(boardImage.ord.eq(1)))
+                .where(boardImage.isNull().or(boardImage.ord.eq(0)))
                 .groupBy(board.boardId)
                 .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
                 .orderBy(board.regDate.desc());
@@ -147,7 +147,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(plan.themes, themeLog).fetchJoin()
                 .leftJoin(themeLog.theme, theme).fetchJoin()
                 .where((boardImage.isNull()
-                        .or(boardImage.ord.eq(1)))
+                        .or(boardImage.ord.eq(0)))
                         .and(member.memberId.eq(memberId)))
                 .groupBy(board.boardId)
                 .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
@@ -287,6 +287,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         .placeName(placeEntity.getPlaceName())
                         .addr(placeEntity.getAddr())
                         .price(placeEntity.getPrice())
+                        .description(placeEntity.getDescription())
+                        .category(placeEntity.getCategory())
                         .startTime(placeEntity.getStartTime())
                         .endTime(placeEntity.getEndTime())
                         .build())

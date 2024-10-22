@@ -11,11 +11,9 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.client.RestTemplate;
 
 @Configuration
-@PropertySource("classpath:.env")
 public class AppConfig {
     @Bean
     public ModelMapper modelMapper() {
@@ -26,11 +24,19 @@ public class AppConfig {
                 .setMatchingStrategy(MatchingStrategies.STRICT);
 
         modelMapper.typeMap(Reply.class, ReplyDTO.class)
-                .addMappings(mapper -> mapper.using(ctx -> {
-                    Board board = (Board) ctx.getSource();
-                    if (board == null) return null;
-                    return board.getBoardId();
-                }).map(Reply::getBoard, ReplyDTO::setBoardId));
+                .addMappings(mapper -> {
+                    mapper.using(ctx -> {
+                        Board board = (Board) ctx.getSource();
+                        if (board == null) return null;
+                        return board.getBoardId();
+                    }).map(Reply::getBoard, ReplyDTO::setBoardId);
+
+                    mapper.using(ctx -> {
+                        Reply parentReply = (Reply) ctx.getSource();
+                        if (parentReply == null) return null;
+                        return parentReply.getReplyId();
+                    }).map(Reply::getParentReply, ReplyDTO::setParentReplyId);
+                });
 
         modelMapper.typeMap(RouteDTO.class, Route.class)
                 .addMappings(mapper -> {

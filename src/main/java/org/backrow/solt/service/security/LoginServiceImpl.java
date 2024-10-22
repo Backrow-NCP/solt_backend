@@ -23,9 +23,7 @@ import java.util.UUID;
 @RequiredArgsConstructor
 @Log4j2
 public class LoginServiceImpl implements LoginService {
-
-    // 60초 * 60분
-    static final long EXPIRATION_TIME = 60*60;
+    static final long EXPIRATION_TIME = 1 * 60 * 60 * 1000;
     static final String PREFIX = "Bearer ";
     static final Key key = Keys.secretKeyFor(SignatureAlgorithm.HS256);
 
@@ -86,10 +84,11 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String getToken(String email, Long memberId) {
+    public String getToken(String email, Long memberId, String name) {
         return Jwts.builder()
                 .setSubject(email)
                 .claim("memberId", memberId)
+                .claim("name", name)
                 .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
                 .signWith(key)
                 .compact();
@@ -109,8 +108,10 @@ public class LoginServiceImpl implements LoginService {
                 log.info(user);
                 return user;
             } catch(ExpiredJwtException e){
+                e.printStackTrace();
                 log.info("Access Token expired");
             } catch(Exception e){
+                e.printStackTrace();
                 log.info("Token parsing error");
             }
         }

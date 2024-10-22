@@ -16,9 +16,6 @@ public class ClovaApiResponse {
     private Status status;
     private Result result;
 
-    @JsonProperty("places")
-    private List<PlacesResponses> places;
-
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
@@ -43,6 +40,10 @@ public class ClovaApiResponse {
         private Integer seed;
         private List<AiFilter> aiFilter;
 
+        // places 필드를 Result 내부로 이동
+        @JsonProperty("places")
+        private List<PlacesResponses> places;
+
         @Data
         @NoArgsConstructor
         @AllArgsConstructor
@@ -65,5 +66,4 @@ public class ClovaApiResponse {
         private String score;
         private String result;
     }
-
 }

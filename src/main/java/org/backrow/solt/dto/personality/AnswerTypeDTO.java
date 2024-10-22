@@ -1,4 +1,4 @@
-package org.backrow.solt.dto.login;
+package org.backrow.solt.dto.personality;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class RefreshTokenDTO {
-    private String email;
-    private String refreshToken;
+public class AnswerTypeDTO {
+    private int typeId;
+    private String name;
 }

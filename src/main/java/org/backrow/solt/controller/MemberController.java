@@ -48,12 +48,13 @@ public class MemberController {
     @Operation(summary = "회원 정보 수정", description = "회원 정보를 수정합니다.")
     @PutMapping
     public ResponseEntity<Map<String,Boolean>> modifyMember(
-            ModifyDTO modifyDTO,
+            @RequestBody ModifyDTO modifyDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
        Map<String,Boolean> response = new HashMap<>();
        try {
            modifyDTO.setMemberId(userDetails.getMemberId());
+           log.info(modifyDTO.toString());
            memberService.modifyMember(modifyDTO);
            response.put("result", true);
            return ResponseEntity.ok(response);

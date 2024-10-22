@@ -43,10 +43,13 @@ public class Member {
 
     private LocalDateTime deleteDate;
 
-    public void changeMemberInfo(String password, String name) {
+    public void changeMemberName(String name) {
+        this.name = name;
+    }
+
+    public void changeMemberPassword(String password) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         this.password = encoder.encode(password);
-        this.name = name;
     }
 
     // 회원탈퇴 시 회원의 id, 닉네임을 남겨놓고 나머지 값 제거
@@ -63,5 +66,9 @@ public class Member {
 
     public void deleteProfileImage() {
         this.fileName = null;
+    }
+
+    public void setProfileImage(String fileName) {
+        this.fileName = fileName;
     }
 }
