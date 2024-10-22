@@ -98,9 +98,9 @@ public class ChatService {
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", chatbotApiKey);
-        headers.set("X-NCP-APIGW-API-KEY", chatbotApiGwKey);
-        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", chatbotRequestId);
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", "NTA0MjU2MWZlZTcxNDJiY1vC5aF5j6hNRVO0DmcUe6IpWkBvVw/A9olJoK46uYvh");
+        headers.set("X-NCP-APIGW-API-KEY", "xXsMvq2mEm3I9KHY1XwdnwtwlLm0Klch5QmGgl71");
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", "0beac50347ed47f5b7fdc8427dc6f1dd");
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/event-stream");
         log.debug("Headers created for Clova API call: {}", headers);
