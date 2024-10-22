@@ -60,6 +60,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/login", "/login/token", "/login/register",
                          "/personalityTest/result",
                         "/email/verification-requests").permitAll()
+                .antMatchers(HttpMethod.PUT,
+                        "/members/password").permitAll()
                 .antMatchers(HttpMethod.DELETE,
                         "/files").permitAll()
                 .anyRequest().authenticated().and()

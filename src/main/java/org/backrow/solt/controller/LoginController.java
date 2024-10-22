@@ -9,6 +9,7 @@ import org.backrow.solt.dto.login.RegisterDTO;
 import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.security.LoginService;
 import org.backrow.solt.service.security.TokenService;
+import org.backrow.solt.util.ValidationConstants;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -123,9 +124,8 @@ public class LoginController {
     @Operation(summary = "회원가입", description = "회원 정보를 입력하여 새로 회원가입을 합니다.")
     @PostMapping("/register")
     public ResponseEntity<Map<String,Boolean>> register(@RequestBody RegisterDTO registerDTO){
-        String regex = "^(?=.*[!@#$%^&*()_+=-]).{8,20}$";
         log.info(registerDTO);
-        if(registerDTO.getPassword().matches(regex)) {
+        if(registerDTO.getPassword().matches(ValidationConstants.PASSWORD_REGEX)) {
            try {
                Map<String, Boolean> response = new HashMap<>();
                response.put("result", loginService.register(registerDTO));

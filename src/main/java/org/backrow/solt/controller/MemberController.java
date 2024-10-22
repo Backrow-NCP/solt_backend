@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.member.ModifyDTO;
 import org.backrow.solt.dto.file.UploadResultDTO;
+import org.backrow.solt.dto.member.ModifyPasswordDTO;
 import org.backrow.solt.security.CustomUserDetails;
 import org.backrow.solt.service.file.FileStorageService;
 import org.backrow.solt.service.member.MemberService;
@@ -113,5 +114,12 @@ public class MemberController {
             log.error(e.getMessage());
             return ResponseEntity.internalServerError().build();
         }
+    }
+
+    @Operation(summary = "비밀번호 변경", description = "회원 ID를 통해 비밀번호를 변경합니다.")
+    @PutMapping("/password")
+    public ResponseEntity<Map<String,Boolean>> modifyMember(@RequestBody ModifyPasswordDTO modifyPasswordDTO) {
+        memberService.modifyPassword(modifyPasswordDTO);
+        return ResponseEntity.ok(Map.of("result", true));
     }
 }

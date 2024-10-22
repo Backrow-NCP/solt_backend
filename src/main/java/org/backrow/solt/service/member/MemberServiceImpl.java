@@ -6,6 +6,7 @@ import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.dto.file.UploadResultDTO;
 import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.member.ModifyDTO;
+import org.backrow.solt.dto.member.ModifyPasswordDTO;
 import org.backrow.solt.repository.member.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -58,6 +59,14 @@ public class MemberServiceImpl implements MemberService {
         Optional<Member> result = memberRepository.findById(memberId);
         Member member = result.orElseThrow();
         member.deleteProfileImage();
+        memberRepository.save(member);
+    }
+
+    @Override
+    public void modifyPassword(ModifyPasswordDTO modifyPasswordDTO) {
+        Optional<Member> result = memberRepository.findByEmail(modifyPasswordDTO.getEmail());
+        Member member = result.orElseThrow();
+        member.changeMemberPassword(modifyPasswordDTO.getPassword());
         memberRepository.save(member);
     }
 }
