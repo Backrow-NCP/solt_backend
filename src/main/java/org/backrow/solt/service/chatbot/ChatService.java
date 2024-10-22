@@ -12,8 +12,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Map;
-
 @Log4j2
 @Service
 public class ChatService {
@@ -39,7 +37,7 @@ public class ChatService {
 
     public ChatResponse sendMessageToClovaApi(String userMessage) {
         if (isInvalidMessage(userMessage)) {
-            return createChatResponse(null, "메시지를 입력해야 합니다.");
+            return new ChatResponse(null, "메시지를 입력해야 합니다.", null, null);
         }
 
         log.info("User message: {}", userMessage);
@@ -68,10 +66,10 @@ public class ChatService {
 
         } catch (HttpClientErrorException e) {
             log.error("Error during Clova API call: {}", e.getResponseBodyAsString());
-            return createChatResponse(null, "클로바 API 호출에 실패했습니다: " + e.getStatusCode());
+            return new ChatResponse(null, "클로바 API 호출에 실패했습니다: " + e.getStatusCode(), null, null);
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
-            return createChatResponse(null, "클로바 API 호출 중 예기치 않은 오류가 발생했습니다: " + e.getMessage());
+            return new ChatResponse(null, "클로바 API 호출 중 예기치 않은 오류가 발생했습니다: " + e.getMessage(), null, null);
         }
     }
 
@@ -81,7 +79,6 @@ public class ChatService {
         headers.set("X-NCP-APIGW-API-KEY", chatbotApiGwKey);
         headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", chatbotRequestId);
         headers.set("Content-Type", "application/json");
-        headers.set("Accept", "text/event-stream");
         return headers;
     }
 
@@ -114,31 +111,20 @@ public class ChatService {
 
     private ChatResponse parseChatResponse(String responseBody) {
         try {
-            // JSON 문자열을 맵으로 변환
-            Map<String, Object> responseMap = objectMapper.readValue(responseBody, Map.class);
-            Map<String, Object> result = (Map<String, Object>) responseMap.get("result");
+            // JSON 문자열을 ChatResponse 객체로 변환
+            ChatResponse apiResponse = objectMapper.readValue(responseBody, ChatResponse.class);
 
-            if (result == null) {
-                return createChatResponse(null, "결과가 없습니다.");
-            }
-
-            // result에서 message 객체를 가져오고 그 안에서 content를 추출
-            Map<String, Object> message = (Map<String, Object>) result.get("message");
-            if (message == null) {
-                return createChatResponse(null, "메시지가 없습니다.");
+            // 응답 상태와 결과가 유효한지 확인
+            if (apiResponse.getStatus() == null || apiResponse.getResult() == null || apiResponse.getResult().getMessage() == null) {
+                return new ChatResponse(null, "결과가 없습니다.", null, null);
             }
 
             // content 값을 추출하여 ChatResponse 객체 생성
-            return createChatResponse((String) message.get("content"), null);
+            return new ChatResponse(apiResponse.getResult().getMessage().getContent(), null, apiResponse.getStatus(), apiResponse.getResult());
 
         } catch (Exception e) {
             log.error("Error parsing Clova API response: {}", e.getMessage());
-            return createChatResponse(null, "Failed to parse Clova API response: " + e.getMessage());
+            return new ChatResponse(null, "Failed to parse Clova API response: " + e.getMessage(), null, null);
         }
-    }
-
-
-    private ChatResponse createChatResponse(String content, String errorMessage) {
-        return new ChatResponse(content, errorMessage);
     }
 }
