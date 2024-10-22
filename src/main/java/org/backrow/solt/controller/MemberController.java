@@ -51,11 +51,10 @@ public class MemberController {
             @RequestBody ModifyDTO modifyDTO,
             @Parameter(hidden = true) @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        log.info(modifyDTO);
        Map<String,Boolean> response = new HashMap<>();
        try {
            modifyDTO.setMemberId(userDetails.getMemberId());
-           log.info(modifyDTO);
+           log.info(modifyDTO.toString());
            memberService.modifyMember(modifyDTO);
            response.put("result", true);
            return ResponseEntity.ok(response);

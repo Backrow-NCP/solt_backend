@@ -30,9 +30,12 @@ public class MemberServiceImpl implements MemberService {
     public void  modifyMember(ModifyDTO modifyDTO) {
         Optional<Member> result = memberRepository.findById(modifyDTO.getMemberId());
         Member member = result.orElseThrow();
-
-        member.changeMemberInfo(modifyDTO.getPassword(), modifyDTO.getName());
-
+        member.changeMemberName(modifyDTO.getName());
+        if(modifyDTO.getPassword() != null && !modifyDTO.getPassword().isEmpty()) {
+            member.changeMemberPassword(modifyDTO.getPassword());
+        } else {
+            memberRepository.save(member);
+        }
         memberRepository.save(member);
     }
 
@@ -44,11 +47,8 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void modifyMemberImage(long memberId, UploadResultDTO uploadResultDTO) {
-        log.info(memberId + "//" + uploadResultDTO);
         Optional<Member> result = memberRepository.findById(memberId);
-        log.info(result);
         Member member = result.orElseThrow();
-        log.info(member.toString());
         member.setProfileImage(uploadResultDTO.getFileName());
         memberRepository.save(member);
     }
