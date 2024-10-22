@@ -43,7 +43,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .leftJoin(board.boardImages, boardImage).fetchJoin()
-                .where(boardImage.isNull().or(boardImage.ord.eq(1)))
+                .where(boardImage.isNull().or(boardImage.ord.eq(0)))
                 .groupBy(board);
 
         if (types != null) {
