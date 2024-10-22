@@ -193,10 +193,11 @@ public class PlanServiceImpl implements PlanService {
 
         // 숙소 및 공항 필터링
         PlaceDTO accommodation = sortedPlaces.stream()
-                .filter(place -> place.getPlaceName().contains("숙소"))
+                .filter(place -> "숙박".equals(place.getCategory()))  // 카테고리로 필터링
                 .findFirst()
                 .orElse(null);
-        log.info("Accomdation : " + accommodation);
+        log.info("Accommodation : " + accommodation);
+
 
         PlaceDTO airport = sortedPlaces.stream()
                 .filter(place -> place.getPlaceName().contains("공항"))
