@@ -113,12 +113,12 @@ public class PlanServiceImpl implements PlanService {
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
         log.info("Received PlanInputDTO: " + planInputDTO);
 
-        // 장소 추천
-        // Clova API 호출하여 추천 장소 정보 가져오기
-        List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO); // 수정된 부분
+// 장소 추천
+// Clova API 호출하여 추천 장소 정보 가져오기
+        List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO);
         log.info("Clova API response: " + clovaPlaces);
 
-        // 응답에서 추천 장소 추출 및 변환
+// 응답에서 추천 장소 추출 및 변환
         List<PlaceDTO> recommendedPlaces = clovaPlaces.stream()
                 .map(response -> PlaceDTO.builder()
                         .placeName(response.getPlaceName())
@@ -137,9 +137,28 @@ public class PlanServiceImpl implements PlanService {
         // 입력된 places 데이터를 가져와서 리스트로 변환
         List<PlaceDTO> placeList = new ArrayList<>(planInputDTO.getPlaces());
 
-        // 중복된 장소를 제거한 상태로 병합
-        Set<PlaceDTO> mergedPlaces = new HashSet<>(placeList);
-        mergedPlaces.addAll(recommendedPlaces); // 중복된 장소 제거
+        // 장소 정보를 중복 제거하고 병합하는 로직
+        Map<String, PlaceDTO> uniquePlacesMap = new HashMap<>();
+
+        // 입력된 장소와 추천 장소 모두 추가
+        placeList.forEach(place -> uniquePlacesMap.put(place.getPlaceName(), place));
+        recommendedPlaces.forEach(place -> {
+            // 이미 존재하는 경우, 기존 장소와 병합
+            if (uniquePlacesMap.containsKey(place.getPlaceName())) {
+                PlaceDTO existingPlace = uniquePlacesMap.get(place.getPlaceName());
+                existingPlace.setPrice(existingPlace.getPrice() != null ? existingPlace.getPrice() : place.getPrice());
+                existingPlace.setDescription(existingPlace.getDescription() != null ? existingPlace.getDescription() : place.getDescription());
+                existingPlace.setCategory(existingPlace.getCategory() != null ? existingPlace.getCategory() : place.getCategory());
+                existingPlace.setStartTime(existingPlace.getStartTime() != null ? existingPlace.getStartTime() : place.getStartTime());
+                existingPlace.setEndTime(existingPlace.getEndTime() != null ? existingPlace.getEndTime() : place.getEndTime());
+                existingPlace.setChecker(true);
+            } else {
+                uniquePlacesMap.put(place.getPlaceName(), place);
+            }
+        });
+
+        // 병합된 장소 리스트 생성
+        Set<PlaceDTO> mergedPlaces = new HashSet<>(uniquePlacesMap.values());
 
         // 테마 이름을 가져오기 위한 로직
         Set<ThemeDTO> themeSet = planInputDTO.getThemes().stream()
@@ -155,7 +174,7 @@ public class PlanServiceImpl implements PlanService {
                 .member(MemberInfoDTO.builder()
                         .memberId(planInputDTO.getMemberId()) // 실제 Member 정보를 설정
                         .build())
-                .places(mergedPlaces) // 병합된 장소 리스트를 Set으로 변환하여 전달
+                .places(mergedPlaces) // 병합된 장소 리스트를 전달
                 .themes(themeSet) // 변환된 테마 정보
                 .location(planInputDTO.getLocation())
                 .startDate(planInputDTO.getStartDate())
@@ -165,6 +184,7 @@ public class PlanServiceImpl implements PlanService {
                 .build();
 
         log.info("Generated PlanViewDTO: " + planViewDTO);
+
 
         // 경로 추천
         // PlanViewDTO의 places를 리스트로 변환 후 startTime 기준으로 정렬
@@ -215,90 +235,107 @@ public class PlanServiceImpl implements PlanService {
                 log.info("Calculating route between: " + startPlace.getPlaceName() + " (" + startPlace.getAddr() + ") -> "
                         + endPlace.getPlaceName() + " (" + endPlace.getAddr() + ")");
 
-                // Google Maps API를 호출하여 경로 계산
-                DirectionsResponses directions = googleMapsApiService.getDirections(
-                        startPlace.getAddr(), // 출발지 주소 사용
-                        endPlace.getAddr()    // 도착지 주소 사용
-                );
+                try {
+                    // Google Maps API를 호출하여 경로 계산
+                    DirectionsResponses directions = googleMapsApiService.getDirections(
+                            startPlace.getAddr(), // 출발지 주소 사용
+                            endPlace.getAddr()    // 도착지 주소 사용
+                    );
 
-                // Google Maps API 응답 로그
-                log.info("Google Maps API response for route from " + startPlace.getPlaceName() + " to " + endPlace.getPlaceName() + ": "
-                        + directions);
+                    // Google Maps API 응답 로그
+                    log.info("Google Maps API response for route from " + startPlace.getPlaceName() + " to " + endPlace.getPlaceName() + ": "
+                            + directions);
 
-                // 경로 정보로 RouteDTO 생성
-                DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
+                    // 경로 정보 체크
+                    if (directions.getRoutes() != null && !directions.getRoutes().isEmpty()) {
+                        DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
 
-                // 이동 수단 정보 추출
-                TransportationDTO transportation = TransportationDTO.builder()
-                        .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
-                        .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
-                        .build();
+                        // 이동 수단 정보 추출
+                        TransportationDTO transportation = TransportationDTO.builder()
+                                .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
+                                .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
+                                .build();
 
-                // 가격 설정: 대중교통이면 3000원, 도보이면 0원
-                int price = "대중교통".equals(transportation.getType()) ? 3000 : 0;
+                        // 가격 설정: 대중교통이면 3000원, 도보이면 0원
+                        int price = "대중교통".equals(transportation.getType()) ? 3000 : 0;
 
-                // 경로 정보로 RouteDTO 생성
-                RouteDTO route = RouteDTO.builder()
-                        .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
-                        .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
-                        .distance(leg.getDistance().getValue())
-                        .travelTime(leg.getDuration().getValue())
-                        .price(price)  // 이동 수단에 따른 가격 설정
-                        .transportation(transportation)
-                        .checker(true)  // AI가 수정할 수 없는 정보로 설정
-                        .build();
+                        // 경로 정보로 RouteDTO 생성
+                        RouteDTO route = RouteDTO.builder()
+                                .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
+                                .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
+                                .distance(leg.getDistance().getValue())
+                                .travelTime(leg.getDuration().getValue())
+                                .price(price)  // 이동 수단에 따른 가격 설정
+                                .transportation(transportation)
+                                .checker(true)  // AI가 수정할 수 없는 정보로 설정
+                                .build();
 
-                calculatedRoutes.add(route);  // 계산된 경로 추가
+                        calculatedRoutes.add(route);  // 계산된 경로 추가
 
-                // 경로 계산 결과 로그
-                log.info("Calculated route: " + route);
+                        // 경로 계산 결과 로그
+                        log.info("Calculated route: " + route);
+                    } else {
+                        log.warn("No routes found between " + startPlace.getPlaceName() + " and " + endPlace.getPlaceName());
+                    }
+                } catch (Exception e) {
+                    log.error("Error calculating route from " + startPlace.getPlaceName() + " to " + endPlace.getPlaceName() + ": " + e.getMessage());
+                }
             }
         }
 
-        // 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
+// 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
         if (airport != null && !normalPlaces.isEmpty()) {
             PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1); // 마지막 일반 장소
 
             log.info("Calculating route from last place to airport: " + lastPlace.getPlaceName() + " -> " + airport.getPlaceName());
 
-            DirectionsResponses directions = googleMapsApiService.getDirections(
-                    lastPlace.getAddr(),
-                    airport.getAddr()
-            );
+            try {
+                DirectionsResponses directions = googleMapsApiService.getDirections(
+                        lastPlace.getAddr(),
+                        airport.getAddr()
+                );
 
-            // Google Maps API 응답 로그
-            log.info("Google Maps API response for route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): "
-                    + directions);
+                // Google Maps API 응답 로그
+                log.info("Google Maps API response for route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): "
+                        + directions);
 
-            // 경로 정보로 RouteDTO 생성
-            DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
+                // 경로 정보 체크
+                if (directions.getRoutes() != null && !directions.getRoutes().isEmpty()) {
+                    DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
 
-            // 이동 수단 정보 추출
-            TransportationDTO airportTransportation = TransportationDTO.builder()
-                    .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
-                    .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
-                    .build();
+                    // 이동 수단 정보 추출
+                    TransportationDTO airportTransportation = TransportationDTO.builder()
+                            .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
+                            .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
+                            .build();
 
-            // 가격 설정: 대중교통이면 3000원, 도보이면 0원
-            int airportPrice = "대중교통".equals(airportTransportation.getType()) ? 3000 : 0;
+                    // 가격 설정: 대중교통이면 3000원, 도보이면 0원
+                    int airportPrice = "대중교통".equals(airportTransportation.getType()) ? 3000 : 0;
 
-            // 공항 경로를 위한 RouteDTO 생성
-            RouteDTO airportRoute = RouteDTO.builder()
-                    .routeId(0L) // 경로 ID는 0으로 초기 설정
-                    .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
-                    .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
-                    .distance(leg.getDistance().getValue())  // 거리 정보
-                    .travelTime(leg.getDuration().getValue())  // 이동 시간
-                    .price(airportPrice)  // 이동 수단에 따른 가격 설정
-                    .transportation(airportTransportation)
-                    .checker(true)  // AI가 수정할 수 없는 정보로 설정
-                    .build();
+                    // 공항 경로를 위한 RouteDTO 생성
+                    RouteDTO airportRoute = RouteDTO.builder()
+                            .routeId(0L) // 경로 ID는 0으로 초기 설정
+                            .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
+                            .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
+                            .distance(leg.getDistance().getValue())  // 거리 정보
+                            .travelTime(leg.getDuration().getValue())  // 이동 시간
+                            .price(airportPrice)  // 이동 수단에 따른 가격 설정
+                            .transportation(airportTransportation)
+                            .checker(true)  // AI가 수정할 수 없는 정보로 설정
+                            .build();
 
-            calculatedRoutes.add(airportRoute);  // 공항 경로 추가
+                    calculatedRoutes.add(airportRoute);  // 공항 경로 추가
 
-            // 공항 경로 계산 결과 로그
-            log.info("Calculated airport route: " + airportRoute);
+                    // 공항 경로 계산 결과 로그
+                    log.info("Calculated airport route: " + airportRoute);
+                } else {
+                    log.warn("No routes found between " + lastPlace.getPlaceName() + " and " + airport.getPlaceName());
+                }
+            } catch (Exception e) {
+                log.error("Error calculating route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): " + e.getMessage());
+            }
         }
+
 
         // 계산된 경로를 PlanViewDTO에 설정
         planViewDTO.setRoutes(new LinkedHashSet<>(calculatedRoutes));
