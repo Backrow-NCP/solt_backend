@@ -31,14 +31,13 @@ public class TransportationUtil {
         }
 
         // 거리와 시간을 킬로미터와 분으로 변환
-        int distanceInKm = (int) Math.round(totalDistance / 1000.0);
         int travelTimeInMin = totalDuration / 60;
 
         // 이동 수단 ID와 타입 설정
         int transportationId;
         String transportationType;
 
-        if (hasTransit || distanceInKm >= 2) {
+        if (hasTransit || totalDistance  >= 2000) {
             transportationId = 2; // 대중교통 ID
             transportationType = "대중교통"; // 대중교통 타입
         } else {
@@ -46,7 +45,7 @@ public class TransportationUtil {
             transportationType = "도보"; // 도보 타입
         }
 
-        return new TransportationResult(transportationId, transportationType, distanceInKm, travelTimeInMin);
+        return new TransportationResult(transportationId, transportationType, totalDistance, travelTimeInMin);
     }
 
     // 결과를 담을 클래스
