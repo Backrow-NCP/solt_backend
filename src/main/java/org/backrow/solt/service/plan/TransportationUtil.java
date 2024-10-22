@@ -31,8 +31,8 @@ public class TransportationUtil {
         }
 
         // 거리와 시간을 킬로미터와 분으로 변환
-        int distanceInKm = totalDistance / 1000; // 미터를 킬로미터로 변환
-        int travelTimeInMin = totalDuration / 60; // 초를 분으로 변환
+        int distanceInKm = totalDistance / 1000 + totalDistance % 1000;
+        int travelTimeInMin = totalDuration / 60;
 
         // 이동 수단 ID와 타입 설정
         int transportationId;
