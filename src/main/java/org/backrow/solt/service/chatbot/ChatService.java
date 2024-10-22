@@ -37,11 +37,14 @@ public class ChatService {
 
     public ChatResponse sendMessageToClovaApi(String userMessage) {
         if (isInvalidMessage(userMessage)) {
+            log.warn("Invalid user message: message is null or empty.");
             return new ChatResponse(null, "메시지를 입력해야 합니다.", null, null);
         }
 
         log.info("User message: {}", userMessage);
         String requestBody = createRequestBody(userMessage);
+        log.debug("Request body created: {}", requestBody);
+
         return sendChatRequest(requestBody);
     }
 
@@ -53,6 +56,9 @@ public class ChatService {
         HttpHeaders headers = createHeaders();
         HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
 
+        log.info("Sending request to Clova API with URL: {}", API_URL);
+        log.debug("Request headers: {}", headers);
+
         try {
             ResponseEntity<String> response = restTemplate.exchange(
                     API_URL,
@@ -61,14 +67,17 @@ public class ChatService {
                     String.class
             );
 
-            log.info("Response from Clova API: {}", response.getBody());
+            log.info("Response from Clova API received.");
+            log.debug("Clova API response body: {}", response.getBody());
+
             return parseChatResponse(response.getBody());
 
         } catch (HttpClientErrorException e) {
-            log.error("Error during Clova API call: {}", e.getResponseBodyAsString());
+            log.error("Error during Clova API call: status code = {}, response body = {}",
+                    e.getStatusCode(), e.getResponseBodyAsString());
             return new ChatResponse(null, "클로바 API 호출에 실패했습니다: " + e.getStatusCode(), null, null);
         } catch (Exception e) {
-            log.error("Unexpected error: {}", e.getMessage());
+            log.error("Unexpected error during Clova API call: {}", e.getMessage());
             return new ChatResponse(null, "클로바 API 호출 중 예기치 않은 오류가 발생했습니다: " + e.getMessage(), null, null);
         }
     }
@@ -79,47 +88,35 @@ public class ChatService {
         headers.set("X-NCP-APIGW-API-KEY", chatbotApiGwKey);
         headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", chatbotRequestId);
         headers.set("Content-Type", "application/json");
+        headers.set("Accept", "text/event-stream");
+        log.debug("Headers created for Clova API call: {}", headers);
         return headers;
     }
 
     private String createRequestBody(String userMessage) {
-        return "{\n" +
+        String requestBody = "{\n" +
                 "  \"messages\": [\n" +
-                "    {\n" +
-                "      \"role\": \"system\",\n" +
-                "      \"content\": \"" +
-                "- 여행지 소개: 해당 여행지의 역사, 문화, 관광 명소, 맛집 등을 소개해 주세요.\\r\\n" +
-                "- 여행 팁 제공: 여행 중 유용한 팁이나 주의사항 등을 알려주세요.\\r\\n" +
-                "- 여행자 문의 응대: 여행자의 질문이나 요청에 친절하게 응대하고, 필요한 정보를 제공해 주세요.\\r\\n" +
-                "- 모든 응답의 글자 수를 100자 이내로 대답해줘\"\n" +
-                "    },\n" +
                 "    {\n" +
                 "      \"role\": \"user\",\n" +
                 "      \"content\": \"" + userMessage + "\"\n" +
                 "    }\n" +
-                "  ],\n" +
-                "  \"topP\": 0.8,\n" +
-                "  \"topK\": 0,\n" +
-                "  \"maxTokens\": 250,\n" +
-                "  \"temperature\": 0.5,\n" +
-                "  \"repeatPenalty\": 7.0,\n" +
-                "  \"stopBefore\": [],\n" +
-                "  \"includeAiFilters\": true,\n" +
-                "  \"seed\": 0\n" +
+                "  ]\n" +
                 "}";
+        log.debug("Request body created: {}", requestBody);
+        return requestBody;
     }
+
 
     private ChatResponse parseChatResponse(String responseBody) {
         try {
-            // JSON 문자열을 ChatResponse 객체로 변환
+            log.debug("Parsing response body from Clova API.");
             ChatResponse apiResponse = objectMapper.readValue(responseBody, ChatResponse.class);
 
-            // 응답 상태와 결과가 유효한지 확인
             if (apiResponse.getStatus() == null || apiResponse.getResult() == null || apiResponse.getResult().getMessage() == null) {
+                log.warn("Invalid response from Clova API: missing status or result.");
                 return new ChatResponse(null, "결과가 없습니다.", null, null);
             }
 
-            // content 값을 추출하여 ChatResponse 객체 생성
             return new ChatResponse(apiResponse.getResult().getMessage().getContent(), null, apiResponse.getStatus(), apiResponse.getResult());
 
         } catch (Exception e) {
