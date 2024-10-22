@@ -1,5 +1,6 @@
 package org.backrow.solt.controller;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -16,9 +17,15 @@ import java.util.Map;
 public class ChatController {
 
     private static final String CLOVA_X_API_URL = "https://clovastudio.stream.ntruss.com/testapp/v1/chat-completions/HCX-003";
-    private static final String CHATBOT_API_KEY = "NTA0MjU2MWZlZTcxNDJiY1vC5aF5j6hNRVO0DmcUe6IpWkBvVw/A9olJoK46uYvh"; // 여기에 Clova X API 키 입력
-    private static final String CHATBOT_APIGW_KEY = "xXsMvq2mEm3I9KHY1XwdnwtwlLm0Klch5QmGgl71"; // API Gateway Key
-    private static final String CHATBOT_REQUEST_ID = "e259898ccd95477c846db04dc538a848"; // 고유 요청 ID
+
+    @Value("${CHATBOT_API_KEY}")
+    private String chatbotApiKey;
+
+    @Value("${CHATBOT_APIGW_KEY}")
+    private String chatbotApiGwKey;
+
+    @Value("${CHATBOT_REQUEST_ID}")
+    private String chatbotRequestId;
 
     @PostMapping("/chat")
     public ResponseEntity<Map<String, String>> sendMessage(@RequestBody Map<String, String> request) {
@@ -42,9 +49,9 @@ public class ChatController {
         // HTTP 요청 헤더 구성
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", CHATBOT_API_KEY);
-        headers.set("X-NCP-APIGW-API-KEY", CHATBOT_APIGW_KEY);
-        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", CHATBOT_REQUEST_ID);
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", chatbotApiKey);
+        headers.set("X-NCP-APIGW-API-KEY", chatbotApiGwKey);
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", chatbotRequestId);
 
         // HTTP 요청 구성
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
