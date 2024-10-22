@@ -6,7 +6,6 @@ import org.backrow.solt.domain.member.Member;
 import org.backrow.solt.domain.plan.*;
 import org.backrow.solt.domain.plan.api.DirectionsResponses;
 import org.backrow.solt.domain.plan.api.PlacesResponses;
-import org.backrow.solt.dto.member.MemberInfoDTO;
 import org.backrow.solt.dto.plan.*;
 import org.backrow.solt.repository.plan.PlanRepository;
 import org.backrow.solt.repository.plan.ThemeLogRepository;
@@ -171,9 +170,9 @@ public class PlanServiceImpl implements PlanService {
         // PlanViewDTO 생성 시 기본 값 설정
         PlanViewDTO planViewDTO = PlanViewDTO.builder()
                 .title(planInputDTO.getTitle())
-                .member(MemberInfoDTO.builder()
-                        .memberId(planInputDTO.getMemberId()) // 실제 Member 정보를 설정
-                        .build())
+//                .member(MemberInfoDTO.builder()
+//                        .memberId(planInputDTO.getMemberId()) // 실제 Member 정보를 설정
+//                        .build())
                 .places(mergedPlaces) // 병합된 장소 리스트를 전달
                 .themes(themeSet) // 변환된 테마 정보
                 .location(planInputDTO.getLocation())
