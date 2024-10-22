@@ -113,12 +113,12 @@ public class PlanServiceImpl implements PlanService {
     public PlanViewDTO recommendPlan(PlanInputDTO planInputDTO) {
         log.info("Received PlanInputDTO: " + planInputDTO);
 
-// 장소 추천
-// Clova API 호출하여 추천 장소 정보 가져오기
+        // 장소 추천
+        // Clova API 호출하여 추천 장소 정보 가져오기
         List<PlacesResponses> clovaPlaces = clovaApiService.callClovaApi(planInputDTO);
         log.info("Clova API response: " + clovaPlaces);
 
-// 응답에서 추천 장소 추출 및 변환
+        // 응답에서 추천 장소 추출 및 변환
         List<PlaceDTO> recommendedPlaces = clovaPlaces.stream()
                 .map(response -> PlaceDTO.builder()
                         .placeName(response.getPlaceName())
@@ -251,9 +251,10 @@ public class PlanServiceImpl implements PlanService {
                         DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
 
                         // 이동 수단 정보 추출
+                        TransportationUtil.TransportationResult transportationResult = TransportationUtil.getTransportationInfo(directions.getRoutes().get(0).getLegs());
                         TransportationDTO transportation = TransportationDTO.builder()
-                                .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
-                                .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
+                                .id(transportationResult.getTransportationId()) // 이동 수단 ID 가져오기
+                                .type(transportationResult.getTransportationType()) // 이동 수단 타입 가져오기
                                 .build();
 
                         // 가격 설정: 대중교통이면 3000원, 도보이면 0원
@@ -263,8 +264,8 @@ public class PlanServiceImpl implements PlanService {
                         RouteDTO route = RouteDTO.builder()
                                 .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
                                 .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
-                                .distance(leg.getDistance().getValue())
-                                .travelTime(leg.getDuration().getValue())
+                                .distance(transportationResult.getDistance()) // km 단위 거리 설정
+                                .travelTime(transportationResult.getTravelTime()) // 분 단위 시간 설정
                                 .price(price)  // 이동 수단에 따른 가격 설정
                                 .transportation(transportation)
                                 .checker(true)  // AI가 수정할 수 없는 정보로 설정
@@ -281,9 +282,10 @@ public class PlanServiceImpl implements PlanService {
                     log.error("Error calculating route from " + startPlace.getPlaceName() + " to " + endPlace.getPlaceName() + ": " + e.getMessage());
                 }
             }
+
         }
 
-// 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
+        // 공항이 있는 경우, 마지막 장소에서 공항으로 가는 경로 추가
         if (airport != null && !normalPlaces.isEmpty()) {
             PlaceDTO lastPlace = normalPlaces.get(normalPlaces.size() - 1); // 마지막 일반 장소
 
@@ -304,9 +306,10 @@ public class PlanServiceImpl implements PlanService {
                     DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
 
                     // 이동 수단 정보 추출
+                    TransportationUtil.TransportationResult transportationResult = TransportationUtil.getTransportationInfo(directions.getRoutes().get(0).getLegs());
                     TransportationDTO airportTransportation = TransportationDTO.builder()
-                            .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
-                            .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
+                            .id(transportationResult.getTransportationId()) // 이동 수단 ID 가져오기
+                            .type(transportationResult.getTransportationType()) // 이동 수단 타입 가져오기
                             .build();
 
                     // 가격 설정: 대중교통이면 3000원, 도보이면 0원
@@ -317,8 +320,8 @@ public class PlanServiceImpl implements PlanService {
                             .routeId(0L) // 경로 ID는 0으로 초기 설정
                             .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
                             .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
-                            .distance(leg.getDistance().getValue())  // 거리 정보
-                            .travelTime(leg.getDuration().getValue())  // 이동 시간
+                            .distance(transportationResult.getDistance())  // km 단위 거리 설정
+                            .travelTime(transportationResult.getTravelTime())  // 분 단위 시간 설정
                             .price(airportPrice)  // 이동 수단에 따른 가격 설정
                             .transportation(airportTransportation)
                             .checker(true)  // AI가 수정할 수 없는 정보로 설정
@@ -335,7 +338,6 @@ public class PlanServiceImpl implements PlanService {
                 log.error("Error calculating route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): " + e.getMessage());
             }
         }
-
 
         // 계산된 경로를 PlanViewDTO에 설정
         planViewDTO.setRoutes(new LinkedHashSet<>(calculatedRoutes));
