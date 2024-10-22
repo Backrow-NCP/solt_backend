@@ -226,16 +226,25 @@ public class PlanServiceImpl implements PlanService {
                         + directions);
 
                 // 경로 정보로 RouteDTO 생성
+                DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
+
+                // 이동 수단 정보 추출
+                TransportationDTO transportation = TransportationDTO.builder()
+                        .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
+                        .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
+                        .build();
+
+                // 가격 설정: 대중교통이면 3000원, 도보이면 0원
+                int price = "대중교통".equals(transportation.getType()) ? 3000 : 0;
+
+                // 경로 정보로 RouteDTO 생성
                 RouteDTO route = RouteDTO.builder()
                         .startTime(startPlace.getEndTime()) // 시작 장소의 종료 시간 사용
                         .endTime(endPlace.getStartTime())   // 도착 장소의 시작 시간 사용
-                        .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())
-                        .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())
-                        .price(0)  // 가격은 0으로 초기화
-                        .transportation(TransportationDTO.builder()  // 기본적으로 이동 수단 정보 설정
-                                .id(0)
-                                .type("string")  // 이동 수단 타입은 "string"으로 임시 설정
-                                .build())
+                        .distance(leg.getDistance().getValue())
+                        .travelTime(leg.getDuration().getValue())
+                        .price(price)  // 이동 수단에 따른 가격 설정
+                        .transportation(transportation)
                         .checker(true)  // AI가 수정할 수 없는 정보로 설정
                         .build();
 
@@ -261,18 +270,27 @@ public class PlanServiceImpl implements PlanService {
             log.info("Google Maps API response for route from " + lastPlace.getPlaceName() + " to airport (" + airport.getPlaceName() + "): "
                     + directions);
 
+            // 경로 정보로 RouteDTO 생성
+            DirectionsResponses.Route.Leg leg = directions.getRoutes().get(0).getLegs().get(0); // 첫 번째 경로의 첫 번째 다리 선택
+
+            // 이동 수단 정보 추출
+            TransportationDTO airportTransportation = TransportationDTO.builder()
+                    .id(TransportationUtil.getTransportationId(directions.getRoutes().get(0).getLegs())) // 이동 수단 ID 가져오기
+                    .type(TransportationUtil.getTransportationType(directions.getRoutes().get(0).getLegs())) // 이동 수단 타입 가져오기
+                    .build();
+
+            // 가격 설정: 대중교통이면 3000원, 도보이면 0원
+            int airportPrice = "대중교통".equals(airportTransportation.getType()) ? 3000 : 0;
+
             // 공항 경로를 위한 RouteDTO 생성
             RouteDTO airportRoute = RouteDTO.builder()
                     .routeId(0L) // 경로 ID는 0으로 초기 설정
                     .startTime(lastPlace.getEndTime())  // 마지막 장소의 종료 시간 사용
                     .endTime(airport.getStartTime())    // 공항의 시작 시간 사용
-                    .distance(directions.getRoutes().get(0).getLegs().get(0).getDistance().getValue())  // 거리 정보
-                    .travelTime(directions.getRoutes().get(0).getLegs().get(0).getDuration().getValue())  // 이동 시간
-                    .price(0)  // 가격은 0으로 초기화
-                    .transportation(TransportationDTO.builder()  // 기본적으로 이동 수단 정보 설정
-                            .id(0)
-                            .type("string")  // 이동 수단 타입은 "string"으로 임시 설정
-                            .build())
+                    .distance(leg.getDistance().getValue())  // 거리 정보
+                    .travelTime(leg.getDuration().getValue())  // 이동 시간
+                    .price(airportPrice)  // 이동 수단에 따른 가격 설정
+                    .transportation(airportTransportation)
                     .checker(true)  // AI가 수정할 수 없는 정보로 설정
                     .build();
 
