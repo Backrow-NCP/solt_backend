@@ -8,9 +8,9 @@ import org.backrow.solt.service.chatbot.ChatService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "챗봇 API", description = "챗봇 기능을 수행하는 API입니다.")
+@Tag(name = "챗봇 API", description = "챗봇과 상호작용하기 위한 API입니다. 사용자가 입력한 메시지를 처리하고 챗봇의 응답을 반환합니다.")
 @RestController
-@RequestMapping("/clovaX")
+@RequestMapping("/chat")
 @Log4j2
 public class ChatController {
 
@@ -20,11 +20,10 @@ public class ChatController {
         this.chatService = chatService;
     }
 
-    @Operation(summary = "챗봇 작성", description = "챗봇에게 메시지를 보내고 응답을 확인합니다.")
-    @PostMapping("/chat")
+    @Operation(summary = "사용자 메시지 전송 및 챗봇 응답 반환", description = "사용자가 입력한 메시지를 챗봇 서비스로 전송하고, 챗봇의 응답을 받아 반환합니다. 입력된 메시지가 유효하지 않거나 오류가 발생하면 적절한 응답 코드와 오류 메시지를 반환합니다.")
+    @PostMapping
     public ResponseEntity<ChatResponse> sendMessage(@RequestBody String userMessage) {
         log.info("Received user message: {}", userMessage);
-
         try {
             ChatResponse chatResponse = chatService.sendMessageToClovaApi(userMessage);
             log.info("Response from ChatService: {}", chatResponse.getContent());

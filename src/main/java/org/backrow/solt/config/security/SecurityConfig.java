@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/loadbalancer").permitAll()
                 .antMatchers(HttpMethod.POST,
                         "/plans/recom",
-                        "/clovaX/chat",
+                        "/chat",
                         "/files",
                         "/login", "/login/token", "/login/register",
                          "/personalityTest/result",
