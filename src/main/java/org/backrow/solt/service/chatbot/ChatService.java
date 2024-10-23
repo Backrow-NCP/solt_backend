@@ -18,8 +18,8 @@ import org.springframework.http.ResponseEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-@Log4j2
 @Service
+@Log4j2
 public class ChatService {
 
     @Value("${CHATBOT_API_KEY}")
