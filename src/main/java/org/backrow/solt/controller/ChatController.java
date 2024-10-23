@@ -25,14 +25,15 @@ public class ChatController {
     public ResponseEntity<ChatResponse> sendMessage(@RequestBody String userMessage) {
         log.info("Received user message: {}", userMessage);
 
-        ChatResponse chatResponse = chatService.sendMessageToClovaApi(userMessage);
-
-        // 응답의 content가 null인지 확인하여 오류 처리
-        if (chatResponse.getContent() == null) {
-            log.error("Response content is null, returning bad request.");
-            return ResponseEntity.badRequest().body(chatResponse); // 오류 메시지와 함께 400 반환
+        try {
+            ChatResponse chatResponse = chatService.sendMessageToClovaApi(userMessage);
+            log.info("Response from ChatService: {}", chatResponse.getContent());
+            return ResponseEntity.ok(chatResponse);
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    ChatResponse.builder()
+                            .content("지금은 답변을 드릴 수 없어요.")
+                            .build());
         }
-        log.info("Response from ChatService: {}", chatResponse.getContent());
-        return ResponseEntity.ok(chatResponse);
     }
 }
