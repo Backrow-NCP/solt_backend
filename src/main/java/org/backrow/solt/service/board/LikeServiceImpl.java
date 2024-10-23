@@ -28,6 +28,11 @@ public class LikeServiceImpl implements LikeService {
         return likeLogRepository.countByBoardBoardId(likeDTO.getBoardId());
     }
 
+    @Override
+    public boolean isLiked(LikeDTO likeDTO) {
+        return likeLogRepository.existsByBoard_BoardIdAndMember_MemberId(likeDTO.getBoardId(), likeDTO.getMemberId());
+    }
+
     public LikeLog convertToEntity(LikeDTO likeDTO) {
         Board board = new Board();
         board.setBoardId(likeDTO.getBoardId());
