@@ -98,27 +98,41 @@ public class ChatService {
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
-        headers.set("X-NCP-CLOVASTUDIO-API-KEY", "NTA0MjU2MWZlZTcxNDJiY1vC5aF5j6hNRVO0DmcUe6IpWkBvVw/A9olJoK46uYvh");
-        headers.set("X-NCP-APIGW-API-KEY", "xXsMvq2mEm3I9KHY1XwdnwtwlLm0Klch5QmGgl71");
-        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", "0beac50347ed47f5b7fdc8427dc6f1dd");
+        headers.set("X-NCP-CLOVASTUDIO-API-KEY", chatbotApiKey); // 환경변수에서 가져오기
+        headers.set("X-NCP-APIGW-API-KEY", chatbotApiGwKey); // 환경변수에서 가져오기
+        headers.set("X-NCP-CLOVASTUDIO-REQUEST-ID", chatbotRequestId); // 환경변수에서 가져오기
         headers.set("Content-Type", "application/json");
         headers.set("Accept", "text/event-stream");
         log.debug("Headers created for Clova API call: {}", headers);
         return headers;
     }
 
+
     private String createRequestBody(String userMessage) {
         String requestBody = "{\n" +
                 "  \"messages\": [\n" +
                 "    {\n" +
+                "      \"role\": \"system\",\n" +
+                "      \"content\": \"- 여행지 소개: 해당 여행지의 역사, 문화, 관광 명소, 맛집 등을 소개해 주세요.\\r\\n- 여행 팁 제공: 여행 중 유용한 팁이나 주의사항 등을 알려주세요.\\r\\n- 여행자 문의 응대: 여행자의 질문이나 요청에 친절하게 응대하고, 필요한 정보를 제공해 주세요.\\n- 모든 응답의 글자 수를 100자 이내로 대답해줘\"\n" +
+                "    },\n" +
+                "    {\n" +
                 "      \"role\": \"user\",\n" +
                 "      \"content\": \"" + userMessage + "\"\n" +
                 "    }\n" +
-                "  ]\n" +
+                "  ],\n" +
+                "  \"topP\": 0.8,\n" +
+                "  \"topK\": 0,\n" +
+                "  \"maxTokens\": 250,\n" +
+                "  \"temperature\": 0.5,\n" +
+                "  \"repeatPenalty\": 7.0,\n" +
+                "  \"stopBefore\": [],\n" +
+                "  \"includeAiFilters\": true,\n" +
+                "  \"seed\": 0\n" +
                 "}";
         log.debug("Request body created: {}", requestBody);
         return requestBody;
     }
+
 
     private ChatResponse parseChatResponse(String responseBody) {
         try {
