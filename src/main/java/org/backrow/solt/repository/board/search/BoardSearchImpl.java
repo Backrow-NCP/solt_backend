@@ -159,8 +159,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         .or(boardImage.ord.eq(0)))
                         .and(member.memberId.eq(memberId)))
                 .groupBy(board.boardId)
-                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
-                .orderBy(board.regDate.desc());
+                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
 
         if (order != null) {
             switch (order) {
