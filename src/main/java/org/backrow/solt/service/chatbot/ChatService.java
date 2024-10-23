@@ -1,22 +1,22 @@
 package org.backrow.solt.service.chatbot;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.backrow.solt.domain.plan.api.ChatResponse;
+import org.backrow.solt.exception.ChatServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 @Log4j2
@@ -44,7 +44,7 @@ public class ChatService {
     public ChatResponse sendMessageToClovaApi(String userMessage) {
         if (isInvalidMessage(userMessage)) {
             log.warn("Invalid user message: message is null or empty.");
-            return new ChatResponse(null, "메시지를 입력해야 합니다.", null, null);
+            return ChatResponse.builder().content("메시지를 입력해주세요!").build();
         }
 
         log.info("User message: {}", userMessage);
@@ -89,14 +89,21 @@ public class ChatService {
             log.debug("Clova API response body: {}", response.getBody());
 
             return parseChatResponse(response.getBody());
-
         } catch (HttpClientErrorException e) {
-            log.error("Error during Clova API call: status code = {}, response body = {}",
+            // Clova API의 요청 처리 오류 (4xx 에러)
+            log.error("Clova API call resulted in a client error: status code = {}, response body = {}",
                     e.getStatusCode(), e.getResponseBodyAsString());
-            return new ChatResponse(null, "클로바 API 호출에 실패했습니다: " + e.getStatusCode(), null, null);
+            throw new ChatServiceException("클로바 API 호출에 실패했습니다: " + e.getStatusCode(), e);
+
+        } catch (ResourceAccessException e) {
+            // 네트워크 연결 문제나 타임아웃 발생
+            log.error("Network error occurred while calling Clova API: {}", e.getMessage());
+            throw new ChatServiceException("클로바 API 호출 중 네트워크 오류가 발생했습니다.", e);
+
         } catch (Exception e) {
+            // 기타 예상치 못한 오류
             log.error("Unexpected error during Clova API call: {}", e.getMessage());
-            return new ChatResponse(null, "클로바 API 호출 중 예기치 않은 오류가 발생했습니다: " + e.getMessage(), null, null);
+            throw new ChatServiceException("클로바 API 호출 중 예기치 않은 오류가 발생했습니다.", e);
         }
     }
 
@@ -141,7 +148,6 @@ public class ChatService {
         try {
             log.debug("Parsing response body from Clova API.");
             String[] jsonLines = responseBody.split("\n");
-            List<ChatResponse.Message> messages = new ArrayList<>();
             String assistantContent = null;
 
             for (String line : jsonLines) {
@@ -155,11 +161,6 @@ public class ChatService {
                             if (messageNode.has("content")) {
                                 assistantContent = messageNode.get("content").asText();
                             }
-                            // 추가적인 메시지 처리
-                            ChatResponse.Message message = new ChatResponse.Message();
-                            message.setRole(messageNode.get("role").asText());
-                            message.setContent(messageNode.get("content").asText());
-                            messages.add(message);
                         }
                     }
                 }
@@ -167,14 +168,21 @@ public class ChatService {
 
             if (assistantContent == null) {
                 log.warn("No content received from assistant.");
-                return new ChatResponse(null, "결과가 없습니다.", null, null);
+                throw new ChatServiceException("결과가 없습니다. Assistant로부터 응답을 받을 수 없습니다.");
             }
 
-            return new ChatResponse(assistantContent, null, null, messages);
+            return ChatResponse.builder()
+                    .content(assistantContent)
+                    .build();
+        } catch (JsonProcessingException e) {
+            // JSON 파싱 중 오류 발생
+            log.error("Failed to parse Clova API response: {}", e.getMessage());
+            throw new ChatServiceException("Clova API 응답 파싱에 실패했습니다.", e);
 
         } catch (Exception e) {
-            log.error("Error parsing Clova API response: {}", e.getMessage());
-            return new ChatResponse(null, "Failed to parse Clova API response: " + e.getMessage(), null, null);
+            // 기타 예상치 못한 오류
+            log.error("Unexpected error during parsing Clova API response: {}", e.getMessage());
+            throw new ChatServiceException("Clova API 응답 처리 중 예기치 않은 오류가 발생했습니다.", e);
         }
     }
 
