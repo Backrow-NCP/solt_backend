@@ -37,9 +37,10 @@ public class BoardServiceImpl implements BoardService {
     public PageResponseDTO<BoardViewDTO> getBoardList(PageRequestDTO pageRequestDTO) {
         String[] types = pageRequestDTO.getTypes();
         String keyword = pageRequestDTO.getKeyword();
+        String order = pageRequestDTO.getOrder();
         Pageable pageable = pageRequestDTO.getPageable();
 
-        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewWithBoardPlan(types, keyword, pageable);
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewWithBoardPlan(types, keyword, order, pageable);
 
         return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
     }
@@ -48,9 +49,10 @@ public class BoardServiceImpl implements BoardService {
     public PageResponseDTO<BoardViewDTO> getBoardListByMemberId(Long id, PageRequestDTO pageRequestDTO) {
         String[] types = pageRequestDTO.getTypes();
         String keyword = pageRequestDTO.getKeyword();
+        String order = pageRequestDTO.getOrder();
         Pageable pageable = pageRequestDTO.getPageable();
 
-        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberIdWithBoardPlan(id, types, keyword, pageable);
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberIdWithBoardPlan(id, types, keyword, order, pageable);
 
         return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
     }
