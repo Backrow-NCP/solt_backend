@@ -3,6 +3,7 @@ package org.backrow.solt.repository.board.search;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
 import org.backrow.solt.domain.member.*;
 import org.backrow.solt.domain.board.*;
@@ -83,22 +84,26 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     @Override
     @Transactional
     public Page<BoardViewDTO> searchBoardViewWithBoardPlan(String[] types, String keyword, String order, Pageable pageable) {
+        JPQLQuery<Long> likeCountSubQuery = JPAExpressions.select(likeLog.count())
+                .from(likeLog)
+                .where(likeLog.board.eq(board));
+
         JPQLQuery<Tuple> boardQuery = from(board)
                 .leftJoin(board.member, member).fetchJoin()
-                .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .leftJoin(board.boardImages, boardImage).fetchJoin()
+                .leftJoin(board.likeLog, likeLog).fetchJoin()
                 .leftJoin(board.boardPlan, boardPlan).fetchJoin()
                 .leftJoin(boardPlan.originPlan, plan).fetchJoin()
                 .leftJoin(plan.themes, themeLog).fetchJoin()
                 .leftJoin(themeLog.theme, theme).fetchJoin()
                 .where(boardImage.isNull().or(boardImage.ord.eq(0)))
                 .groupBy(board.boardId)
-                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
+                .select(board, member, boardImage, likeLog, boardPlan, plan, themeLog, theme, likeCountSubQuery);
 
         if (order == null) {
             boardQuery.orderBy(board.regDate.desc());
         } else if (order.equals("l")) {
-            boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
+            boardQuery.orderBy(likeLog.count().desc(), board.regDate.desc());
         } else {
             boardQuery.orderBy(board.regDate.desc());
         }
@@ -119,10 +124,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         List<BoardViewDTO> boardViewDTOS = results.stream()
                 .map(tuple -> {
                     Board boardEntity = tuple.get(board);
+                    Long likeCount = tuple.get(likeCountSubQuery);
                     BoardPlan boardPlan = boardEntity.getBoardPlan();
 
                     Set<ThemeDTO> themeDTOS = createThemeDTOS(boardEntity);
                     BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
+                    boardViewDTO.setLikeCount(likeCount != null ? likeCount.intValue() : 0);
                     PlanViewDTO planViewDTO = null;
                     if (boardPlan != null) {
                         planViewDTO = PlanViewDTO.builder()
@@ -145,6 +152,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
     @Override
     @Transactional
     public Page<BoardViewDTO> searchBoardViewByMemberIdWithBoardPlan(Long memberId, String[] types, String keyword, String order, Pageable pageable) {
+        JPQLQuery<Long> likeCountSubQuery = JPAExpressions.select(likeLog.count())
+                .from(likeLog)
+                .where(likeLog.board.eq(board));
+
         JPQLQuery<Tuple> boardQuery = from(board)
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
@@ -157,12 +168,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                         .or(boardImage.ord.eq(0)))
                         .and(member.memberId.eq(memberId)))
                 .groupBy(board.boardId)
-                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
+                .select(board, member, boardImage, likeLog, boardPlan, plan, themeLog, theme, likeCountSubQuery);
 
         if (order == null) {
             boardQuery.orderBy(board.regDate.desc());
         } else if (order.equals("l")) {
-            boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
+            boardQuery.orderBy(likeLog.count().desc(), board.regDate.desc());
         } else {
             boardQuery.orderBy(board.regDate.desc());
         }
@@ -183,10 +194,12 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
         List<BoardViewDTO> boardViewDTOS = results.stream()
                 .map(tuple -> {
                     Board boardEntity = tuple.get(board);
+                    Long likeCount = tuple.get(likeCountSubQuery);
                     BoardPlan boardPlan = boardEntity.getBoardPlan();
 
                     Set<ThemeDTO> themeDTOS = createThemeDTOS(boardEntity);
                     BoardViewDTO boardViewDTO = createBoardViewDTO(boardEntity);
+                    boardViewDTO.setLikeCount(likeCount != null ? likeCount.intValue() : 0);
                     PlanViewDTO planViewDTO = null;
                     if (boardPlan != null) {
                         planViewDTO = PlanViewDTO.builder()
