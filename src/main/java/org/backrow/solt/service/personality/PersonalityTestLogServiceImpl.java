@@ -27,6 +27,16 @@ public class PersonalityTestLogServiceImpl implements PersonalityTestLogService 
     public void saveLog(PersonalityTestLogInputDTO personalityTestLogInputDTO) {
         PersonalityTestLog personalityTestLog = convertToEntity(personalityTestLogInputDTO);
         personalityTestLogRepository.save(personalityTestLog);
+        List<PersonalityTestLog> logs = personalityTestLogRepository.findByMemberMemberId(personalityTestLogInputDTO.getMemberId());
+
+        // 로그가 8개를 초과하는 경우 오래된 로그를 삭제
+        if (logs.size() > 8) {
+            logs.sort((log1, log2) -> log1.getRegDate().compareTo(log2.getRegDate()));
+            int logsToRemove = logs.size() - 8;
+            for (int i = 0; i < logsToRemove; i++) {
+                personalityTestLogRepository.delete(logs.get(i));
+            }
+        }
     }
 
     @Override
@@ -37,11 +47,6 @@ public class PersonalityTestLogServiceImpl implements PersonalityTestLogService 
                 .map(testLog -> modelMapper.map(testLog, PersonalityTestLogViewDTO.class))
                 .collect(Collectors.toList());
     }
-
-//    @Override
-//    public SurveyLogViewDTO getLog(Long surveyLogId) {
-//        return null;
-//    }
 
     @Override
     public boolean deleteLog(Long id) {
@@ -56,7 +61,6 @@ public class PersonalityTestLogServiceImpl implements PersonalityTestLogService 
 
     private PersonalityTestLog convertToEntity(PersonalityTestLogInputDTO personalityTestLogInputDTO) {
         PersonalityTestLog personalityTestLog = new PersonalityTestLog();
-
         personalityTestLog.setLogId(null);
 
         Member member = Member.builder()
