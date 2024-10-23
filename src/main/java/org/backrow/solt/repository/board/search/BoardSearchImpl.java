@@ -82,7 +82,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
     @Override
     @Transactional
-    public Page<BoardViewDTO> searchBoardViewWithBoardPlan(String[] types, String keyword, Pageable pageable) {
+    public Page<BoardViewDTO> searchBoardViewWithBoardPlan(String[] types, String keyword, String order, Pageable pageable) {
         JPQLQuery<Tuple> boardQuery = from(board)
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
@@ -93,8 +93,15 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .leftJoin(themeLog.theme, theme).fetchJoin()
                 .where(boardImage.isNull().or(boardImage.ord.eq(0)))
                 .groupBy(board.boardId)
-                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
-                .orderBy(board.regDate.desc());
+                .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
+
+        switch (order) {
+            case "l":
+                boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
+                break;
+            default:
+                boardQuery.orderBy(board.regDate.desc());
+        }
 
         if (types != null) {
             BooleanBuilder builder = new BooleanBuilder();
@@ -137,7 +144,7 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
 
     @Override
     @Transactional
-    public Page<BoardViewDTO> searchBoardViewByMemberIdWithBoardPlan(Long memberId, String[] types, String keyword, Pageable pageable) {
+    public Page<BoardViewDTO> searchBoardViewByMemberIdWithBoardPlan(Long memberId, String[] types, String keyword, String order, Pageable pageable) {
         JPQLQuery<Tuple> boardQuery = from(board)
                 .leftJoin(board.member, member).fetchJoin()
                 .leftJoin(board.likeLog, likeLog).fetchJoin()
@@ -152,6 +159,14 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .groupBy(board.boardId)
                 .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme)
                 .orderBy(board.regDate.desc());
+
+        switch (order) {
+            case "l":
+                boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
+                break;
+            default:
+                boardQuery.orderBy(board.regDate.desc());
+        }
 
         if (types != null) {
             BooleanBuilder builder = new BooleanBuilder();
