@@ -99,6 +99,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             boardQuery.orderBy(board.regDate.desc());
         } else if (order.equals("l")) {
             boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
+        } else {
+            boardQuery.orderBy(board.regDate.desc());
         }
 
         if (types != null) {
@@ -161,6 +163,8 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
             boardQuery.orderBy(board.regDate.desc());
         } else if (order.equals("l")) {
             boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
+        } else {
+            boardQuery.orderBy(board.regDate.desc());
         }
 
         if (types != null) {
