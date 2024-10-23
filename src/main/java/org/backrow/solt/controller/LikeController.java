@@ -29,6 +29,12 @@ public class LikeController {
         return ResponseEntity.ok(Map.of("likeCount", likeService.getLikesByBoardId(id)));
     }
 
+    @Operation(summary = "좋아요 여부 확인", description = "게시글 ID와 멤버 ID를 이용해 주어진 멤버가 특정 게시글에 대해 좋아요를 눌렀는지 여부를 확인합니다.")
+    @GetMapping("/status")
+    public ResponseEntity<Map<String, Boolean>> getLikesByBoardId(@Valid LikeDTO likeDTO) {
+        return ResponseEntity.ok(Map.of("isLiked", likeService.isLiked(likeDTO)));
+    }
+
     @Operation(summary = "좋아요 등록/취소 토글", description = "게시글 ID와 멤버 ID를 통해 좋아요를 등록/취소합니다.<br>토글 후 좋아요 개수를 반환힙니다.")
     @PostMapping
     public ResponseEntity<Map<String, Integer>> toggleLike(

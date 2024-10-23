@@ -16,4 +16,6 @@ public interface LikeLogRepository extends JpaRepository<LikeLog, LikeLogId> {
     @Transactional
     @Query("DELETE FROM LikeLog l WHERE l.board.boardId = :boardId AND l.member.memberId = :memberId")
     int deleteByBoardIdAndMemberId(@Param("boardId") Long boardId, @Param("memberId") Long memberId);
+
+    boolean existsByBoard_BoardIdAndMember_MemberId(Long boardId, Long memberId);
 }

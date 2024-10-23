@@ -1,5 +1,6 @@
 package org.backrow.solt.dto.like;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -8,6 +9,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
+@Builder
 public class LikeDTO {
     @NotNull(message = "게시글 ID는 반드시 존재해야 합니다.")
     @Min(value = 1, message = "게시글 ID는 1 이상의 정수여야 합니다.")
