@@ -2,6 +2,7 @@ package org.backrow.solt.service.chatbot;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.lang3.StringEscapeUtils;
 import org.backrow.solt.domain.plan.api.ChatResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -107,8 +108,8 @@ public class ChatService {
         return headers;
     }
 
-
     private String createRequestBody(String userMessage) {
+        String escapedUserMessage = StringEscapeUtils.escapeJson(userMessage); // JSON 문자열 이스케이프
         String requestBody = "{\n" +
                 "  \"messages\": [\n" +
                 "    {\n" +
@@ -117,7 +118,7 @@ public class ChatService {
                 "    },\n" +
                 "    {\n" +
                 "      \"role\": \"user\",\n" +
-                "      \"content\": \"" + userMessage + "\"\n" +
+                "      \"content\": \"" + escapedUserMessage + "\"\n" +
                 "    }\n" +
                 "  ],\n" +
                 "  \"topP\": 0.8,\n" +
@@ -133,11 +134,11 @@ public class ChatService {
         return requestBody;
     }
 
-
     private ChatResponse parseChatResponse(String responseBody) {
         try {
             log.debug("Parsing response body from Clova API.");
-            ChatResponse apiResponse = objectMapper.readValue(responseBody, ChatResponse.class);
+            String jsonData = extractJsonFromStream(responseBody);
+            ChatResponse apiResponse = objectMapper.readValue(jsonData, ChatResponse.class);
 
             if (apiResponse.getStatus() == null || apiResponse.getResult() == null || apiResponse.getResult().getMessage() == null) {
                 log.warn("Invalid response from Clova API: missing status or result.");
@@ -151,4 +152,20 @@ public class ChatService {
             return new ChatResponse(null, "Failed to parse Clova API response: " + e.getMessage(), null, null);
         }
     }
+
+    private String extractJsonFromStream(String responseBody) {
+        // 스트리밍 형식의 응답에서 JSON 데이터 추출
+        StringBuilder jsonBuilder = new StringBuilder();
+        String[] lines = responseBody.split("\n");
+        for (String line : lines) {
+            if (line.startsWith("data:")) {
+                String jsonLine = line.substring(5).trim();
+                if (!jsonLine.isEmpty()) {
+                    jsonBuilder.append(jsonLine).append("\n");
+                }
+            }
+        }
+        return jsonBuilder.toString();
+    }
+
 }
