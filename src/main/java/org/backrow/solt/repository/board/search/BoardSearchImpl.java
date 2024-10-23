@@ -95,14 +95,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .groupBy(board.boardId)
                 .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
 
-        if (order != null) {
-            switch (order) {
-                case "l":
-                    boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
-                    break;
-                default:
-                    boardQuery.orderBy(board.regDate.desc());
-            }
+        if (order == null) {
+            boardQuery.orderBy(board.regDate.desc());
+        } else if (order.equals("l")) {
+            boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
         }
 
         if (types != null) {
@@ -161,14 +157,10 @@ public class BoardSearchImpl extends QuerydslRepositorySupport implements BoardS
                 .groupBy(board.boardId)
                 .select(board, member, likeLog, boardImage, boardPlan, plan, themeLog, theme);
 
-        if (order != null) {
-            switch (order) {
-                case "l":
-                    boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
-                    break;
-                default:
-                    boardQuery.orderBy(board.regDate.desc());
-            }
+        if (order == null) {
+            boardQuery.orderBy(board.regDate.desc());
+        } else if (order.equals("l")) {
+            boardQuery.orderBy(board.likeLog.size().desc(), board.regDate.desc());
         }
 
         if (types != null) {
