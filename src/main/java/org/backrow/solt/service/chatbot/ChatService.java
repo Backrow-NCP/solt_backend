@@ -1,6 +1,8 @@
 package org.backrow.solt.service.chatbot;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.backrow.solt.domain.plan.api.ChatResponse;
@@ -12,6 +14,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Log4j2
 @Service
@@ -49,9 +54,7 @@ public class ChatService {
         ChatResponse response = sendChatRequest(requestBody);
 
         // 여기서 assistant의 응답 내용을 활용
-        String assistantContent = response.getResult() != null && response.getResult().getMessage() != null
-                ? response.getResult().getMessage().getContent()
-                : null;
+        String assistantContent = response.getContent();
 
         if (assistantContent != null) {
             log.info("Assistant's response: {}", assistantContent);
@@ -137,35 +140,42 @@ public class ChatService {
     private ChatResponse parseChatResponse(String responseBody) {
         try {
             log.debug("Parsing response body from Clova API.");
-            String jsonData = extractJsonFromStream(responseBody);
-            ChatResponse apiResponse = objectMapper.readValue(jsonData, ChatResponse.class);
+            String[] jsonLines = responseBody.split("\n");
+            List<ChatResponse.Message> messages = new ArrayList<>();
+            String assistantContent = null;
 
-            if (apiResponse.getStatus() == null || apiResponse.getResult() == null || apiResponse.getResult().getMessage() == null) {
-                log.warn("Invalid response from Clova API: missing status or result.");
+            for (String line : jsonLines) {
+                if (line.startsWith("data:")) {
+                    String jsonLine = line.substring(5).trim();
+                    if (!jsonLine.isEmpty()) {
+                        // JSON 파싱
+                        ObjectNode jsonNode = objectMapper.readValue(jsonLine, ObjectNode.class);
+                        if (jsonNode.has("message")) {
+                            JsonNode messageNode = jsonNode.get("message");
+                            if (messageNode.has("content")) {
+                                assistantContent = messageNode.get("content").asText();
+                            }
+                            // 추가적인 메시지 처리
+                            ChatResponse.Message message = new ChatResponse.Message();
+                            message.setRole(messageNode.get("role").asText());
+                            message.setContent(messageNode.get("content").asText());
+                            messages.add(message);
+                        }
+                    }
+                }
+            }
+
+            if (assistantContent == null) {
+                log.warn("No content received from assistant.");
                 return new ChatResponse(null, "결과가 없습니다.", null, null);
             }
 
-            return new ChatResponse(apiResponse.getResult().getMessage().getContent(), null, apiResponse.getStatus(), apiResponse.getResult());
+            return new ChatResponse(assistantContent, null, null, messages);
 
         } catch (Exception e) {
             log.error("Error parsing Clova API response: {}", e.getMessage());
             return new ChatResponse(null, "Failed to parse Clova API response: " + e.getMessage(), null, null);
         }
-    }
-
-    private String extractJsonFromStream(String responseBody) {
-        // 스트리밍 형식의 응답에서 JSON 데이터 추출
-        StringBuilder jsonBuilder = new StringBuilder();
-        String[] lines = responseBody.split("\n");
-        for (String line : lines) {
-            if (line.startsWith("data:")) {
-                String jsonLine = line.substring(5).trim();
-                if (!jsonLine.isEmpty()) {
-                    jsonBuilder.append(jsonLine).append("\n");
-                }
-            }
-        }
-        return jsonBuilder.toString();
     }
 
 }
