@@ -1,10 +1,12 @@
 package org.backrow.solt.controller.advice;
 
+import com.fasterxml.jackson.databind.exc.InvalidDefinitionException;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageConversionException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.BindingResult;
@@ -69,6 +71,17 @@ public class GlobalExceptionHandler {
             }
         }
         return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+    }
+
+    // Jackson 역직렬화 실패 (InvalidDefinitionException)
+    @ExceptionHandler(HttpMessageConversionException.class)
+    public ResponseEntity<String> handleHttpMessageConversionException(HttpMessageConversionException e) {
+        log.error("Message conversion error: {}", e.getMessage());
+        Throwable cause = e.getCause();
+        if (cause instanceof InvalidDefinitionException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청 데이터입니다. 필수 필드나 형식을 확인하세요.");
+        }
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("메시지 변환 중 오류가 발생했습니다.");
     }
 
     // 기타 선언하지 않은 모든 예외 처리
