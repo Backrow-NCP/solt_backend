@@ -167,8 +167,8 @@ public class ClovaApiService {
                 "      \"role\": \"system\",\n" +
                 "      \"content\": \"- 지역, 기간, 키워드 입력 시 필수 장소 포함 여행 일정 JSON 생성.\\r\\n" +
                 "      - 마지막 날 마지막 장소는 공항 필수.\\r\\n" +
-                "      - 매일 숙소는 마지막 장소, 하루 최소 3개 장소 필요.\\r\\n" +
-                "      - place는 날짜순 정렬, description은 20자 이내 필수.\\r\\n" +
+                "      - 매일 숙소는 마지막 장소, 하루 최소 3개 장소 필요, 최소 3시간 체류.\\r\\n" +
+                "      - place는 날짜순 정렬, description 20자 이내 필수.\\r\\n" +
                 "      - placeId는 0부터 순차 증가.\\r\\n" +
                 "      - category는 숙박, 음식점, 교통비, 쇼핑, 관광지, 레포츠, 문화시설, 축제 중 하나.\\r\\n" +
                 "      - category별 가격: 교통비=3000원, 음식점=15000원, 쇼핑=100000원, 숙박=100000원, 레포츠=30000원, 관광지=20000원.\\r\\n" +
@@ -180,10 +180,11 @@ public class ClovaApiService {
                 "      {\\r\\n" +
                 "        \\\"places\\\": [\\r\\n" +
                 "          {\\r\\n" +
+                "            \\\"placeId\\\": 0,\\r\\n" +
                 "            \\\"placeName\\\": \\\"string\\\",\\r\\n" +
                 "            \\\"addr\\\": \\\"string\\\",\\r\\n" +
                 "            \\\"price\\\": 0,\\r\\n" +
-                "            \\\"startTime\\\": \\\"2024-09-15T13:20:00\\\",\\r\\n" +
+                "            \\\"startTime\\\": \\\"2024-09-15T10:20:00\\\",\\r\\n" +
                 "            \\\"endTime\\\": \\\"2024-09-15T13:20:00\\\",\\r\\n" +
                 "            \\\"description\\\": \\\"string\\\",\\r\\n" +
                 "            \\\"category\\\": \\\"string\\\",\\r\\n" +
@@ -201,7 +202,7 @@ public class ClovaApiService {
                 "      \"content\": \"" + userContent + "\"\n" +
                 "    }\n" +
                 "  ],\n" +
-                "  \"topP\": 0.9,\n" +
+                "  \"topP\": 0.8,\n" +
                 "  \"topK\": 0,\n" +
                 "  \"maxTokens\": 3550,\n" +
                 "  \"temperature\": 0.85,\n" +
@@ -211,6 +212,7 @@ public class ClovaApiService {
                 "  \"seed\": 3000\n" +
                 "}";
     }
+
 
     private HttpHeaders createHeaders() {
         HttpHeaders headers = new HttpHeaders();
