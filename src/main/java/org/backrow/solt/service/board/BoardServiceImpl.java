@@ -52,7 +52,7 @@ public class BoardServiceImpl implements BoardService {
         String order = pageRequestDTO.getOrder();
         Pageable pageable = pageRequestDTO.getPageable();
 
-        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberIdWithBoardPlan(id, types, keyword, order, pageable);
+        Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberIdWithBoardPlan(id, types, keyword, pageable);
 
         return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
     }
