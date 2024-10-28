@@ -46,7 +46,9 @@ public class PlanServiceImpl implements PlanService {
 
         Page<PlanViewDTO> planPage = planRepository.searchPlanViewWithMemberId(types, keyword, pageable, id);
 
-        return new PageResponseDTO<>(pageRequestDTO, planPage.getContent(), (int) planPage.getTotalElements());
+        return PageResponseDTO.<PlanViewDTO>withAll()
+                .page(planPage)
+                .build();
     }
 
     @Override

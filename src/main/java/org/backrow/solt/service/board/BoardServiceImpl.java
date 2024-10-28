@@ -42,7 +42,9 @@ public class BoardServiceImpl implements BoardService {
 
         Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewWithBoardPlan(types, keyword, order, pageable);
 
-        return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
+        return PageResponseDTO.<BoardViewDTO>withAll()
+                .page(boardPage)
+                .build();
     }
 
     @Override
@@ -54,7 +56,9 @@ public class BoardServiceImpl implements BoardService {
 
         Page<BoardViewDTO> boardPage = boardRepository.searchBoardViewByMemberIdWithBoardPlan(id, types, keyword, pageable);
 
-        return new PageResponseDTO<>(pageRequestDTO, boardPage.getContent(), (int) boardPage.getTotalElements());
+        return PageResponseDTO.<BoardViewDTO>withAll()
+                .page(boardPage)
+                .build();
     }
 
     @Override
@@ -76,6 +80,7 @@ public class BoardServiceImpl implements BoardService {
 
         // 게시글 작성한 뒤에 Plan을 지우면 BoardPlan에서 Theme를 불러오지 못하는 문제가 발생할 수 있음
         // 그렇다고 BoardPlan 만들 때 Theme까지 복제하자니 쿼리를 너무 많이 생성하는 것 같은데...;;;; 어쩌지
+        // Theme는 지우지 말자. 기록용으로 남겨놓기로 했으니까.
         Optional<Plan> findPlan = planRepository.findById(boardInputDTO.getPlanId()); // 여기서 Plan, Place, Route를 한 번의 쿼리로 가져오게 하면 더 효율적일 듯 (지금은 쿼리 3번 날림)
         Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + boardInputDTO.getPlanId()));
         board.setBoardPlan(planToBoardPlan(plan));

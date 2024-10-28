@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
 import javax.validation.constraints.Pattern;
+import java.util.Optional;
 
 @Data
 @Builder
@@ -29,13 +30,13 @@ public class PageRequestDTO {
     @Schema(description = "정렬 종류: l (좋아요 수)")
     private String order;
 
+    // type 필드를 배열로 변환하여 반환
     @Schema(hidden = true)
     public String[] getTypes(){
-        if(type==null || type.isEmpty())
-            return null;
-        return type.split("");
+        return Optional.ofNullable(type).map(t -> t.split("")).orElse(null);
     }
 
+    // Sort by props 필드 기준으로 Pageable 객체 생성
     public Pageable getPageable(String...props){
         return PageRequest.of(this.page-1, this.size, Sort.by(props).descending());
     }
