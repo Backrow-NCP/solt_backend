@@ -37,6 +37,7 @@ public class Board {
 
     @OneToOne(fetch = FetchType.LAZY,
             cascade = { CascadeType.PERSIST, CascadeType.REMOVE })
+    @JoinColumn(name = "plan_id", nullable = false)
     private BoardPlan boardPlan;
 
     @OneToMany(mappedBy = "board",
