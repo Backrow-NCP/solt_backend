@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.log4j.Log4j2;
 import org.apache.commons.lang3.StringEscapeUtils;
-import org.backrow.solt.domain.plan.api.ChatResponse;
+import org.backrow.solt.dto.plan.api.ChatResponse;
 import org.backrow.solt.exception.ChatServiceException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;

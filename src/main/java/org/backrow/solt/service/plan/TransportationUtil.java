@@ -1,6 +1,7 @@
 package org.backrow.solt.service.plan;
 
-import org.backrow.solt.domain.plan.api.DirectionsResponses;
+import lombok.Getter;
+import org.backrow.solt.dto.plan.api.DirectionsResponses;
 
 import java.util.List;
 
@@ -49,6 +50,7 @@ public class TransportationUtil {
     }
 
     // 결과를 담을 클래스
+    @Getter
     public static class TransportationResult {
         private final Integer transportationId;
         private final String transportationType;
@@ -62,20 +64,5 @@ public class TransportationUtil {
             this.travelTime = travelTime;
         }
 
-        public Integer getTransportationId() {
-            return transportationId;
-        }
-
-        public String getTransportationType() {
-            return transportationType;
-        }
-
-        public Integer getDistance() {
-            return distance;
-        }
-
-        public Integer getTravelTime() {
-            return travelTime;
-        }
     }
 }
