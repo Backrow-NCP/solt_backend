@@ -1,4 +1,4 @@
-package org.backrow.solt.domain.plan.api;
+package org.backrow.solt.dto.plan.api;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
