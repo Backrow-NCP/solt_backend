@@ -1,6 +1,6 @@
 package org.backrow.solt.service.ai;
 
-import org.backrow.solt.domain.plan.api.DirectionsResponses;
+import org.backrow.solt.dto.plan.api.DirectionsResponses;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
