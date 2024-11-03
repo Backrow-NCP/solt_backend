@@ -39,10 +39,7 @@ public class ReplyServiceImpl implements ReplyService {
                 .map(reply -> modelMapper.map(reply, ReplyDTO.class))
                 .collect(Collectors.toList());
 
-        return PageResponseDTO.<ReplyDTO>withCustomContent()
-                .page(replyPage)
-                .content(dtoList)
-                .build();
+        return new PageResponseDTO<>(replyPage, dtoList);
     }
 
     @Override
