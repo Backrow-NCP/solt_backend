@@ -33,7 +33,7 @@ public class LikeServiceImpl implements LikeService {
         return likeLogRepository.existsByBoard_BoardIdAndMember_MemberId(likeDTO.getBoardId(), likeDTO.getMemberId());
     }
 
-    public LikeLog convertToEntity(LikeDTO likeDTO) {
+    private LikeLog convertToEntity(LikeDTO likeDTO) {
         Board board = new Board();
         board.setBoardId(likeDTO.getBoardId());
         Member member = Member.builder().memberId(likeDTO.getMemberId()).build();
