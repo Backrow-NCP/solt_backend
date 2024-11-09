@@ -39,12 +39,12 @@ public class PlanServiceImpl implements PlanService {
     private final ThemeStore themeStore;
 
     @Override
-    public PageResponseDTO<PlanViewDTO> getPlanList(long id, PageRequestDTO pageRequestDTO) { // List 조회 시에는 Plan의 세부 내용은 필요 없지 않을까..?
+    public PageResponseDTO<PlanViewDTO> getPlanList(Long memberId, PageRequestDTO pageRequestDTO) { // List 조회 시에는 Plan의 세부 내용은 필요 없지 않을까..?
         String[] types = pageRequestDTO.getTypes();
         String keyword = pageRequestDTO.getKeyword();
         Pageable pageable = pageRequestDTO.getPageable();
 
-        Page<PlanViewDTO> planPage = planRepository.searchPlanViewWithMemberId(types, keyword, pageable, id);
+        Page<PlanViewDTO> planPage = planRepository.searchPlanViewWithMemberId(types, keyword, pageable, memberId);
 
         return PageResponseDTO.<PlanViewDTO>withAll()
                 .page(planPage)
@@ -52,10 +52,10 @@ public class PlanServiceImpl implements PlanService {
     }
 
     @Override
-    public PlanViewDTO getPlan(long id) {
-        PlanViewDTO result = planRepository.searchPlanView(id);
+    public PlanViewDTO getPlan(Long planId) {
+        PlanViewDTO result = planRepository.searchPlanView(planId);
         if (result == null) {
-            throw new NotFoundException("Plan not found: " + id);
+            throw new NotFoundException("Plan not found: " + planId);
         }
         return result;
     }
@@ -80,7 +80,7 @@ public class PlanServiceImpl implements PlanService {
 
     @Transactional
     @Override
-    public boolean modifyPlan(long planId, PlanInputDTO planInputDTO, long memberId) {
+    public boolean modifyPlan(Long planId, PlanInputDTO planInputDTO, Long memberId) {
         Optional<Plan> findPlan = planRepository.findById(planId);
         Plan plan = findPlan.orElseThrow(() -> new NotFoundException("Plan not found: " + planId));
         if (!Objects.equals(plan.getMember().getMemberId(), memberId))
@@ -101,7 +101,7 @@ public class PlanServiceImpl implements PlanService {
 
     @Transactional
     @Override
-    public boolean deletePlan(long planId, long memberId) {
+    public boolean deletePlan(Long planId, Long memberId) {
         try {
             planRepository.deleteByPlanIdAndMember_MemberId(planId, memberId);
             return true;
