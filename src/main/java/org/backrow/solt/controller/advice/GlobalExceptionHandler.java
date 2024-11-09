@@ -26,7 +26,6 @@ public class GlobalExceptionHandler {
     // 바인딩 실패(타입 불일치 등)
     @ExceptionHandler(BindException.class)
     public ResponseEntity<Map<String, String>> handleBindException(BindException e) {
-        log.error(e);
         Map<String, String> map = new HashMap<>();
         if (e.hasErrors()) {
             BindingResult bindingResult = e.getBindingResult();
@@ -38,7 +37,6 @@ public class GlobalExceptionHandler {
     // 유효성 검증 실패(@Valid 등)
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.error(e);
         Map<String, String> map = new HashMap<>();
         if (e.hasErrors()) {
             BindingResult bindingResult = e.getBindingResult();
@@ -50,14 +48,12 @@ public class GlobalExceptionHandler {
     // 데이터 무결성 제약 위반
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<String> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
-        log.error("Data integrity violation: {}", e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body("입력 값이 잘못되었습니다. 다시 한번 확인해주세요.");
     }
 
     // 리소스 조회 실패
     @ExceptionHandler(NotFoundException.class)
     public ResponseEntity<String> handleNotFoundException(NotFoundException e) {
-        log.error(e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 
@@ -76,7 +72,6 @@ public class GlobalExceptionHandler {
     // Jackson 역직렬화 실패 (InvalidDefinitionException)
     @ExceptionHandler(HttpMessageConversionException.class)
     public ResponseEntity<String> handleHttpMessageConversionException(HttpMessageConversionException e) {
-        log.error("Message conversion error: {}", e.getMessage());
         Throwable cause = e.getCause();
         if (cause instanceof InvalidDefinitionException) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청 데이터입니다. 필수 필드나 형식을 확인하세요.");
@@ -88,7 +83,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public void handleException(Exception e) {
-        log.error(e.getMessage());
         e.printStackTrace();
     }
 }
