@@ -67,7 +67,7 @@ public class GlobalExceptionHandler {
         if (e.getCause() instanceof InvalidFormatException) {
             InvalidFormatException invalidFormatException = (InvalidFormatException) e.getCause();
             if (invalidFormatException.getCause() instanceof DateTimeParseException) {
-                return new ResponseEntity<>("잘못된 날짜 형식입니다. YYYY-MM-DD 형식으로 입력해주세요.", HttpStatus.BAD_REQUEST);
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 날짜 형식입니다. YYYY-MM-DD 형식으로 입력해주세요.");
             }
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다. JSON 형식을 확인하세요.");
