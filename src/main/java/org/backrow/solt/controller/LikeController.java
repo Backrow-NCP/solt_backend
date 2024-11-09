@@ -31,7 +31,7 @@ public class LikeController {
 
     @Operation(summary = "좋아요 여부 확인", description = "게시글 ID와 멤버 ID를 이용해 주어진 멤버가 특정 게시글에 대해 좋아요를 눌렀는지 여부를 확인합니다.")
     @GetMapping("/status")
-    public ResponseEntity<Map<String, Boolean>> getLikesByBoardId(@Valid LikeDTO likeDTO) {
+    public ResponseEntity<Map<String, Boolean>> isBoardLikedByUser(@Valid LikeDTO likeDTO) {
         return ResponseEntity.ok(Map.of("isLiked", likeService.isLiked(likeDTO)));
     }
 
