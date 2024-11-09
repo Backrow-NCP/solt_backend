@@ -29,9 +29,11 @@ public class GlobalExceptionHandler {
         Map<String, String> map = new HashMap<>();
         if (e.hasErrors()) {
             BindingResult bindingResult = e.getBindingResult();
-            bindingResult.getFieldErrors().forEach(fieldError -> map.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            bindingResult.getFieldErrors().forEach(fieldError ->
+                    map.put(fieldError.getField(), fieldError.getDefaultMessage())
+            );
         }
-        return ResponseEntity.badRequest().body(map);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 
     // 유효성 검증 실패(@Valid 등)
@@ -40,9 +42,11 @@ public class GlobalExceptionHandler {
         Map<String, String> map = new HashMap<>();
         if (e.hasErrors()) {
             BindingResult bindingResult = e.getBindingResult();
-            bindingResult.getFieldErrors().forEach(fieldError -> map.put(fieldError.getField(), fieldError.getDefaultMessage()));
+            bindingResult.getFieldErrors().forEach(fieldError ->
+                    map.put(fieldError.getField(), fieldError.getDefaultMessage())
+            );
         }
-        return ResponseEntity.badRequest().body(map);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(map);
     }
 
     // 데이터 무결성 제약 위반
@@ -59,14 +63,14 @@ public class GlobalExceptionHandler {
 
     // Json 파싱 실패
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException ex) {
-        if (ex.getCause() instanceof InvalidFormatException) {
-            InvalidFormatException invalidFormatException = (InvalidFormatException) ex.getCause();
+    public ResponseEntity<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        if (e.getCause() instanceof InvalidFormatException) {
+            InvalidFormatException invalidFormatException = (InvalidFormatException) e.getCause();
             if (invalidFormatException.getCause() instanceof DateTimeParseException) {
                 return new ResponseEntity<>("잘못된 날짜 형식입니다. YYYY-MM-DD 형식으로 입력해주세요.", HttpStatus.BAD_REQUEST);
             }
         }
-        return new ResponseEntity<>("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("잘못된 요청입니다. JSON 형식을 확인하세요.");
     }
 
     // Jackson 역직렬화 실패 (InvalidDefinitionException)
@@ -82,7 +86,8 @@ public class GlobalExceptionHandler {
     // 기타 선언하지 않은 모든 예외 처리
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public void handleException(Exception e) {
+    public ResponseEntity<String> handleException(Exception e) {
         e.printStackTrace();
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("서버에서 오류가 발생했습니다. 관리자에게 문의하세요.");
     }
 }
