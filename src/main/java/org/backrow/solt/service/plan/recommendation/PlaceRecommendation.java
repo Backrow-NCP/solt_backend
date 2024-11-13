@@ -8,11 +8,11 @@ import org.backrow.solt.service.ai.ClovaApiService;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class PlaceRecommendationService {
+public class PlaceRecommendation {
 
     private final ClovaApiService clovaApiService;
 
-    public PlaceRecommendationService(ClovaApiService clovaApiService) {
+    public PlaceRecommendation(ClovaApiService clovaApiService) {
         this.clovaApiService = clovaApiService;
     }
 
