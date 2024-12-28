@@ -24,7 +24,7 @@ SOLT는 AI 기반의 맞춤형 여행 일정 추천 및 공유 플랫폼입니�
 
 <!-- 🔗 SOLT 공식 웹사이트 -->
 
-🔗 [SOLT Frontend Repository - ](https://github.com/Backrow-NCP/solt-frontend)
+🔗 [SOLT Frontend Repository ](https://github.com/Backrow-NCP/solt-frontend)
 
 #### 📅 개발 기간
 2024.08.28 ~ 2024.10.25
