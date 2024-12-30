@@ -10,13 +10,20 @@ SOLT는 AI 기술을 활용해 여행자의 성향과 선호도를 분석하고,
     - 1.2 [개발 인원 및 역할](#-개발-인원-및-역할)
     - 1.3 [개발 환경](#️-개발-환경)
 2. [주요 기능](#-주요-기능)
-3. [시스템 아키텍처](#️-시스템-아키텍처)
-4. [UML 다이어그램](#-UML-다이어그램)
+    - 2.1 [AI 여행 일정 추천](#1.-AI-여행-일정-추천)
+    - 2.2 [여행 일정 및 게시글 공유](#2.-여행-일정-및-게시글-공유)
+    - 2.3 [AI 여행 가이드](#3.-AI-여행-가이드)
+    - 2.4 [여행 선호도 검사](#4.-여행-선호도-검사)
+4. [시스템 아키텍처](#️-시스템-아키텍처)
+5. [UML 다이어그램](#-UML-다이어그램)
     - 4.1 [Use Case Diagram](#use-case-diagram)
     - 4.2 [Sequence Diagram](#sequence-diagram)
     - 4.3 [Class Diagram](#class-diagram)
-5. [API 명세서](#-API-명세서)
-6. [기타사항](#-기타사항)
+6. [ERD](#-ERD)
+    - 5.1 [논리 ERD](#논리-ERD)
+    - 5.2 [물리 ERD](#물리-ERD)
+7. [API 명세서](#-API-명세서)
+8. [기타사항](#-기타사항)
 
 ## 📌 프로젝트 소개
 SOLT는 AI 기반의 맞춤형 여행 일정 추천 및 공유 플랫폼입니다.
@@ -62,29 +69,40 @@ SOLT는 AI 기반의 맞춤형 여행 일정 추천 및 공유 플랫폼입니�
 - AI 챗봇이 여행 관련 상담을 제공합니다.  
 - **실시간 대화**로 여행 가이드와 소통하고, AI 기반 **여행 페르소나** 시스템을 적용했습니다.  
 
-#### 4. 여행 유형 검사  
+#### 4. 여행 선호도 검사  
 - 간단한 문답으로 사용자의 **여행 성향**을 분석합니다.  
 - 결과에 따라 **맞춤형 여행지 및 코스**를 자동 추천합니다.  
 
 ## 🏗️ 시스템 아키텍처
-시스템 아키텍처는 현재 작성 중입니다.
+![image](https://github.com/user-attachments/assets/aeadd771-4413-4a3c-97b1-534cd34f55e0)
 
 ## 📊 UML 다이어그램
-UML 다이어그램은 현재 작성 중입니다.
 #### Use Case Diagram
-_시스템의 주요 사용 사례를 표현한 다이어그램입니다._
-
-#### Sequence Diagram
-- **회원 관리** 
-- **여행 일정**  
-- **게시판 관리** 
+![UseCaseDiagram_ver0 22](https://github.com/user-attachments/assets/25541754-c4a3-4356-87ec-c1a29eea2fb7)
 
 #### Class Diagram
-_시스템의 객체와 관계를 정의한 클래스 다이어그램입니다._
-<!--
-_⚠️ 클래스 다이어그램은 크기가 커서 PDF로 제공합니다._  
-👉 **클래스 다이어그램 보기 (다운로드 링크)**  _
--->
+_⚠️ 클래스 다이어그램은 크기가 커서 링크를 통해 제공합니다._  
+👉 [**클래스 다이어그램 보기 (다운로드 링크)**](https://viewer.diagrams.net/?tags=%7b%7d&lightbox=1&target=blank&highlight=0000ff&edit=_blank&layers=1&nav=1&title=SOLT_ClassDiagram.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1kg11byxCNn2xSkGwEZ1PZF4QkXgTRL--%26export%3Ddownload)
+
+#### Sequence Diagram
+- **여행 일정**
+
+![SequenceDiagram_Plan](https://github.com/user-attachments/assets/5770bbda-6549-4b8b-8ccb-ded602a4cf9b)
+
+- **게시판 관리**
+
+![SequenceDiagram_Board](https://github.com/user-attachments/assets/fe139f28-1f3d-44b4-b999-5227d8dbab53)
+
+- **회원 관리**
+
+![SequenceDiagram_User_ver0 3](https://github.com/user-attachments/assets/1209638f-cd9f-4fc8-b03b-f6d512e1cd77)
+
+## ERD
+#### 논리 ERD
+![논리 ERD](https://github.com/user-attachments/assets/6a6b8b23-318c-422b-842f-45967d0ac25b)
+
+#### 물리 ERD 
+![solt_erd](https://github.com/user-attachments/assets/77606bb8-7ce5-4f74-9fa6-b79acf9c5694)
 
 ## 🧑‍💻 API 명세서
 API 명세서는 현재 작성 중입니다.
