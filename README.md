@@ -74,11 +74,11 @@ SOLT는 AI 기반의 맞춤형 여행 일정 추천 및 공유 플랫폼입니�
 - 결과에 따라 **맞춤형 여행지 및 코스**를 자동 추천합니다.  
 
 ## 🏗️ 시스템 아키텍처
-![image](https://github.com/user-attachments/assets/aeadd771-4413-4a3c-97b1-534cd34f55e0)
+<img src="https://github.com/user-attachments/assets/aeadd771-4413-4a3c-97b1-534cd34f55e0" width="900px">
 
 ## 📊 UML 다이어그램
 #### Use Case Diagram
-![UseCaseDiagram_ver0 22](https://github.com/user-attachments/assets/25541754-c4a3-4356-87ec-c1a29eea2fb7)
+<img src="https://github.com/user-attachments/assets/25541754-c4a3-4356-87ec-c1a29eea2fb7" width="900px">
 
 #### Class Diagram
 _⚠️ 클래스 다이어그램은 크기가 커서 링크를 통해 제공합니다._  
@@ -86,23 +86,20 @@ _⚠️ 클래스 다이어그램은 크기가 커서 링크를 통해 제공합
 
 #### Sequence Diagram
 - **여행 일정**
-
-![SequenceDiagram_Plan](https://github.com/user-attachments/assets/5770bbda-6549-4b8b-8ccb-ded602a4cf9b)
+<img src="https://github.com/user-attachments/assets/5770bbda-6549-4b8b-8ccb-ded602a4cf9b" width="600px">
 
 - **게시판 관리**
-
-![SequenceDiagram_Board](https://github.com/user-attachments/assets/fe139f28-1f3d-44b4-b999-5227d8dbab53)
+<img src="https://github.com/user-attachments/assets/fe139f28-1f3d-44b4-b999-5227d8dbab53" width="900px">
 
 - **회원 관리**
-
-![SequenceDiagram_User_ver0 3](https://github.com/user-attachments/assets/1209638f-cd9f-4fc8-b03b-f6d512e1cd77)
+<img src="https://github.com/user-attachments/assets/1209638f-cd9f-4fc8-b03b-f6d512e1cd77" width="600px">
 
 ## ERD
 #### 논리 ERD
-![논리 ERD](https://github.com/user-attachments/assets/6a6b8b23-318c-422b-842f-45967d0ac25b)
+<img src="https://github.com/user-attachments/assets/6a6b8b23-318c-422b-842f-45967d0ac25b" width="600px">
 
 #### 물리 ERD 
-![solt_erd](https://github.com/user-attachments/assets/77606bb8-7ce5-4f74-9fa6-b79acf9c5694)
+<img src="https://github.com/user-attachments/assets/77606bb8-7ce5-4f74-9fa6-b79acf9c5694" width="600px">
 
 ## 🧑‍💻 API 명세서
 API 명세서는 현재 작성 중입니다.
