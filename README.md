@@ -39,10 +39,10 @@ SOLT는 여행 계획에 대한 부담을 덜고, 혼자 떠나는 여행을 더
 
 SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할 수 있습니다.
 
-#### 📅 개발 기간
+### 📅 개발 기간
 2024.08.28 ~ 2024.10.25
 
-#### 👨‍💻 개발 인원 및 역할
+### 👨‍💻 개발 인원 및 역할
 | 이름              | 역할             | 담당 서비스              | GitHub                                                                       |
 | --------------- | -------------- | ------------------- | ---------------------------------------------------------------------------- |
 | **임수한** (조장)    | Backend, AI    | AI 여행 일정 추천         | [@NoskeLim](https://github.com/orgs/Backrow-NCP/people/NoskeLim)             |
@@ -53,7 +53,7 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 | **김성훈**         | Frontend       | 게시판 관리              | [@seonghunkim724](https://github.com/orgs/Backrow-NCP/people/seonghunkim724) |
 | **김유나**         | Frontend, AI   | 회원 관리, AI 챗봇 여행 가이드 | [@YooonaKim](https://github.com/orgs/Backrow-NCP/people/YooonaKim)           |
 
-#### 🛠️ 개발 환경
+### 🛠️ 개발 환경
 - **Frontend**: React (v18.3.1), Nginx  
 - **Backend**: SpringBoot (v2.6.15)  
 - **Database**: MySQL (v8.0.4), Redis (v7.4.1)  
@@ -63,19 +63,19 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 
 ## 📑 주요 기능 
 주요 기능은 현재 작성 중입니다.
-#### 1. AI 여행 일정 추천  
+### 1. AI 여행 일정 추천  
 - 사용자가 입력한 **기간, 지역, 테마, 선호 장소** 등을 기반으로 AI가 맞춤형 일정을 생성합니다.  
 - **여행 일정 자동 생성 알고리즘**을 개발하고 최적화했습니다.  
 
-#### 2. 여행 일정 및 게시글 공유  
+### 2. 여행 일정 및 게시글 공유  
 - 생성된 여행 일정을 게시글로 **공유 및 수정**할 수 있으며, 다른 사용자와 경험을 나눌 수 있습니다.  
 - 게시글에는 **사진 및 후기**를 추가해 여행 경험을 보다 생생하게 전달합니다.  
 
-#### 3. AI 여행 가이드  
+### 3. AI 여행 가이드  
 - AI 챗봇이 여행 관련 상담을 제공합니다.  
 - **실시간 대화**로 여행 가이드와 소통하고, AI 기반 **여행 페르소나** 시스템을 적용했습니다.  
 
-#### 4. 여행 선호도 검사  
+### 4. 여행 선호도 검사  
 - 간단한 문답으로 사용자의 **여행 성향**을 분석합니다.  
 - 결과에 따라 **맞춤형 여행지 및 코스**를 자동 추천합니다.  
 
@@ -83,14 +83,14 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 <img src="https://github.com/user-attachments/assets/aeadd771-4413-4a3c-97b1-534cd34f55e0" width="900px">
 
 ## 📊 UML 다이어그램
-#### Use Case Diagram
+### Use Case Diagram
 <img src="https://github.com/user-attachments/assets/25541754-c4a3-4356-87ec-c1a29eea2fb7" width="900px">
 
-#### Class Diagram
+### Class Diagram
 _⚠️ 클래스 다이어그램은 크기가 커서 링크를 통해 제공합니다._  
 👉 [**클래스 다이어그램 보기 (다운로드 링크)**](https://viewer.diagrams.net/?tags=%7b%7d&lightbox=1&target=blank&highlight=0000ff&edit=_blank&layers=1&nav=1&title=SOLT_ClassDiagram.drawio#Uhttps%3A%2F%2Fdrive.google.com%2Fuc%3Fid%3D1kg11byxCNn2xSkGwEZ1PZF4QkXgTRL--%26export%3Ddownload)
 
-#### Sequence Diagram
+### Sequence Diagram
 - **여행 일정**
 <img src="https://github.com/user-attachments/assets/5770bbda-6549-4b8b-8ccb-ded602a4cf9b" width="600px">
 
@@ -101,10 +101,10 @@ _⚠️ 클래스 다이어그램은 크기가 커서 링크를 통해 제공합
 <img src="https://github.com/user-attachments/assets/1209638f-cd9f-4fc8-b03b-f6d512e1cd77" width="600px">
 
 ## ERD
-#### 논리 ERD
+### 논리 ERD
 <img src="https://github.com/user-attachments/assets/6a6b8b23-318c-422b-842f-45967d0ac25b" width="600px">
 
-#### 물리 ERD 
+### 물리 ERD 
 <img src="https://github.com/user-attachments/assets/77606bb8-7ce5-4f74-9fa6-b79acf9c5694" width="600px">
 
 ## 🧑‍💻 API 명세서
