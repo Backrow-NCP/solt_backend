@@ -108,8 +108,8 @@ _⚠️ 클래스 다이어그램은 크기가 커서 링크를 통해 제공합
 <img src="https://github.com/user-attachments/assets/77606bb8-7ce5-4f74-9fa6-b79acf9c5694" width="600px">
 
 ## 🧑‍💻 API 명세서
-API 명세서는 노션에서 확인하실 수 있습니다.  
-[노션에서 API 문서 보기](https://quilted-guitar-d51.notion.site/API-fdd324890eae4df78efffbfa1fc53ee8?pvs=4)
+_⚠️ API 명세서는 노션에서 확인하실 수 있습니다._  
+👉 [**노션에서 API 문서 보기**](https://quilted-guitar-d51.notion.site/API-fdd324890eae4df78efffbfa1fc53ee8?pvs=4)
 
 ## 🚧 기타사항
 <!-- - 프로젝트는 지속적으로 **기능 개선 및 유지 보수**가 진행됩니다. -->
