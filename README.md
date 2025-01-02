@@ -46,7 +46,7 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 | 이름              | 역할             | 담당 서비스              | GitHub                                                                       |
 | --------------- | -------------- | ------------------- | ---------------------------------------------------------------------------- |
 | **임수한** (조장)    | Backend, AI    | AI 여행 일정 추천         | [@NoskeLim](https://github.com/orgs/Backrow-NCP/people/NoskeLim)             |
-| **박상도** (BE 팀장) | FullStack      | 게시판 관리, 여행 일정 서포트   | [@SD-PARK](https://github.com/orgs/Backrow-NCP/people/SD-PARK)               |
+| **박상도** (BE 팀장) | FullStack      | 게시판 관리, 여행 일정   | [@SD-PARK](https://github.com/orgs/Backrow-NCP/people/SD-PARK)               |
 | **박지수**         | Backend, CI/CD | 회원 관리               | [@JisuPark9191](https://github.com/orgs/Backrow-NCP/people/JisuPark9191)     |
 | **윤영훈**         | FullStack      | 여행 유형 검사            | [@YeongHunYun](https://github.com/orgs/Backrow-NCP/people/YeongHunYun)       |
 | **권정현** (FE 팀장) | Frontend       | 메인, 여행 일정           | [@zvnghyvn](https://github.com/orgs/Backrow-NCP/people/zvnghyvn)             |
