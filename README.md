@@ -83,20 +83,20 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 ## 📽️ 기능 시연
 프로젝트의 주요 기능을 GIF와 함께 확인할 수 있습니다.
 #### 메인 페이지
-![메인페이지](https://github.com/Backrow-NCP/solt_backend/tree/main/images/mainpage.gif)
+![메인페이지](https://github.com/Backrow-NCP/solt_backend/blob/main/images/mainpage.gif)
 
 ### 1. AI 여행 일정 추천
 #### 여행 일정 추천 (AI 추천)
 AI가 사용자의 선호도를 바탕으로 맞춤형 여행 일정을 추천합니다.
-![여행일정추천](https://github.com/Backrow-NCP/solt_backend/tree/main/images/plan_recom.gif)
+![여행일정추천](https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_recom.gif)
 
 #### 여행 일정 조정
 추천받은 여행 일정을 내 일정에 맞게 수정하는 과정입니다.
-![여행일정조정](htps://github.com/Backrow-NCP/solt_backend/tree/main/images/plan_custom.gif)
+![여행일정조정](https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_custom.gif)
 
 #### 여행 일정 PDF/마이페이지 저장
 추천된 일정을 PDF 및 마이페이지에 저장하는 기능입니다.
-![여행일정저장](https://github.com/Backrow-NCP/solt_backend/tree/main/images/plan_save.gif)
+![여행일정저장](https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_save.gif)
 
 ### 2. 여행 일정 및 게시글 공유
 #### 게시판 페이지 (인기 게시글 및 최신 게시글 확인)
