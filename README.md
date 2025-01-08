@@ -14,11 +14,13 @@ SOLT는 AI 기술을 활용해 여행자의 성향과 선호도를 분석하고,
     - 1.1 [개발 기간](#-개발-기간)
     - 1.2 [개발 인원 및 역할](#-개발-인원-및-역할)
     - 1.3 [개발 환경](#️-개발-환경)
-2. [주요 기능](#-주요-기능)
+    - 1.4 [주요 기능](#-주요-기능)
+2. [기능 시연](#-기능-시연)
     - 2.1 [AI 여행 일정 추천](#1.-AI-여행-일정-추천)
     - 2.2 [여행 일정 및 게시글 공유](#2.-여행-일정-및-게시글-공유)
     - 2.3 [AI 여행 가이드](#3.-AI-여행-가이드)
     - 2.4 [여행 선호도 검사](#4.-여행-선호도-검사)
+    - 2.5 [회원 기능](#5.-회원-기능)
 4. [시스템 아키텍처](#️-시스템-아키텍처)
 5. [UML 다이어그램](#-UML-다이어그램)
     - 4.1 [Use Case Diagram](#use-case-diagram)
@@ -48,7 +50,7 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 | **임수한** (조장)    | Backend, AI    | AI 여행 일정 추천         | [@NoskeLim](https://github.com/orgs/Backrow-NCP/people/NoskeLim)             |
 | **박상도** (BE 팀장) | FullStack      | 게시판 관리, 여행 일정   | [@SD-PARK](https://github.com/orgs/Backrow-NCP/people/SD-PARK)               |
 | **박지수**         | Backend, CI/CD | 회원 관리               | [@JisuPark9191](https://github.com/orgs/Backrow-NCP/people/JisuPark9191)     |
-| **윤영훈**         | FullStack      | 여행 유형 검사            | [@YeongHunYun](https://github.com/orgs/Backrow-NCP/people/YeongHunYun)       |
+| **윤영훈**         | FullStack      | 여행 선호도 검사            | [@YeongHunYun](https://github.com/orgs/Backrow-NCP/people/YeongHunYun)       |
 | **권정현** (FE 팀장) | Frontend       | 메인, 여행 일정           | [@zvnghyvn](https://github.com/orgs/Backrow-NCP/people/zvnghyvn)             |
 | **김성훈**         | Frontend       | 게시판 관리              | [@seonghunkim724](https://github.com/orgs/Backrow-NCP/people/seonghunkim724) |
 | **김유나**         | Frontend, AI   | 회원 관리, AI 챗봇 여행 가이드 | [@YooonaKim](https://github.com/orgs/Backrow-NCP/people/YooonaKim)           |
@@ -61,23 +63,89 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 - **API & 라이브러리**: HyperCLOVA X, Google Map API, Axios (v1.7.7), Lombok
 - **IDE**: IntelliJ IDEA Ultimate, VS Code  
 
-## 📑 주요 기능 
-주요 기능은 현재 작성 중입니다.
-### 1. AI 여행 일정 추천  
+### 📑 주요 기능 
+#### 1. AI 여행 일정 추천  
 - 사용자가 입력한 **기간, 지역, 테마, 선호 장소** 등을 기반으로 AI가 맞춤형 일정을 생성합니다.  
 - **여행 일정 자동 생성 알고리즘**을 개발하고 최적화했습니다.  
 
-### 2. 여행 일정 및 게시글 공유  
+#### 2. 여행 일정 및 게시글 공유  
 - 생성된 여행 일정을 게시글로 **공유 및 수정**할 수 있으며, 다른 사용자와 경험을 나눌 수 있습니다.  
 - 게시글에는 **사진 및 후기**를 추가해 여행 경험을 보다 생생하게 전달합니다.  
 
-### 3. AI 여행 가이드  
+#### 3. AI 여행 가이드  
 - AI 챗봇이 여행 관련 상담을 제공합니다.  
 - **실시간 대화**로 여행 가이드와 소통하고, AI 기반 **여행 페르소나** 시스템을 적용했습니다.  
 
-### 4. 여행 선호도 검사  
+#### 4. 여행 선호도 검사  
 - 간단한 문답으로 사용자의 **여행 성향**을 분석합니다.  
-- 결과에 따라 **맞춤형 여행지 및 코스**를 자동 추천합니다.  
+- 결과에 따라 **맞춤형 여행지 및 코스**를 자동 추천합니다.
+
+## 📽️ 기능 시연
+프로젝트의 주요 기능을 GIF와 함께 확인할 수 있습니다.
+#### 메인 페이지
+![메인페이지](https://github.com/Backrow-NCP/solt_backend/tree/main/images/mainpage.gif)
+
+### 1. AI 여행 일정 추천
+#### 여행 일정 추천 (AI 추천)
+AI가 사용자의 선호도를 바탕으로 맞춤형 여행 일정을 추천합니다.
+![여행일정추천](https://github.com/Backrow-NCP/solt_backend/tree/main/images/plan_recom.gif)
+
+#### 여행 일정 조정
+추천받은 여행 일정을 내 일정에 맞게 수정하는 과정입니다.
+![여행일정조정](htps://github.com/Backrow-NCP/solt_backend/tree/main/images/plan_custom.gif)
+
+#### 여행 일정 PDF/마이페이지 저장
+추천된 일정을 PDF 및 마이페이지에 저장하는 기능입니다.
+![여행일정저장](https://github.com/Backrow-NCP/solt_backend/tree/main/images/plan_save.gif)
+
+### 2. 여행 일정 및 게시글 공유
+#### 게시판 페이지 (인기 게시글 및 최신 게시글 확인)
+인기 게시글과 최신 게시글을 확인하고 탐색하는 과정입니다.
+<img src="path_to_gif/board_page.gif" width="70%">
+
+#### 게시글 작성
+여행 후기 및 일정을 게시글로 작성하고 업로드하는 과정입니다.
+<img src="path_to_gif/write_post.gif" width="70%">
+
+#### 게시글 조회 및 댓글 작성
+게시글을 클릭해 상세 내용을 조회하고 댓글을 작성합니다.
+<img src="path_to_gif/view_post_and_comment.gif" width="70%">
+
+### 3. AI 여행 가이드
+#### AI 챗봇을 통한 여행 가이드
+AI 챗봇이 사용자와 대화하며 여행 일정을 추천하거나 여행 관련 상담을 제공합니다.
+<img src="path_to_gif/ai_travel_guide.gif" width="70%">
+
+### 4. 여행 선호도 검사
+#### 여행 선호도 검사
+간단한 문답을 통해 사용자의 여행 성향을 검사합니다.
+<img src="path_to_gif/type_test.gif" width="70%">
+
+#### 다른 유형 보기 및 공유
+다른 유형을 확인하고, 카카오톡으로 공유하는 과정입니다.
+<img src="path_to_gif/share_result.gif" width="70%">
+
+#### 나의 여행 유형 조회
+마이페이지에서 본인의 여행 유형을 다시 확인할 수 있습니다.
+<img src="path_to_gif/view_my_type.gif" width="70%">
+
+### 5. 회원 기능
+#### 회원가입
+사용자가 새로운 계정을 생성합니다.
+
+#### 로그인
+이메일 및 비밀번호를 통해 로그인합니다.
+
+#### 비밀번호 찾기/재설정
+비밀번호를 잊은 경우 이메일을 통해 재설정할 수 있습니다.
+
+#### 마이페이지
+사용자 정보와 활동 내역을 확인하는 과정입니다.
+<img src="path_to_gif/mypage.gif" width="70%">
+
+#### 프로필 수정
+마이페이지에서 프로필 정보를 수정하고 저장합니다.
+<img src="path_to_gif/profile_edit.gif" width="70%">
 
 ## 🏗️ 시스템 아키텍처
 <img src="https://github.com/user-attachments/assets/aeadd771-4413-4a3c-97b1-534cd34f55e0" width="900px">
