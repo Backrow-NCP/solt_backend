@@ -83,69 +83,87 @@ SOLT와 함께라면 누구나 자신만의 여행을 쉽고 즐겁게 계획할
 ## 📽️ 기능 시연
 프로젝트의 주요 기능을 GIF와 함께 확인할 수 있습니다.
 #### 메인 페이지
-![메인페이지](https://github.com/Backrow-NCP/solt_backend/blob/main/images/mainpage.gif)
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/mainpage.gif" width="800px">
 
 ### 1. AI 여행 일정 추천
 #### 여행 일정 추천 (AI 추천)
-AI가 사용자의 선호도를 바탕으로 맞춤형 여행 일정을 추천합니다.
-![여행일정추천](https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_recom.gif)
+AI를 통해 사용자의 선호도를 바탕으로 맞춤형 여행 일정을 추천받는 과정입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_recom.gif" width="800px">
 
 #### 여행 일정 조정
 추천받은 여행 일정을 내 일정에 맞게 수정하는 과정입니다.
-![여행일정조정](https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_custom.gif)
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_custom.gif" width="800px">
 
 #### 여행 일정 PDF/마이페이지 저장
 추천된 일정을 PDF 및 마이페이지에 저장하는 기능입니다.
-![여행일정저장](https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_save.gif)
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/plan_save.gif" width="800px">
 
 ### 2. 여행 일정 및 게시글 공유
 #### 게시판 페이지 (인기 게시글 및 최신 게시글 확인)
-인기 게시글과 최신 게시글을 확인하고 탐색하는 과정입니다.
-<img src="path_to_gif/board_page.gif" width="70%">
+인기 게시글과 최신 게시글을 조회하는 페이지입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/board_main.gif" width="800px">
 
 #### 게시글 작성
 여행 후기 및 일정을 게시글로 작성하고 업로드하는 과정입니다.
-<img src="path_to_gif/write_post.gif" width="70%">
 
-#### 게시글 조회 및 댓글 작성
-게시글을 클릭해 상세 내용을 조회하고 댓글을 작성합니다.
-<img src="path_to_gif/view_post_and_comment.gif" width="70%">
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/board_create.gif" width="800px">
+
+#### 게시글 조회
+게시글 상세 내용을 조회하는 기능입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/board_view.gif" width="800px">
+
+#### 댓글 작성 및 좋아요
+게시글에 댓글을 작성하고 좋아요를 눌러 추천하는 기능입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/board_function.gif" width="800px">
 
 ### 3. AI 여행 가이드
 #### AI 챗봇을 통한 여행 가이드
-AI 챗봇이 사용자와 대화하며 여행 일정을 추천하거나 여행 관련 상담을 제공합니다.
-<img src="path_to_gif/ai_travel_guide.gif" width="70%">
+여행 가이드 챗봇을 통해 여행 관련 상담을 제공받는 기능입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/guide.gif" width="800px">
 
 ### 4. 여행 선호도 검사
 #### 여행 선호도 검사
 간단한 문답을 통해 사용자의 여행 성향을 검사합니다.
-<img src="path_to_gif/type_test.gif" width="70%">
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/test.gif" width="800px">
 
 #### 다른 유형 보기 및 공유
 다른 유형을 확인하고, 카카오톡으로 공유하는 과정입니다.
-<img src="path_to_gif/share_result.gif" width="70%">
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/test_viewandshare.gif" width="800px">
 
 #### 나의 여행 유형 조회
 마이페이지에서 본인의 여행 유형을 다시 확인할 수 있습니다.
-<img src="path_to_gif/view_my_type.gif" width="70%">
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/test_record.gif" width="800px">
 
 ### 5. 회원 기능
 #### 회원가입
-사용자가 새로운 계정을 생성합니다.
+새로운 계정을 생성하는 기능입니다.
 
-#### 로그인
-이메일 및 비밀번호를 통해 로그인합니다.
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/member_signup.gif" width="800px">
+
+#### 로그인 및 마이페이지 조회
+이메일과 비밀번호를 통해 로그인하고 사용자 정보와 활동 내역을 확인하는 과정입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/member_login.gif" width="800px">
 
 #### 비밀번호 찾기/재설정
-비밀번호를 잊은 경우 이메일을 통해 재설정할 수 있습니다.
+비밀번호를 잊은 경우, 이메일 인증을 통해 재설정하는 과정입니다.
 
-#### 마이페이지
-사용자 정보와 활동 내역을 확인하는 과정입니다.
-<img src="path_to_gif/mypage.gif" width="70%">
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/member_searchpassword.gif" width="800px">
 
 #### 프로필 수정
-마이페이지에서 프로필 정보를 수정하고 저장합니다.
-<img src="path_to_gif/profile_edit.gif" width="70%">
+프로필 정보를 수정하는 기능입니다.
+
+<img src="https://github.com/Backrow-NCP/solt_backend/blob/main/images/member_edit.gif" width="800px">
 
 ## 🏗️ 시스템 아키텍처
 <img src="https://github.com/user-attachments/assets/aeadd771-4413-4a3c-97b1-534cd34f55e0" width="900px">
